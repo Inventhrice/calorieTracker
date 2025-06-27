@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calorie Tracker</title>
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body>
+    <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
+    <script type="module" src="./js/index.js"></script>
+    <div id="dashboard" class="flex">
+        <sidebaritem></sidebaritem>
+        <div id="content" class="content-container">
+            <content-header :title=title></content-header>
+            <div id="main-content" class="content-list">
+                <div class="flex flex-row justify-around text w-full">
+                    <div class="graph module-background"><graph-header title="Weight Loss"></graph-header></div>
+                    <div class="graph module-background"><graph-header title="Calorie Intake"></graph-header></div>
+                </div>
+                <div class="module-background">
+                    <!-- Quick Add Entry box -->
+                    <!-- Maybe have a history "module"/table that has the previously set goals and metrics (this could also be moved into a metrics page) -->
+                    <!-- Somewhere we need to also add a weight logging as well, perhaps in this page as well -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

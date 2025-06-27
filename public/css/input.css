@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+@layer components {
+  .sidebar {
+    @apply static flex-initial top-0 left-0 h-screen w-16 flex flex-col bg-white dark:bg-gray-900 shadow-lg
+  }
+
+  .sidebar-icon {
+    @apply relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto bg-gray-400 hover:bg-blue-600 dark:bg-gray-800 text-blue-500 hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg;
+  }
+
+  .sidebar-tooltip {
+    @apply absolute w-auto p-2 m-2 min-w-max left-14 rounded-md shadow-md z-50 text-white bg-gray-900 text-xs font-bold transition-all duration-100 scale-0 origin-left;
+  }
+
+  .sidebar-hr {
+    @apply bg-gray-200 dark:bg-gray-800 border border-gray-200 dark:border-gray-800 rounded-full mx-2;
+  }
+
+  .dropdown {
+    @apply m-0 w-full px-2 pb-2 transition duration-300 ease-in-out;
+  }
+
+  .dropdown-header {
+    @apply flex flex-row items-center justify-evenly mx-0 text-gray-500 cursor-pointer;
+  }
+
+  .dropdown-header-text {
+    @apply text-gray-500 opacity-90 text-lg font-semibold cursor-default;
+  }
+
+  .dropdown-header-text-selected {
+    @apply text-blue-500 opacity-90 text-lg font-bold;
+  }
+
+  .dropdown-selection {
+    @apply flex flex-row items-center justify-evenly mt-1 mr-auto ml-2 transition duration-300 ease-in-out cursor-pointer;
+  }
+
+  .dropdown-selection-text {
+    @apply text-gray-500 font-semibold tracking-wide mr-auto transition duration-300 ease-in-out hover:text-pink-500 dark:hover:text-gray-500 cursor-pointer;
+  }
+
+  .content-container {
+    @apply flex flex-col bg-gray-300 dark:bg-gray-700 m-0 h-screen w-screen overflow-hidden;
+  }
+
+  .content-list {
+    @apply flex flex-col items-center h-full w-full m-2 px-2 pb-12 overflow-y-scroll;
+  }
+
+  .top-navigation {
+    @apply flex flex-row items-center justify-start bg-gray-300 dark:bg-gray-800/90 w-full h-16 m-0 shadow-lg;
+  }
+
+  .title-text {
+    @apply text-xl text-gray-300 tracking-wider font-semibold opacity-80 ml-6 my-auto transition duration-300 ease-in-out;
+  }
+
+  .module-background {
+    @apply bg-gray-900/50;
+  }
+
+  th {
+    @apply text-lg font-semibold ;
+  }
+
+  td, th {
+    @apply px-2 mx-2;
+  }
+
+  .text {
+    @apply text-gray-300 opacity-80;
+  }
+
+  .table-border {
+    @apply border-2 border-gray-500;
+  }
+
+  .btn{
+    @apply p-1 rounded-md text-gray-100 bg-gray-500 hover:bg-gray-600 active:bg-gray-700;
+  }
+
+  .btn-icon{
+    @apply scale-125
+  }
+
+  .dialog {
+    @apply bg-gray-300 dark:dark:bg-black opacity-100 rounded-xl  max-h-screen
+    fixed top-1/2 left-1/2 -translate-1/2 z-auto overflow-y-auto
+    px-5 py-2 gap-2;
+
+  }
+
+  label{
+    @apply pr-2 text-gray-300 font-semibold;
+  }
+
+  .dialog-input {
+    @apply bg-gray-300 dark:bg-gray-700 rounded pl-1 py-1;
+  }
+
+  .btn-uhoh {
+    @apply bg-red-500 hover:bg-red-600 active:bg-red-700 px-2;
+  }
+
+  .btn-confirm {
+    @apply bg-blue-500 hover:bg-blue-600 active:bg-blue-700 px-2;
+  }
+
+  .graph {
+    @apply min-w-2/5 p-3 rounded-lg;
+  }
+
+  .graph-header {
+    @apply flex flex-row justify-between items-center;
+  }
+
+  .graph-timespan-selector {
+    @apply flex flex-row justify-start
+    bg-gray-500 rounded-2xl
+    border-2 border-gray-400;
+  }
+
+  .remove-spinner{
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance: textfield;
+  }
+
+}
