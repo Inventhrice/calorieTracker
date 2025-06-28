@@ -31,7 +31,7 @@ export default {
                 let foodinfo = this.foodinfo
                 this.selected.foodname = foodinfo.name
                 this.selected.cal = foodinfo.calperg * quantity
-                this.selected.carb = foodinfo.carbperg * quantity
+                this.selected.carbs = foodinfo.carbperg * quantity
                 this.selected.protein = foodinfo.proteinperg * quantity
                 this.selected.fat = foodinfo.fatperg * quantity
             }
@@ -91,7 +91,7 @@ export default {
                 <label for="fat">Fat (g)</label>
                 <label for="carb">Carbs (g)</label>
                 <input type="number" class="dialog-input" step="0.01" id="fat" v-model="selected.fat" :disabled="isFoodID"/>
-                <input type="number" class="dialog-input" step="0.01" id="carb" v-model="selected.carb" :disabled="isFoodID"/>
+                <input type="number" class="dialog-input" step="0.01" id="carb" v-model="selected.carbs" :disabled="isFoodID"/>
             </div>
 
             <label for="notes">Notes</label>

@@ -93,7 +93,7 @@ createApp({
             if (index === undefined) {
                 this.selected = {
                     daterecord: this.getDateOnly(this.currentWeek.start), foodname: "", foodID: undefined,
-                    quantity: 0, cal: 0, protein: 0, fat: 0, carb: 0, notes: ""
+                    quantity: 0, cal: 0, protein: 0, fat: 0, carbs: 0, notes: ""
                 }
             } else {
                 this.selected = JSON.parse(JSON.stringify(this.entries[index]))

@@ -14,6 +14,7 @@ func InitRouter() *gin.Engine {
 	router := gin.Default()
 	router.GET("/api/settings", groups.RefreshSettings)
 	router.StaticFS("/app", http.Dir("/app/public/"))
+	router.StaticFile("/favicon.ico", "/app/public/favicon.ico")
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.Redirect(http.StatusPermanentRedirect, "/app")
 	})
