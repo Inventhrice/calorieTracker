@@ -21,7 +21,7 @@
                         <button @click="currentWeek=addDate(start, -7)" class="btn btn-confirm"> <span
                                 class="iconify btn-icon" data-icon="mdi-navigate-before"></span></button>
                         <span class="my-1 p-1">From: <input class="dialog-input" type="date"
-                                v-model="inputStartDate" /> </span>
+                                v-model="datePickerWrapperCurrentWeek" /> </span>
                         <button @click="currentWeek=addDate(start, 7)" class="btn btn-confirm">
                             <span class="iconify btn-icon" data-icon="mdi-navigate-next"></span></button>
                         <span class="my-1 p-1">To: {{currentWeek.end.toDateString()}}</span>

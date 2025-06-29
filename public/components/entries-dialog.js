@@ -16,6 +16,14 @@ export default {
             get() {
                 return this.allFoods.find((el) => el.id == this.selected.foodID)
             }
+        },
+        dateRecord: {
+            get(){
+                return this.selected.daterecord.toISOString().split('T')[0]
+            },
+            set(dateStr){
+                this.selected.daterecord = new Date(dateStr+"T00:00:00")
+            }
         }
     },
     props: {
@@ -59,7 +67,7 @@ export default {
     template: `
         <dialog class="dialog text flex flex-col" open>
             <label for="date">Date</label>
-            <input class="dialog-input" type="date" v-model="selected.daterecord" />
+            <input class="dialog-input" type="date" v-model="dateRecord" />
 
             <label for="foodName">Food</label>
             <span class="grid grid-cols-2 gap-3">

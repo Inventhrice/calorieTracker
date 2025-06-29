@@ -1,4 +1,4 @@
-import { createApp, toRaw } from './vue.esm-browser.prod.js'
+import { createApp, toRaw } from './vue.esm-browser.js'
 import deleteDialog from "../components/confirmDialog.js"
 import entriesDialog from '../components/entries-dialog.js'
 import sidebaritem from '../components/sidebarItem.js'
@@ -9,7 +9,7 @@ createApp({
         return {
             title: "Entries", // Title of this page
             entries: [], // All the entries fetched by GET /api/entries
-            start: this.getLastMon(new Date()), //The current displaying week, beginning on Monday and ending on Sunday new Date("2024-09-09T00:00-04:00")
+            start: this.getLastMon(new Date()), //The current displaying week, beginning on Monday and ending on Sunday
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
             showEntriesDialog: false,
             showConfirmDeleteDialog: false,
@@ -18,9 +18,9 @@ createApp({
         }
     },
     computed: {
-        inputStartDate : {
-            get() {
-                return this.getDateOnly(this.currentWeek.start)
+        datePickerWrapperCurrentWeek:{
+            get(){
+                return this.getLocalDate(this.currentWeek.start)
             },
             set(dateStr){
                 this.currentWeek = new Date(dateStr + "T00:00:00")
@@ -50,25 +50,30 @@ createApp({
                             entry.meal = ""
                         }
                     } else {
-                        entry.daterecord = (new Date(entry.daterecord)).toDateString()
+                        entry.daterecord = new Date(entry.daterecord).toDateString()
+                        
                     }
                 }
                 let entry = graftTable[0]
                 if (entry) {
-                    entry.daterecord = (new Date(entry.daterecord)).toDateString()
+                    entry.daterecord = new Date(entry.daterecord).toDateString()
                 }
                 return graftTable
             }
         }
     },
     methods: {
-        getDateOnly(date) {
+        getLocalDate(date=undefined) {
+            if(date === undefined){
+                date = new Date()
+                date.setUTCHours(8)
+            }
             return date.toISOString().split('T')[0]
         },
         getLastMon(date) {
             // Find the difference of dates till the monday, and get the last Monday that has occured in the week. If the day is the same (1==1), then -1*0 is 9, nothing is added.
             const MONDAY = 1
-            let diffStartToMonday = date.getDay() - MONDAY
+            let diffStartToMonday = date.getDay() - MONDAY + 1
             return this.addDate(date, -1 * diffStartToMonday)
         },
         addDate(date, numDays) {
@@ -78,7 +83,7 @@ createApp({
             return ret
         },
         sortEntries(first, second) {
-            let diffDate = new Date(first.daterecord) - new Date(second.daterecord)
+            let diffDate = first.daterecord - second.daterecord
             if (diffDate == 0) {
                 return this.mealTimes.indexOf(first.meal) - this.mealTimes.indexOf(second.meal)
             } else {
@@ -92,37 +97,35 @@ createApp({
         showEntriesDialogFn(index = undefined) {
             if (index === undefined) {
                 this.selected = {
-                    daterecord: this.getDateOnly(this.currentWeek.start), foodname: "", foodID: undefined,
+                    daterecord: new Date(), foodname: "", foodID: undefined,
                     quantity: 0, cal: 0, protein: 0, fat: 0, carbs: 0, notes: ""
                 }
             } else {
                 this.selected = JSON.parse(JSON.stringify(this.entries[index]))
                 if(this.entries[index].foodID === undefined) this.selected.foodID = undefined 
-                this.selected.daterecord = this.getDateOnly(new Date(this.selected.daterecord))
+                this.selected.daterecord = this.getLocalDate(this.selected.daterecord)
             }
             this.showEntriesDialog = true
         },
         async editEntry() {
             if (this.selected) {
-
-                let copy_foodID = this.selected.foodID
-                this.selected.foodID = { Int32: (this.selected.foodID === undefined ? 0 : this.selected.foodID), Valid: (this.selected.foodID !== undefined) }
+                let selectedCopy = JSON.parse(JSON.stringify(selected))
+                selectedCopy.foodID = { Int32: (selectedCopy.foodID === undefined ? 0 : selectedCopy.foodID), Valid: (selectedCopy.foodID !== undefined) }
+                selectedCopy.daterecord = this.getLocalDate(selectedCopy.daterecord)
 
                 if (!this.selected.hasOwnProperty('id')) {
-                    let response = (await fetch("/api/entries/", { method: "POST", body: JSON.stringify(this.selected) }))
+                    let response = (await fetch("/api/entries/", { method: "POST", body: JSON.stringify(selectedCopy) }))
                     if (response.ok) {
                         let data = await (response).json()
-                        this.selected.foodID = copy_foodID
                         this.selected.id = data.addedID
                         this.entries.push(this.selected)
                     } else {
                         console.log(response.Error)
                     }
                 } else {
-                    let index = this.entries.findIndex((el) => this.selected.id == el.id)
-                    let response = await fetch("/api/entries/" + this.selected.id, { method: "PATCH", body: JSON.stringify(this.selected) })
+                    let index = this.entries.findIndex((el) => selectedCopy.id == el.id)
+                    let response = await fetch("/api/entries/" + selectedCopy.id, { method: "PATCH", body: JSON.stringify(selectedCopy) })
                     if (response.ok) {
-                        this.selected.foodID = copy_foodID
                         this.entries[index] = this.selected
                     } else {
                         let errmsg = await (response.json()).Error
@@ -137,7 +140,7 @@ createApp({
         async editWeight() {
             let response = await fetch("/api/weight/", {
                 method: "POST", body:
-                    JSON.stringify({ daterecord: this.getDateOnly(this.currentWeek.start), kg: this.weightRecorded })
+                    JSON.stringify({ daterecord: this.getLocalDate(this.currentWeek.start), kg: this.weightRecorded })
             })
 
             if (!response.ok) {
@@ -156,14 +159,14 @@ createApp({
             }
         },
         async fetchEntries() {
-            this.entries = await (await fetch("/api/entries/" + this.getDateOnly(this.currentWeek.start) + "/" + this.getDateOnly(this.currentWeek.end))).json()
+            this.entries = await (await fetch("/api/entries/" + this.getLocalDate(this.currentWeek.start) + "/" + this.getLocalDate(this.currentWeek.end))).json()
             this.entries.forEach((el) => {
                 el.foodID = (el.foodID.Valid) ? el.foodID.Int32 : undefined;
-                el.daterecord = el.daterecord.split('Z')[0];
+                el.daterecord = new Date((new Date(el.daterecord)).setUTCHours(8));
             })
             this.entries.sort(this.sortEntries)
 
-            let response = await (await fetch("/api/weight/" + this.getDateOnly(this.currentWeek.start))).json()
+            let response = await (await fetch("/api/weight/" + this.getLocalDate(this.currentWeek.start))).json()
             this.weightRecorded = response.kg
         }
     },
