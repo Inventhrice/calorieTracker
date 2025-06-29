@@ -18,7 +18,7 @@
             <div id="main-content w-98/100" class="content-list">
                 <div class="flex justify-between items-center w-full text font-semibold">
 
-                    <entries-date-picker class="my-1 p-1" v-model="entries"></entries-date-picker>
+                    <entries-date-picker class="my-1 p-1" @fetch-entries="fetchEntries"></entries-date-picker>
                     <weight-entry class="my-1 p-1" :start></weight-entry>
                     
                     <span class="my-1 p-1">

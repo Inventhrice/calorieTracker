@@ -33,7 +33,7 @@ createApp({
                 }
             } else {
                 this.selected = JSON.parse(JSON.stringify(this.entries[index]))
-                if(this.entries[index].foodID === undefined) this.selected.foodID = undefined 
+                if (this.entries[index].foodID === undefined) this.selected.foodID = undefined
                 this.selected.daterecord = this.getLocalDate(this.selected.daterecord)
             }
             this.showEntriesDialog = true
@@ -77,6 +77,15 @@ createApp({
                     console.log(response.Error)
                 }
                 this.showConfirmDeleteDialog = false
+            }
+        },
+        async fetchEntries(currentWeek) {
+            if(currentWeek){
+                this.entries = await (await fetch("/api/entries/" + currentWeek.start + "/" + currentWeek.end)).json()
+                this.entries.forEach((el) => {
+                    el.foodID = (el.foodID.Valid) ? el.foodID.Int32 : undefined;
+                    el.daterecord = new Date((new Date(el.daterecord)).setUTCHours(8));
+                })
             }
         }
     }

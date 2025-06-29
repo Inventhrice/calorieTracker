@@ -16,18 +16,18 @@ export default {
                 this.start = this.getLastMon(startDate)
             }
         },
-        datePickerWrapperCurrentWeek:{
-            get(){
+        datePickerWrapperCurrentWeek: {
+            get() {
                 return this.getLocalDate(this.currentWeek.start)
             },
-            set(dateStr){
+            set(dateStr) {
                 this.currentWeek = new Date(dateStr + "T00:00:00")
             }
         }
     },
     methods: {
-        getLocalDate(date=undefined) {
-            if(date === undefined){
+        getLocalDate(date = undefined) {
+            if (date === undefined) {
                 date = new Date()
                 date.setUTCHours(8)
             }
@@ -44,36 +44,27 @@ export default {
             let ret = new Date(date)
             ret.setDate(ret.getDate() + numDays)
             return ret
-        },
-        async fetchEntries() {            
-            this.entries = await (await fetch("/api/entries/" + this.getLocalDate(this.currentWeek.start) + "/" + this.getLocalDate(this.currentWeek.end))).json()
-            this.entries.forEach((el) => {
-                el.foodID = (el.foodID.Valid) ? el.foodID.Int32 : undefined;
-                el.daterecord = new Date((new Date(el.daterecord)).setUTCHours(8));
-            })
         }
     },
     created() {
-        this.fetchEntries()
+        this.$emit('fetchEntries', { start: this.getLocalDate(this.currentWeek.start), end: this.getLocalDate(this.currentWeek.end) })
     },
-    props: ['entries'],
-    emits: ['update:entries'],
     template: `
     <span>
-        <button @click="currentWeek = addDate(currentWeek, -7)" class="btn btn-confirm">
+        <button @click="currentWeek = addDate(currentWeek.start, -7)" class="btn btn-confirm">
             <span class="iconify btn-icon" data-icon="mdi-navigate-before"></span>
         </button>
         <span class="my-1 p-1">
             From: <input class="dialog-input" type="date" v-model="datePickerWrapperCurrentWeek" />
         </span>
-        <button @click="currentWeek = addDate(currentWeek, 7)" class="btn btn-confirm">
+        <button @click="currentWeek = addDate(currentWeek.start, 7)" class="btn btn-confirm">
             <span class="iconify btn-icon" data-icon="mdi-navigate-next"></span>
         </button>
         <span class="my-1 p-1">To: {{currentWeek.end.toDateString()}}</span>
         <button class="btn" @click="currentWeek = new Date()">
             <span class="iconify btn-icon" data-icon="mdi-calendar-today"></span>
         </button>
-        <button @click="$emit('fetchEntries', currentWeek)" class="btn btn-confirm">
+        <button @click="$emit('fetchEntries', {start: getLocalDate(currentWeek.start), end: getLocalDate(currentWeek.end)})" class="btn btn-confirm">
             <span class="iconify btn-icon" data-icon="mdi-refresh"></span>
         </button>
     </span>
