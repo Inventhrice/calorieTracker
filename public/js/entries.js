@@ -3,93 +3,24 @@ import deleteDialog from "../components/confirmDialog.js"
 import entriesDialog from '../components/entries-dialog.js'
 import sidebaritem from '../components/sidebarItem.js'
 import contentHeader from '../components/headerComponent.js'
+import tabledEntries from '../components/tabledEntries.js'
+import entriesDatePicker from '../components/entriesDatePicker.js'
+import weightEntry from '../components/weightEntry.js'
+
 createApp({
-    components: { sidebaritem, contentHeader, deleteDialog, entriesDialog },
+    components: { sidebaritem, contentHeader, deleteDialog, entriesDialog, tabledEntries, entriesDatePicker, weightEntry },
     data() {
         return {
             title: "Entries", // Title of this page
             entries: [], // All the entries fetched by GET /api/entries
-            start: this.getLastMon(new Date()), //The current displaying week, beginning on Monday and ending on Sunday
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
+            start: null,
             showEntriesDialog: false,
             showConfirmDeleteDialog: false,
-            selected: null,
-            weightRecorded: 0
-        }
-    },
-    computed: {
-        datePickerWrapperCurrentWeek:{
-            get(){
-                return this.getLocalDate(this.currentWeek.start)
-            },
-            set(dateStr){
-                this.currentWeek = new Date(dateStr + "T00:00:00")
-            }
-        },
-        currentWeek: {
-            get() {
-                // Make a local copy of the start date
-                let startLocal = this.getLastMon(this.start)
-                let endLocal = this.addDate(startLocal, 6)
-                return { start: startLocal, end: endLocal }
-            },
-            set(startDate) {
-                this.start = this.getLastMon(startDate)
-            }
-        },
-        graftTable: {
-            get() {
-                let graftTable = JSON.parse(JSON.stringify(this.entries))
-
-                for (let index = graftTable.length - 1; index > 0; index--) {
-                    let entry = graftTable[index]
-
-                    if (entry.daterecord === graftTable[index - 1].daterecord) {
-                        entry.daterecord = ""
-                        if (entry.meal === graftTable[index - 1].meal) {
-                            entry.meal = ""
-                        }
-                    } else {
-                        entry.daterecord = new Date(entry.daterecord).toDateString()
-                        
-                    }
-                }
-                let entry = graftTable[0]
-                if (entry) {
-                    entry.daterecord = new Date(entry.daterecord).toDateString()
-                }
-                return graftTable
-            }
+            selected: null
         }
     },
     methods: {
-        getLocalDate(date=undefined) {
-            if(date === undefined){
-                date = new Date()
-                date.setUTCHours(8)
-            }
-            return date.toISOString().split('T')[0]
-        },
-        getLastMon(date) {
-            // Find the difference of dates till the monday, and get the last Monday that has occured in the week. If the day is the same (1==1), then -1*0 is 9, nothing is added.
-            const MONDAY = 1
-            let diffStartToMonday = date.getDay() - MONDAY + 1
-            return this.addDate(date, -1 * diffStartToMonday)
-        },
-        addDate(date, numDays) {
-            // ret is needed for SetDate
-            let ret = new Date(date)
-            ret.setDate(ret.getDate() + numDays)
-            return ret
-        },
-        sortEntries(first, second) {
-            let diffDate = first.daterecord - second.daterecord
-            if (diffDate == 0) {
-                return this.mealTimes.indexOf(first.meal) - this.mealTimes.indexOf(second.meal)
-            } else {
-                return diffDate
-            }
-        },
         showDeleteDialog(index) {
             this.selected = JSON.parse(JSON.stringify(this.entries[index]))
             this.showConfirmDeleteDialog = true
@@ -137,16 +68,6 @@ createApp({
 
             }
         },
-        async editWeight() {
-            let response = await fetch("/api/weight/", {
-                method: "POST", body:
-                    JSON.stringify({ daterecord: this.getLocalDate(this.currentWeek.start), kg: this.weightRecorded })
-            })
-
-            if (!response.ok) {
-                console.log(response.Error)
-            }
-        },
         async deleteEntry() {
             if (this.selected) {
                 let response = await fetch("/api/entries/" + this.selected.id, { method: "DELETE" })
@@ -157,21 +78,6 @@ createApp({
                 }
                 this.showConfirmDeleteDialog = false
             }
-        },
-        async fetchEntries() {
-            this.entries = await (await fetch("/api/entries/" + this.getLocalDate(this.currentWeek.start) + "/" + this.getLocalDate(this.currentWeek.end))).json()
-            this.entries.forEach((el) => {
-                el.foodID = (el.foodID.Valid) ? el.foodID.Int32 : undefined;
-                el.daterecord = new Date((new Date(el.daterecord)).setUTCHours(8));
-            })
-            this.entries.sort(this.sortEntries)
-
-            let response = await (await fetch("/api/weight/" + this.getLocalDate(this.currentWeek.start))).json()
-            this.weightRecorded = response.kg
         }
-    },
-    created() {
-        this.fetchEntries()
     }
-
 }).mount('#entries')

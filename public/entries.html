@@ -15,25 +15,12 @@
         <sidebaritem></sidebaritem>
         <div id="content" class="content-container">
             <content-header :title=title></content-header>
-            <div id="main-content" class="content-list">
-                <div class="flex justify-between items-center w-98/100 text font-semibold">
-                    <span class="my-1 p-1">
-                        <button @click="currentWeek=addDate(start, -7)" class="btn btn-confirm"> <span
-                                class="iconify btn-icon" data-icon="mdi-navigate-before"></span></button>
-                        <span class="my-1 p-1">From: <input class="dialog-input" type="date"
-                                v-model="datePickerWrapperCurrentWeek" /> </span>
-                        <button @click="currentWeek=addDate(start, 7)" class="btn btn-confirm">
-                            <span class="iconify btn-icon" data-icon="mdi-navigate-next"></span></button>
-                        <span class="my-1 p-1">To: {{currentWeek.end.toDateString()}}</span>
-                        <button class="btn" @click="currentWeek = new Date()"><span class="iconify btn-icon"
-                                data-icon="mdi-calendar-today"></span></button>
-                        <button @click="fetchEntries" class="btn btn-confirm">
-                            <span class="iconify btn-icon" data-icon="mdi-refresh"></span></button>
-                    </span>
-                    <span class="my-1 p-1"><label for="weight">Weight: </label> <input class="remove-spinner"
-                            name="weight" type="number" step="0.01" v-model="weightRecorded" /><button
-                            @click="editWeight()" class="btn btn-confirm"><span class="iconify btn-icon"
-                                data-icon="mdi-refresh"></span></button></button></span>
+            <div id="main-content w-98/100" class="content-list">
+                <div class="flex justify-between items-center w-full text font-semibold">
+
+                    <entries-date-picker class="my-1 p-1" v-model="entries"></entries-date-picker>
+                    <weight-entry class="my-1 p-1" :start></weight-entry>
+                    
                     <span class="my-1 p-1">
                         <button class="flex btn btn-confirm" @click="showEntriesDialogFn(undefined)">
                             <span class="iconify btn-icon text-2xl" data-icon="mdi-pencil-add"></span>
@@ -41,43 +28,8 @@
                         </button>
                     </span>
                 </div>
-                <table class="text table-border table-auto w-98/100">
-                    <thead class="module-background table-header">
-                        <tr>
-                            <th>Date</th>
-                            <th>Meal</th>
-                            <th>Food</th>
-                            <th>Quantity</th>
-                            <th>Calorie (g)</th>
-                            <th>Protein (g)</th>
-                            <th>Fat (g)</th>
-                            <th>Carb (g)</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(entry,index) in graftTable" :key="index" class="table-border">
-                            <td class="font-semibold">{{entry.daterecord}}</td>
-                            <td class="font-semibold">{{entry.meal}}</td>
-                            <td class="font-semibold">{{entry.foodname}}</td>
-                            <td class="text-right">{{entry.quantity}}</td>
-                            <td class="text-right">{{entry.cal.toFixed(2)}}</td>
-                            <td class="text-right">{{entry.protein.toFixed(2)}}</td>
-                            <td class="text-right">{{entry.fat.toFixed(2)}}</td>
-                            <td class="text-right">{{entry.carbs.toFixed(2)}}</td>
-                            <td class="text-center py-1">
-                                <span class="p-1">
-                                    <button class="btn" @click="showEntriesDialogFn(index)"> <span
-                                            class="iconify btn-icon" data-icon="mdi-pencil"></span> </button>
-                                </span>
-                                <span class="p-1">
-                                    <button class="btn btn-uhoh px-1" @click="showDeleteDialog(index)"> <span
-                                            class="iconify btn-icon" data-icon="mdi-trash-can"></span> </button>
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <tabled-entries class="w-full" :entries v-if="!showEntriesDialog"></tabled-entries>
+
             </div>
             <entries-dialog v-if=showEntriesDialog @close-dialog="this.showEntriesDialog = false" :selected
                 @confirm-dialog="editEntry"></entries-dialog>
