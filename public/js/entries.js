@@ -81,6 +81,7 @@ createApp({
         },
         async fetchEntries(currentWeek) {
             if(currentWeek){
+                this.start = currentWeek.start
                 this.entries = await (await fetch("/api/entries/" + currentWeek.start + "/" + currentWeek.end)).json()
                 this.entries.forEach((el) => {
                     el.foodID = (el.foodID.Valid) ? el.foodID.Int32 : undefined;

@@ -1,11 +1,11 @@
-export default{
+export default {
     data() {
         return {
             weightRecorded: 0
         }
     },
     methods: {
-        async fetchData(){
+        async fetchData() {
             let response = await (await fetch("/api/weight/" + this.start)).json()
             this.weightRecorded = response.kg
         },
@@ -22,6 +22,11 @@ export default{
     },
     props: {
         start: String
+    },
+    created() {
+        this.$watch('start', () => {
+            this.fetchData()
+        })
     },
     template: `
     <span>

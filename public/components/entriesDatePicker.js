@@ -36,7 +36,7 @@ export default {
         getLastMon(date) {
             // Find the difference of dates till the monday, and get the last Monday that has occured in the week. If the day is the same (1==1), then -1*0 is 9, nothing is added.
             const MONDAY = 1
-            let diffStartToMonday = date.getDay() - MONDAY + 1
+            let diffStartToMonday = date.getDay() - MONDAY
             return this.addDate(date, -1 * diffStartToMonday)
         },
         addDate(date, numDays) {
