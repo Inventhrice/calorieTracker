@@ -35,7 +35,7 @@ createApp({
             } else {
                 this.selected = JSON.parse(JSON.stringify(this.entries[index]))
                 if (this.entries[index].foodID === undefined) this.selected.foodID = undefined
-                this.selected.daterecord = getLocalDate(this.selected.daterecord)
+                this.selected.daterecord = new Date(this.selected.daterecord)
             }
             this.showEntriesDialog = true
         },
