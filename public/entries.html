@@ -15,26 +15,23 @@
         <sidebaritem></sidebaritem>
         <div id="content" class="content-container">
             <content-header :title=title></content-header>
-            <div id="main-content w-98/100" class="content-list">
-                <div class="flex justify-between items-center w-full text font-semibold">
-
-                    <entries-date-picker class="my-1 p-1" @fetch-entries="fetchEntries"></entries-date-picker>
-                    <weight-entry class="my-1 p-1" :start></weight-entry>
-                    
-                    <span class="my-1 p-1">
-                        <button class="flex btn btn-confirm" @click="showEntriesDialogFn(undefined)">
-                            <span class="iconify btn-icon text-2xl" data-icon="mdi-pencil-add"></span>
-                            <span>Add entry</span>
-                        </button>
-                    </span>
+            <div id="main-content" class="content-list">
+                <div v-if="!showEntriesDialog">
+                    <div class="text font-semibold flex flex-col lg:flex-row lg:justify-between">
+                        <entries-date-picker class="my-1 p-1" @fetch-entries="fetchEntries"></entries-date-picker>
+                        <weight-entry class="my-1 p-1" :start></weight-entry>
+                        <span class="my-1 p-1">
+                            <button class="flex btn btn-confirm" @click="showEntriesDialogFn(undefined)">
+                                <span class="iconify btn-icon text-2xl" data-icon="mdi-pencil-add"></span>
+                                <span>Add entry</span>
+                            </button>
+                        </span>
+                    </div>
+                    <tabled-entries @show-dialog="showEntriesDialogFn" :entries></tabled-entries>
                 </div>
-                <tabled-entries class="w-full" :entries v-if="!showEntriesDialog"></tabled-entries>
-
             </div>
-            <entries-dialog v-if=showEntriesDialog @close-dialog="this.showEntriesDialog = false" :selected
-                @confirm-dialog="editEntry"></entries-dialog>
-            <delete-dialog v-if=showConfirmDeleteDialog @close-dialog="this.showConfirmDeleteDialog = false"
-                @confirm-dialog="deleteEntry"></delete-dialog>
+            <entries-dialog v-if="showEntriesDialog" @close-dialog="this.showEntriesDialog = false" :selected
+                @confirm-dialog="editEntry" @delete-dialog="showDeleteDialog(index)"></entries-dialog>
         </div>
     </div>
     <!-- <script src="https://unpkg.com/v-calendar"></script> -->

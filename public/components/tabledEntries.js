@@ -51,12 +51,11 @@ export default{
                 <th>Protein (g)</th>
                 <th>Fat (g)</th>
                 <th>Carb (g)</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="(entry,index) in graftTable" :key="index" class="table-border">
-                <td class="font-semibold">{{entry.daterecord}}</td>
+                <td class="font-semibold" @click="$emit('showDialog', index)">{{entry.daterecord}}</td>
                 <td class="font-semibold">{{entry.meal}}</td>
                 <td class="font-semibold">{{entry.foodname}}</td>
                 <td class="text-right">{{entry.quantity}}</td>
@@ -64,16 +63,6 @@ export default{
                 <td class="text-right">{{entry.protein.toFixed(2)}}</td>
                 <td class="text-right">{{entry.fat.toFixed(2)}}</td>
                 <td class="text-right">{{entry.carbs.toFixed(2)}}</td>
-                <td class="text-center py-1">
-                    <span class="p-1">
-                        <button class="btn" @click="showEntriesDialogFn(index)"> <span
-                                class="iconify btn-icon" data-icon="mdi-pencil"></span> </button>
-                    </span>
-                    <span class="p-1">
-                        <button class="btn btn-uhoh px-1" @click="showDeleteDialog(index)"> <span
-                                class="iconify btn-icon" data-icon="mdi-trash-can"></span> </button>
-                    </span>
-                </td>
             </tr>
         </tbody>
     </table>
