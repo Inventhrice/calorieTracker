@@ -6,7 +6,6 @@ import contentHeader from '../components/headerComponent.js'
 import tabledEntries from '../components/tabledEntries.js'
 import entriesDatePicker from '../components/entriesDatePicker.js'
 import weightEntry from '../components/weightEntry.js'
-import {getLocalDate, getLastMon, addDate} from "../components/dateFunctions.js"
 
 createApp({
     components: { sidebaritem, contentHeader, deleteDialog, entriesDialog, tabledEntries, entriesDatePicker, weightEntry },
@@ -14,6 +13,7 @@ createApp({
         return {
             title: "Entries", // Title of this page
             entries: [], // All the entries fetched by GET /api/entries
+            goalsinfo: {percentAllowed: 0.1, goal: 1900, Breakfast: 380, Lunch: 665, Dinner: 665, Snacks: 190},
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
             start: null,
             showEntriesDialog: false,
@@ -81,6 +81,7 @@ createApp({
             }
         },
         async fetchEntries(currentWeek) {
+            //this.goalsInfo = await(await fetch("/api/settings/goals")).json()
             if(currentWeek){
                 this.start = currentWeek.start
                 this.entries = await (await fetch("/api/entries/" + currentWeek.start + "/" + currentWeek.end)).json()

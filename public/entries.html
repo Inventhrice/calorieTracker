@@ -27,7 +27,7 @@
                             </button>
                         </span>
                     </div>
-                    <tabled-entries @show-dialog="showEntriesDialogFn" :entries></tabled-entries>
+                    <tabled-entries @show-dialog="showEntriesDialogFn" :goalsinfo :entries></tabled-entries>
                 
             </div>
             <entries-dialog v-if="showEntriesDialog" @close-dialog="this.showEntriesDialog = false" :selected

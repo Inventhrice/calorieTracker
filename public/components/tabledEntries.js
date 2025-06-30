@@ -4,44 +4,58 @@ export default {
             get() {
                 let graftTable = JSON.parse(JSON.stringify(this.entries))
                 graftTable.sort(this.sortEntries)
-                
-                let stats = {}
+
+                let spliceList = []
+
                 let totalCal = 0
                 for (let index = graftTable.length - 1; index > 0; index--) {
                     let entry = graftTable[index]
                     if (entry.daterecord === graftTable[index - 1].daterecord) {
-                        totalcal += entry.cal
+                        totalCal += entry.cal
                         if (entry.meal !== graftTable[index - 1].meal) {
-                            stats = this.computeStats(totalCal, entry.meal)
-                            graftTable.splice(index,0, {daterecord: "", meal: entry.meal, foodname: msg, quantity: totalCal, cal: diffCal, protein: 0, carbs: 0, fat: 0})
+                            spliceList.push({index: index, val: this.computeStats("", entry.meal, totalCal)})
                             totalCal = 0
                         }
                         entry.meal = ""
                     } else {
-                        graftTable.splice(index,0, {daterecord: new Date(entry.daterecord).toDateString(), meal: entry.meal, foodname: msg, quantity: totalCal, cal: diffCal, protein: 0, carbs: 0, fat: 0})
+                        spliceList.push({index: index, val: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal)})
+                        entry.meal = ""
                     }
                     entry.daterecord = ""
                 }
                 let entry = graftTable[0]
-                if (entry) {                    
-                    graftTable.splice(0,0, {daterecord: new Date(entry.daterecord).toDateString(), meal: entry.meal, foodname: msg, quantity: totalCal, cal: diffCal, protein: 0, carbs: 0, fat: 0})
+                if (entry) {
+                    spliceList.push({index: 0, val: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal)})
                     entry.daterecord = ""
                     entry.meal = ""
                 }
+
+                for(let index = spliceList.length-1; index > -1; index--){
+                    graftTable.splice(spliceList[index].index, 0, spliceList[index].val)
+                }
+
+
                 return graftTable
             }
         }
     },
     props: {
-        entries: Array
+        entries: Array,
+        goalsinfo: Object
     },
     methods: {
-        computeStats(totalCalForMeal, meal) {
-            let diffCal = (goals[meal]-totalCalForMeal)
-            let tolerance = goals[meal]*(goals.percentAllowed)
-            let msg = (diffCal > tolerance) ? "Great job!" : 
-                    ((diffCal <= tolerance && diffCal >= tolerance*-1) ? "Spot on!" : "Next time!")
-            return {msg: msg, totalCal: totalCalForMeal, diffCal: diffCal}
+        computeStats(dateRecord = "", meal, totalCal) {
+            let msg = ""
+            let diffCal = 0
+            if (this.goalsinfo) {
+                let goals = this.goalsinfo
+                diffCal = (goals[meal] - totalCal)
+                let tolerance = goals[meal] * (goals.percentAllowed)
+                msg = (diffCal > tolerance) ? "Great job!" :
+                    ((diffCal <= tolerance && diffCal >= tolerance * -1) ? "Spot on!" : "Next time!")
+            }
+            return { daterecord: dateRecord, meal: meal, foodname: "", notes: msg, quantity: totalCal, cal: diffCal, protein: 0, carbs: 0, fat: 0 }
+
         },
         sortEntries(first, second) {
             let diffDate = first.daterecord - second.daterecord
@@ -64,6 +78,7 @@ export default {
                 <th>Protein (g)</th>
                 <th>Fat (g)</th>
                 <th>Carb (g)</th>
+                <th>Notes</th>
             </tr>
         </thead>
         <tbody>
@@ -76,6 +91,7 @@ export default {
                 <td class="text-right">{{entry.protein.toFixed(2)}}</td>
                 <td class="text-right">{{entry.fat.toFixed(2)}}</td>
                 <td class="text-right">{{entry.carbs.toFixed(2)}}</td>
+                <td class="text-right">{{entry.notes}}</td>
             </tr>
         </tbody>
     </table>
