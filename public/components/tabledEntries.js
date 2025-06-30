@@ -1,4 +1,3 @@
-import { createApp, toRaw } from '../js/vue.esm-browser.js'
 export default {
     data() {
         return {
@@ -8,7 +7,8 @@ export default {
     computed: {
         graftTable: {
             get() {
-                let graftTable = this.entries.toSorted(this.sortEntries)
+                let graftTable = JSON.parse(JSON.stringify(this.entries))
+                graftTable.sort(this.sortEntries)
                 let add = []
                 let totalCal = 0
 
@@ -17,11 +17,11 @@ export default {
                     if (entry.daterecord.valueOf() == graftTable[index-1].daterecord.valueOf()) {
                         totalCal += entry.cal
                         if (entry.meal !== graftTable[index - 1].meal) {
-                            add.push({ addIndex: index - 1, data: this.computeStats("", entry.meal, totalCal) })
+                            add.push({ addIndex: index, data: this.computeStats("", entry.meal, totalCal) })
                             totalCal = 0
                         }
                     } else {
-                        add.push({ addIndex: index - 1, data: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal) })
+                        add.push({ addIndex: index, data: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal) })
                         totalCal = 0
                     }
                     entry.meal = ""
@@ -90,7 +90,7 @@ export default {
             <tr v-for="(entry,index) in graftTable" :key="index" class="table-border">
                 <td class="font-semibold">{{entry.daterecord}}</td>
                 <td class="font-semibold">{{entry.meal}}</td>
-                <td class="font-semibold"><a @click="$emit('showDialog', index)">{{entry.foodname}}</a></td>
+                <td class="font-semibold"><a @click="$emit('showDialog', entry.id)">{{entry.foodname}}</a></td>
                 <td class="text-right">{{entry.quantity}}</td>
                 <td class="text-right">{{entry.cal.toFixed(2)}}</td>
                 <td class="text-right">{{entry.protein.toFixed(2)}}</td>

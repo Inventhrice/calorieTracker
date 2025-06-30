@@ -6,7 +6,7 @@ import contentHeader from '../components/headerComponent.js'
 import tabledEntries from '../components/tabledEntries.js'
 import entriesDatePicker from '../components/entriesDatePicker.js'
 import weightEntry from '../components/weightEntry.js'
-
+import { getLocalDate } from '../components/dateFunctions.js'
 createApp({
     components: { sidebaritem, contentHeader, deleteDialog, entriesDialog, tabledEntries, entriesDatePicker, weightEntry },
     data() {
@@ -33,17 +33,18 @@ createApp({
                     quantity: 0, cal: 0, protein: 0, fat: 0, carbs: 0, notes: ""
                 }
             } else {
-                this.selected = JSON.parse(JSON.stringify(this.entries[index]))
-                if (this.entries[index].foodID === undefined) this.selected.foodID = undefined
+                let found = this.entries.find((el) => el.id == index)
+                this.selected = JSON.parse(JSON.stringify(found))
+                if (found.foodID === undefined) this.selected.foodID = undefined
                 this.selected.daterecord = new Date(this.selected.daterecord)
             }
             this.showEntriesDialog = true
         },
         async editEntry() {
             if (this.selected) {
-                let selectedCopy = JSON.parse(JSON.stringify(selected))
+                let selectedCopy = JSON.parse(JSON.stringify(this.selected))
                 selectedCopy.foodID = { Int32: (selectedCopy.foodID === undefined ? 0 : selectedCopy.foodID), Valid: (selectedCopy.foodID !== undefined) }
-                selectedCopy.daterecord = this.getLocalDate(selectedCopy.daterecord)
+                selectedCopy.daterecord = getLocalDate(new Date(selectedCopy.daterecord))
 
                 if (!this.selected.hasOwnProperty('id')) {
                     let response = (await fetch("/api/entries/", { method: "POST", body: JSON.stringify(selectedCopy) }))
