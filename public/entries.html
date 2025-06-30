@@ -16,7 +16,7 @@
         <div id="content" class="content-container">
             <content-header :title=title></content-header>
             <div id="main-content" class="content-list">
-                <div v-if="!showEntriesDialog">
+                
                     <div class="text font-semibold flex flex-col lg:flex-row lg:justify-between">
                         <entries-date-picker class="my-1 p-1" @fetch-entries="fetchEntries"></entries-date-picker>
                         <weight-entry class="my-1 p-1" :start></weight-entry>
@@ -28,7 +28,7 @@
                         </span>
                     </div>
                     <tabled-entries @show-dialog="showEntriesDialogFn" :entries></tabled-entries>
-                </div>
+                
             </div>
             <entries-dialog v-if="showEntriesDialog" @close-dialog="this.showEntriesDialog = false" :selected
                 @confirm-dialog="editEntry" @delete-dialog="showDeleteDialog(index)"></entries-dialog>

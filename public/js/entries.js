@@ -6,6 +6,7 @@ import contentHeader from '../components/headerComponent.js'
 import tabledEntries from '../components/tabledEntries.js'
 import entriesDatePicker from '../components/entriesDatePicker.js'
 import weightEntry from '../components/weightEntry.js'
+import {getLocalDate, getLastMon, addDate} from "../components/dateFunctions.js"
 
 createApp({
     components: { sidebaritem, contentHeader, deleteDialog, entriesDialog, tabledEntries, entriesDatePicker, weightEntry },
@@ -34,7 +35,7 @@ createApp({
             } else {
                 this.selected = JSON.parse(JSON.stringify(this.entries[index]))
                 if (this.entries[index].foodID === undefined) this.selected.foodID = undefined
-                this.selected.daterecord = this.getLocalDate(this.selected.daterecord)
+                this.selected.daterecord = getLocalDate(this.selected.daterecord)
             }
             this.showEntriesDialog = true
         },

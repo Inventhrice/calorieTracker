@@ -55,7 +55,7 @@ export default{
         </thead>
         <tbody>
             <tr v-for="(entry,index) in graftTable" :key="index" class="table-border">
-                <td class="font-semibold" @click="$emit('showDialog', index)">{{entry.daterecord}}</td>
+                <td class="font-semibold"><a @click="$emit('showDialog', index)">{{entry.daterecord}}</a></td>
                 <td class="font-semibold">{{entry.meal}}</td>
                 <td class="font-semibold">{{entry.foodname}}</td>
                 <td class="text-right">{{entry.quantity}}</td>

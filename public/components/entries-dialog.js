@@ -1,3 +1,4 @@
+import {getLocalDate} from "./dateFunctions.js"
 export default {
     data() {
         return {
@@ -19,7 +20,7 @@ export default {
         },
         dateRecord: {
             get(){
-                return this.selected.daterecord.toISOString().split('T')[0]
+                return getLocalDate(this.selected.daterecord)
             },
             set(dateStr){
                 this.selected.daterecord = new Date(dateStr+"T00:00:00")

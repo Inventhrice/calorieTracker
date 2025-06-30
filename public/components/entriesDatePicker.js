@@ -1,54 +1,36 @@
+import {getLocalDate, getLastMon, addDate} from "./dateFunctions.js"
 export default {
+    setup(){
+        return {addDate, getLocalDate}
+    },
     data() {
         return {
-            start: this.getLastMon(new Date()), //The current displaying week, beginning on Monday and ending on Sunday
+            start: getLastMon(new Date()), //The current displaying week, beginning on Monday and ending on Sunday
         }
     },
     computed: {
         currentWeek: {
             get() {
                 // Make a local copy of the start date
-                let startLocal = this.getLastMon(this.start)
-                let endLocal = this.addDate(startLocal, 6)
+                let startLocal = getLastMon(this.start)
+                let endLocal = addDate(startLocal, 6)
                 return { start: startLocal, end: endLocal }
             },
             set(startDate) {
-                this.start = this.getLastMon(startDate)
+                this.start = getLastMon(startDate)
             }
         },
         datePickerWrapperCurrentWeek: {
             get() {
-                return this.getLocalDate(this.currentWeek.start)
+                return getLocalDate(this.currentWeek.start)
             },
             set(dateStr) {
                 this.currentWeek = new Date(dateStr + "T00:00:00")
             }
         }
     },
-    methods: {
-        getLocalDate(date = undefined) {
-            if (date === undefined) {
-                date = new Date()
-                date.setHours(8)
-            }
-            return date.toISOString().split('T')[0]
-        },
-        getLastMon(date) {
-            // Find the difference of dates till the monday, and get the last Monday that has occured in the week. If the day is the same (1==1), then -1*0 is 9, nothing is added.
-            const MONDAY = 1
-            date.setHours(8)
-            let diffStartToMonday = date.getDay() - MONDAY
-            return this.addDate(date, -1 * diffStartToMonday)
-        },
-        addDate(date, numDays) {
-            // ret is needed for SetDate
-            let ret = new Date(date)
-            ret.setDate(ret.getDate() + numDays)
-            return ret
-        }
-    },
     created() {
-        this.$emit('fetchEntries', { start: this.getLocalDate(this.currentWeek.start), end: this.getLocalDate(this.currentWeek.end) })
+        this.$emit('fetchEntries', { start: getLocalDate(this.currentWeek.start), end: getLocalDate(this.currentWeek.end) })
     },
     template: `
     <span>
