@@ -1,39 +1,44 @@
+import { createApp, toRaw } from '../js/vue.esm-browser.js'
 export default {
+    data() {
+        return {
+            mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"]
+        }
+    },
     computed: {
         graftTable: {
             get() {
-                let graftTable = JSON.parse(JSON.stringify(this.entries))
-                graftTable.sort(this.sortEntries)
-
-                let spliceList = []
-
+                let graftTable = this.entries.toSorted(this.sortEntries)
+                let add = []
                 let totalCal = 0
+
                 for (let index = graftTable.length - 1; index > 0; index--) {
                     let entry = graftTable[index]
-                    if (entry.daterecord === graftTable[index - 1].daterecord) {
+                    if (entry.daterecord.valueOf() == graftTable[index-1].daterecord.valueOf()) {
                         totalCal += entry.cal
                         if (entry.meal !== graftTable[index - 1].meal) {
-                            spliceList.push({index: index, val: this.computeStats("", entry.meal, totalCal)})
+                            add.push({ addIndex: index - 1, data: this.computeStats("", entry.meal, totalCal) })
                             totalCal = 0
                         }
-                        entry.meal = ""
                     } else {
-                        spliceList.push({index: index, val: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal)})
-                        entry.meal = ""
+                        add.push({ addIndex: index - 1, data: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal) })
+                        totalCal = 0
                     }
+                    entry.meal = ""
                     entry.daterecord = ""
                 }
+
                 let entry = graftTable[0]
                 if (entry) {
-                    spliceList.push({index: 0, val: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal)})
-                    entry.daterecord = ""
+                    add.push({ addIndex: 0, data: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal) })
                     entry.meal = ""
+                    entry.daterecord = ""
                 }
 
-                for(let index = spliceList.length-1; index > -1; index--){
-                    graftTable.splice(spliceList[index].index, 0, spliceList[index].val)
+                for(let index = 0; index < add.length; index++){
+                    let data = add[index]
+                    graftTable.splice(data.addIndex, 0, data.data)
                 }
-
 
                 return graftTable
             }
