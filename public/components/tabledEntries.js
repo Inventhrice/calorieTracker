@@ -7,8 +7,7 @@ export default {
     computed: {
         graftTable: {
             get() {
-                let graftTable = JSON.parse(JSON.stringify(this.entries))
-                graftTable.sort(this.sortEntries)
+                let graftTable = JSON.parse(JSON.stringify(this.entries)).toSorted(this.sortEntries)
                 let add = []
                 let totalCal = 0
 
@@ -63,9 +62,14 @@ export default {
 
         },
         sortEntries(first, second) {
-            let diffDate = first.daterecord - second.daterecord
+            let diffDate = new Date(first.daterecord).valueOf() - new Date(second.daterecord).valueOf()
             if (diffDate == 0) {
-                return this.mealTimes.indexOf(first.meal) - this.mealTimes.indexOf(second.meal)
+				if(this.mealTimes){
+					return this.mealTimes.indexOf(first.meal) - this.mealTimes.indexOf(second.meal)
+				} else{
+					console.log("Unable to sort, this.mealtimes not defined")
+					return -1
+				}
             } else {
                 return diffDate
             }
