@@ -13,8 +13,8 @@ export default {
 
                 for (let index = graftTable.length - 1; index > 0; index--) {
                     let entry = graftTable[index]
+					totalCal += entry.cal
                     if (entry.daterecord.valueOf() == graftTable[index-1].daterecord.valueOf()) {
-                        totalCal += entry.cal
                         if (entry.meal !== graftTable[index - 1].meal) {
                             add.push({ addIndex: index, data: this.computeStats("", entry.meal, totalCal) })
                             totalCal = 0
@@ -29,6 +29,7 @@ export default {
 
                 let entry = graftTable[0]
                 if (entry) {
+					totalCal += entry.cal
                     add.push({ addIndex: 0, data: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal) })
                     entry.meal = ""
                     entry.daterecord = ""
