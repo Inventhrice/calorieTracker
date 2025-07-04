@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
 type Credentials struct {
 	Email string `json:"email" db:"email"`
 	Password string `json:"password" db:"password"`
@@ -20,8 +21,6 @@ type Profile struct {
 	Lastname string `json:"lastname" db:"lastname"`
 	Pronouns string `json:"pronouns" db:"pronouns"`
 }
-
-
 
 func login(ctx *gin.Context){
 	var creds Credentials
