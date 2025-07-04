@@ -9,6 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Credentials struct {
+	Email string `json:"email" db:"email"`
+	Password string `json:"password" db:"password"`
+}
+
 type Profile struct {
 	ID string `json:"id" db:"id"`
 	Firstname string `json:"firstname" db:"firstname"`
@@ -16,34 +21,38 @@ type Profile struct {
 	Pronouns string `json:"pronouns" db:"pronouns"`
 }
 
-type Settings struct {
 
+
+func login(ctx *gin.Context){
+	var creds Credentials
+
+	if err := ctx.BindJSON(&creds); err != nil{
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err})
+		return
+	}
+
+	if err := middlewares.AuthenticateUser(creds.Email, creds.Password); err != nil{
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err})
+		return
+	}
+
+	ctx.Set("loggedInUser", creds.Email)
 }
 
-type Goals struct{
-	DateRecord string `json:"daterecord" db:"dateRecord"`
-	GoalLbs float32 `json:"goallbs" db:"goallbs"`
-	Multiplier int `json:"multiplier" db:"multiplier"`
-	ErrMargin float32 `json:"acceptablePercent" db:"acceptablePercent"`
-	goalsPerMeal string `json:"goalsPerMeal" db:"goalsPerMeal"`
+func profile(ctx *gin.Context){
+	var user Profile
+	email := 
+	if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns WHERE email=?", email); err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
+		return 
+	}
+
+	ctx.JSON(http.StatusOK, user)
 }
 
 func initProfileAPI(group *gin.RouterGroup){
-	group.GET("/")
-	group.POST("/login")
-	group.PATCH("/update")
+	group.POST("/login", login)
+	group.GET("/profile", profile)
+	group.PATCH("/profile")
 }
 
-func initSettingsAPI(group *gin.RouterGroup){
-	group.GET("/:setting") // if setting == all then return everything, else return value
-	group.PATCH("/:setting")
-	group.POST("/")
-	group.DELETE("/:setting")
-}
-
-func initGoalsAPI(group *gin.RouterGroup){
-	group.GET("/:daterecord") //QUERY goals table by date record, or get most recent entry
-	group.PATCH("/:daterecord")
-	group.POST("/")
-
-}

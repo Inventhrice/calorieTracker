@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
 type FoodInfo struct {
 	ID          int     `json:"id" db:"ID"`
 	Name        string  `json:"name" db:"name"`
@@ -86,7 +87,7 @@ func getAllFoodIDs() ([]sql.NullInt16, error) {
 
 func getAllFoods(ctx *gin.Context) {
 	listFoods := []FoodInfo{}
-	if err := middlewares.Database.Select(&listFoods, "SELECT * FROM food_info"); err != nil {
+	if err := middlewares.Database.Select(&listFoods, "SELECT id, name, calperg, proteinperg, fatperg, carbperg, notes, source FROM food_info"); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}
