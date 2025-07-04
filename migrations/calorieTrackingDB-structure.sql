@@ -39,7 +39,7 @@ CREATE TABLE `entries` (
   PRIMARY KEY (`ID`),
   KEY `foodID` (`foodID`),
   CONSTRAINT `entries_ibfk_1` FOREIGN KEY (`foodID`) REFERENCES `food_info` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2779 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -60,7 +60,7 @@ CREATE TABLE `food_info` (
   `source` varchar(3000) NOT NULL,
   `userid` uuid DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -79,7 +79,7 @@ CREATE TABLE `goals` (
   `goalsPerMeal` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`goalsPerMeal`)),
   `userid` uuid DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,7 +117,7 @@ CREATE TABLE `settings` (
   `value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`value`)),
   `userid` uuid DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,5 +183,17 @@ CREATE TABLE `weightTrack` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+CREATE VIEW processed_entries AS
+SELECT e.ID, e.userid, e.dateRecord, e.meal,
+	IF(e.foodID IS NULL, e.foodname,fi.name) AS foodname,
+	e.foodID,
+	e.grams, 
+	IF(e.foodID IS NULL, e.cal,(e.grams * fi.calPerG)) AS cal,
+	IF(e.foodID IS NULL, e.protein,(e.grams * fi.proteinPerG)) AS protein,
+	IF(e.foodID IS NULL, e.fat,(e.grams * fi.fatPerG)) AS fat,
+	IF(e.foodID IS NULL, e.carbs,(e.grams * fi.carbPerG)) AS carbs,
+	e.notes FROM entries e LEFT JOIN food_info fi ON e.foodID=fi.ID ORDER BY dateRecord;
+
 
 -- Dump completed on 2025-07-04 14:48:13
