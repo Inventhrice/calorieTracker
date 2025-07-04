@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calorie Tracker</title>
-    <link rel="stylesheet" href="./css/index.css">
-</head>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Calorie Tracker</title>
+		<link rel="stylesheet" href="./css/index.css">
+	</head>
 
-<body>
-    <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
-    <script type="module" src="./js/index.js"></script>
-    <div id="settings" class="flex">
-        <sidebaritem></sidebaritem>
-        <div id="content" class="content-container">
-            <content-header :title=title></content-header>
-            <div id="main-content" class="content-list">
-                
-            </div>
-        </div>
-    </div>
+	<body>
+		<script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
+		<script type="module" src="./js/index.js"></script>
+		<div id="settings" class="flex">
+			<sidebaritem></sidebaritem>
+			<div id="content" class="content-container">
+				<content-header :title=title></content-header>
+				<div id="main-content" class="content-list">
+					<label for="firstname">Firstname: </label><input type="text">
+					<label for="lastname">Lastname: </label><input type="text">
+					<label for="Goals data">JSON Data for Goals:</label><textarea></textarea>
+				</div>
+			</div>
+		</div>
 
-</body>
+	</body>
 
 </html>
