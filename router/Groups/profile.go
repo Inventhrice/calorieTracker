@@ -1,18 +1,23 @@
-package groups;
+package groups
 
 import (
 	"database/sql"
 	"net/http"
+	"strings"
 	"time"
 
 	"example.com/m/v2/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
+// type Credentials struct {
+// 	Email string `json:"email" db:"email"`
+// 	Password string `json:"password" db:"password"`
+// }
 
 type Credentials struct {
-	Email string `json:"email" db:"email"`
-	Password string `json:"password" db:"password"`
+	Email string `json:"email"`
+	Password string `json:"password"`
 }
 
 type Profile struct {
@@ -30,28 +35,56 @@ func login(ctx *gin.Context){
 		return
 	}
 
-	if err := middlewares.AuthenticateUser(creds.Email, creds.Password); err != nil{
+	if token, err := middlewares.AuthenticateUser(creds.Email, creds.Password); err != nil{
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err})
 		return
+	} else{
+		ctx.JSON(http.StatusOK, gin.H{"email": creds.Email, "token": token})
+		return
 	}
-
-	ctx.Set("loggedInUser", creds.Email)
 }
 
 func profile(ctx *gin.Context){
-	var user Profile
-	email := 
-	if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns WHERE email=?", email); err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
-		return 
+	if email, exists := ctx.Get("loggedInUser"); !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"Error": "User is not authenticated."})
+	} else{
+		var user Profile
+		if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns WHERE email=?", email); err != nil {
+			ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
+			return 
+		}
+
+		ctx.JSON(http.StatusOK, user)
+	}
+}
+
+func checkAuthenticated(ctx *gin.Context){
+	header := ctx.GetHeader("Authorization")
+
+	if(header == ""){
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Error": "Authorization header is missing"})
+		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	authToken := strings.Split(header[1:len(header)-2], " ")
+	if(len(authToken) != 2 || authToken[0] != "Bearer"){
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Error": "Invalid token format"})
+		return
+	}
+
+	token := authToken[1]
+
+	if email, err := middlewares.CheckLoggedIn(token); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Error": "User is not logged in."})
+		return
+	} else {
+		ctx.Set("loggedInUser", email)
+		ctx.Next()
+	}
 }
 
 func initProfileAPI(group *gin.RouterGroup){
 	group.POST("/login", login)
-	group.GET("/profile", profile)
-	group.PATCH("/profile")
+	group.GET("/profile", checkAuthenticated, profile)
 }
 

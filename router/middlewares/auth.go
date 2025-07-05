@@ -16,7 +16,7 @@ type ActiveToken struct {
 
 var activeSessions []ActiveToken // mapping emails, referenced by token
 
-func AuthenticateUser(email string, password string) error {
+func AuthenticateUser(email string, password string) (string, error) {
 	storedPassword := ""
 
 	if err := Database.Get(&storedPassword, "SELECT password FROM users WHERE email=?", email); err != nil{
@@ -25,9 +25,9 @@ func AuthenticateUser(email string, password string) error {
 
 	if match, err := argon2id.ComparePasswordAndHash(password, storedPassword); err != nil || !match {
 		if !match{
-			return errors.New("Passwords do not match.") 
+			return "", errors.New("Passwords do not match.") 
 		}
-		return err
+		return "", err
 	}
 
 	removeActiveSession(email)
@@ -35,7 +35,7 @@ func AuthenticateUser(email string, password string) error {
 
 	activeSessions = append(activeSessions, ActiveToken{Email: email, Token: genToken})
 
-	return nil
+	return genToken, nil
 }
 
 // Bearer-Token-Based Authentication
@@ -78,6 +78,5 @@ func CheckLoggedIn(token string) (string, error){
 			return activeToken.Email, nil
 		}
 	}
-
 	return "", errors.New("User was not found in the list of active sessions.")
 }
