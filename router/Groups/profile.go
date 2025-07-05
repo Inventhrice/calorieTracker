@@ -1,10 +1,8 @@
 package groups
 
 import (
-	"database/sql"
 	"net/http"
 	"strings"
-	"time"
 
 	"example.com/m/v2/middlewares"
 	"github.com/gin-gonic/gin"
@@ -49,7 +47,7 @@ func profile(ctx *gin.Context){
 		ctx.JSON(http.StatusUnauthorized, gin.H{"Error": "User is not authenticated."})
 	} else{
 		var user Profile
-		if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns WHERE id=?", userID); err != nil {
+		if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns FROM users WHERE id=?", userID); err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
 			return 
 		}
@@ -66,7 +64,7 @@ func checkAuthenticated(ctx *gin.Context){
 		return
 	}
 
-	authToken := strings.Split(header[1:len(header)-2], " ")
+	authToken := strings.Split(header[1:len(header)-1], " ")
 	if(len(authToken) != 2 || authToken[0] != "Bearer"){
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Error": "Invalid token format"})
 		return
@@ -83,8 +81,8 @@ func checkAuthenticated(ctx *gin.Context){
 	}
 }
 
-func initProfileAPI(group *gin.RouterGroup){
+func InitProfileAPI(group *gin.RouterGroup){
 	group.POST("/login", login)
-	group.GET("/profile", checkAuthenticated, profile)
+	group.GET("/", checkAuthenticated, profile)
 }
 

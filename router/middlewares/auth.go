@@ -3,8 +3,9 @@ package middlewares
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"github.com/alexedwards/argon2id"
 	"errors"
+
+	"github.com/alexedwards/argon2id"
 )
 
 const numTokenBytes = 64
@@ -18,8 +19,8 @@ var activeSessions []ActiveToken // mapping emails, referenced by token
 
 func AuthenticateUser(email string, password string) (string, error) {
 	storedPassword := struct {
-		UserID string
-		Password string
+		UserID string `db:"id"`
+		Password string `db:"password"`
 	}{"", ""}
 
 	if err := Database.Get(&storedPassword, "SELECT id, password FROM users WHERE email=?", email); err != nil{
@@ -61,7 +62,7 @@ func ChangePassword(email string, password string) error {
 }
 
 func removeActiveSession(userID string) {
-	if found, index := findActiveSession(userID); !found {
+	if found, index := findActiveSession(userID); found {
 		activeSessions = append(activeSessions[:index], activeSessions[index+1:]...)
 	}
 }

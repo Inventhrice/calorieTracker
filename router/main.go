@@ -27,6 +27,9 @@ func InitRouter() *gin.Engine {
 
 	weightAPI := router.Group("/api/weight")
 	groups.InitWeightAPI(weightAPI)
+
+	profileAPI := router.Group("/api/profile")	
+	groups.InitProfileAPI(profileAPI)
 	return router
 }
 
