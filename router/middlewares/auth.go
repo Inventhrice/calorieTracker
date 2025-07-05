@@ -10,30 +10,33 @@ import (
 const numTokenBytes = 64
 
 type ActiveToken struct {
-	Email string
+	userID string
 	Token string
 }
 
 var activeSessions []ActiveToken // mapping emails, referenced by token
 
 func AuthenticateUser(email string, password string) (string, error) {
-	storedPassword := ""
+	storedPassword := struct {
+		UserID string
+		Password string
+	}{"", ""}
 
-	if err := Database.Get(&storedPassword, "SELECT password FROM users WHERE email=?", email); err != nil{
-		return err
+	if err := Database.Get(&storedPassword, "SELECT id, password FROM users WHERE email=?", email); err != nil{
+		return "", err
 	}
 
-	if match, err := argon2id.ComparePasswordAndHash(password, storedPassword); err != nil || !match {
+	if match, err := argon2id.ComparePasswordAndHash(password, storedPassword.Password); err != nil || !match {
 		if !match{
 			return "", errors.New("Passwords do not match.") 
 		}
 		return "", err
 	}
 
-	removeActiveSession(email)
+	removeActiveSession(storedPassword.UserID)
 	genToken, _ := generateToken()
 
-	activeSessions = append(activeSessions, ActiveToken{Email: email, Token: genToken})
+	activeSessions = append(activeSessions, ActiveToken{userID: storedPassword.UserID, Token: genToken})
 
 	return genToken, nil
 }
@@ -57,15 +60,15 @@ func ChangePassword(email string, password string) error {
 	return nil
 }
 
-func removeActiveSession(email string) {
-	if found, index := findActiveSession(email); !found {
+func removeActiveSession(userID string) {
+	if found, index := findActiveSession(userID); !found {
 		activeSessions = append(activeSessions[:index], activeSessions[index+1:]...)
 	}
 }
 
-func findActiveSession(email string) (bool, int) {
+func findActiveSession(userID string) (bool, int) {
 	for index, activeToken := range activeSessions {
-		if (activeToken.Email == email) {
+		if (activeToken.userID == userID) {
 			return true, index
 		}
 	}
@@ -75,7 +78,7 @@ func findActiveSession(email string) (bool, int) {
 func CheckLoggedIn(token string) (string, error){
 	for _, activeToken := range activeSessions {
 		if(activeToken.Token == token){
-			return activeToken.Email, nil
+			return activeToken.userID, nil
 		}
 	}
 	return "", errors.New("User was not found in the list of active sessions.")

@@ -45,11 +45,11 @@ func login(ctx *gin.Context){
 }
 
 func profile(ctx *gin.Context){
-	if email, exists := ctx.Get("loggedInUser"); !exists {
+	if userID, exists := ctx.Get("loggedInUser"); !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"Error": "User is not authenticated."})
 	} else{
 		var user Profile
-		if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns WHERE email=?", email); err != nil {
+		if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns WHERE id=?", userID); err != nil {
 			ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
 			return 
 		}
@@ -74,11 +74,11 @@ func checkAuthenticated(ctx *gin.Context){
 
 	token := authToken[1]
 
-	if email, err := middlewares.CheckLoggedIn(token); err != nil {
+	if userID, err := middlewares.CheckLoggedIn(token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Error": "User is not logged in."})
 		return
 	} else {
-		ctx.Set("loggedInUser", email)
+		ctx.Set("loggedInUser", userID)
 		ctx.Next()
 	}
 }
