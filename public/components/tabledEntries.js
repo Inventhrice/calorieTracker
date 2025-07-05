@@ -9,6 +9,7 @@ export default {
             get() {
                 let graftTable = JSON.parse(JSON.stringify(this.entries)).toSorted(this.sortEntries)
                 let add = []
+				let caloriesOfDay = 0
                 let totalCal = 0
 
                 for (let index = graftTable.length - 1; index > 0; index--) {
@@ -17,11 +18,17 @@ export default {
                     if (entry.daterecord.valueOf() == graftTable[index-1].daterecord.valueOf()) {
                         if (entry.meal !== graftTable[index - 1].meal) {
                             add.push({ addIndex: index, data: this.computeStats("", entry.meal, totalCal) })
+							caloriesOfDay += totalCal
                             totalCal = 0
                         }
                     } else {
-                        add.push({ addIndex: index, data: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal) })
+                        add.push({ addIndex: index, data: this.computeStats("", entry.meal, totalCal) })
+
+						caloriesOfDay += totalCal
+                        add.push({ addIndex: index, data: this.computeStats(new Date(entry.daterecord).toDateString(), "Total", caloriesOfDay) })
+
                         totalCal = 0
+						caloriesOfDay = 0
                     }
                     entry.meal = ""
                     entry.daterecord = ""
@@ -30,7 +37,10 @@ export default {
                 let entry = graftTable[0]
                 if (entry) {
 					totalCal += entry.cal
-                    add.push({ addIndex: 0, data: this.computeStats(new Date(entry.daterecord).toDateString(), entry.meal, totalCal) })
+                    add.push({ addIndex: 0, data: this.computeStats("", entry.meal, totalCal) })
+					caloriesOfDay += totalCal
+					add.push({ addIndex: 0, data: this.computeStats(new Date(entry.daterecord).toDateString(), "Total", caloriesOfDay) })
+
                     entry.meal = ""
                     entry.daterecord = ""
                 }

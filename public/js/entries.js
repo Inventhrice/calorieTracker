@@ -13,7 +13,7 @@ createApp({
         return {
             title: "Entries", // Title of this page
             entries: [], // All the entries fetched by GET /api/entries
-            goalsinfo: {percentAllowed: 0.1, goal: 1900, Breakfast: 380, Lunch: 665, Dinner: 665, Snacks: 190},
+            goalsinfo: {percentAllowed: 0.1, Total: 1900, Breakfast: 380, Lunch: 665, Dinner: 665, Snacks: 190},
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
             start: null,
             showEntriesDialog: false,
