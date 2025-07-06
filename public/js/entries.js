@@ -22,9 +22,10 @@ createApp({
         }
     },
     methods: {
-        showDeleteDialog(index) {
-            this.selected = JSON.parse(JSON.stringify(this.entries[index]))
-            this.showConfirmDeleteDialog = true
+        showDeleteDialog(select) {
+			this.selected = select
+			this.showEntriesDialog = false
+			this.deleteEntry()
         },
         showEntriesDialogFn(index = undefined) {
             if (index === undefined) {

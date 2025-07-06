@@ -108,7 +108,7 @@ export default {
 
             <div class="flex justify-end">
                 <button class="btn" @click="$emit('close-dialog')">Cancel</button>
-                <button class="btn btn-uhoh mx-1" @click="$emit('delete-dialog')">Delete</button>
+                <button class="btn btn-uhoh mx-1" @click="$emit('delete-dialog', selected)">Delete</button>
                 <button class="btn btn-confirm" @click="$emit('confirm-dialog')">Save</button>
             </div>
         </dialog>
