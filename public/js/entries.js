@@ -30,7 +30,7 @@ createApp({
         showEntriesDialogFn(index = undefined) {
             if (index === undefined) {
                 this.selected = {
-                    daterecord: new Date(), foodname: "", foodID: undefined,
+                    daterecord:  getLastMon(getLocalDate(undefined)+"T00:00:00"), foodname: "", foodID: undefined,
                     quantity: 0, cal: 0, protein: 0, fat: 0, carbs: 0, notes: ""
                 }
             } else {
