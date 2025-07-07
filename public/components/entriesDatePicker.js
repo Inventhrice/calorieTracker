@@ -5,7 +5,7 @@ export default {
     },
     data() {
         return {
-            start: getLastMon(new Date()), //The current displaying week, beginning on Monday and ending on Sunday
+            start:  getLastMon(new Date(getLocalDate(undefined)+"T00:00:00")), //The current displaying week, beginning on Monday and ending on Sunday
         }
     },
     computed: {

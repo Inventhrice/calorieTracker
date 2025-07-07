@@ -11,6 +11,9 @@ export function getLastMon(date) {
     const MONDAY = 1
     date.setHours(8)
     let diffStartToMonday = date.getDay() - MONDAY
+	if(date.getDay() == 0){ // this is if the date is sunday
+		diffStartToMonday = 7 - MONDAY
+	}
     return addDate(date, -1 * diffStartToMonday)
 }
 
