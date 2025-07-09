@@ -1,5 +1,11 @@
-//https://docs.emmet.io/cheat-sheet/
-//https://icon-sets.iconify.design/mdi/page-2.html
+/*
+<span class="self-end" @click="logout">
+		<span class="iconify" :data-icon="'mdi-logout'"></span>
+		<span class="absolute p-2 m-3 min-w-max left-14 rounded-md shadow-md z-50 text-white bg-gray-900 text-xs font-bold transition-all duration-100 scale-0 origin-left group-hover:scale-100">Logout</span>
+	</span>
+*/
+
+import { api_logout } from "../js/auth"
 export default {
     data() {
         return {
@@ -11,6 +17,11 @@ export default {
             ]
         }
     },
+    methods: {
+        async logout(){
+            await api_logout()
+        }
+    },
     template: `
 <div class="flex flex-col w-auto h-screen p-2 bg-white dark:bg-gray-900 shadow-lg">
     <span v-for="icon in sidebarIcons" >
@@ -19,10 +30,8 @@ export default {
 			<span class="absolute p-2 m-3 min-w-max left-14 rounded-md shadow-md z-50 text-white bg-gray-900 text-xs font-bold transition-all duration-100 scale-0 origin-left group-hover:scale-100">{{icon.text}}</span>
 		</a>
     </span>
-	<span class="self-end" @click="logout">
-		<span class="iconify" :data-icon="'mdi-logout'"></span>
-		<span class="absolute p-2 m-3 min-w-max left-14 rounded-md shadow-md z-50 text-white bg-gray-900 text-xs font-bold transition-all duration-100 scale-0 origin-left group-hover:scale-100">Logout</span>
-	</span>
 </div>
 `
 }
+
+
