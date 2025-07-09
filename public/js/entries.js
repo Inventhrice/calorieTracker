@@ -86,11 +86,18 @@ createApp({
             //this.goalsInfo = await(await fetch("/api/settings/goals")).json()
             if(currentWeek){
                 this.start = currentWeek.start
-                this.entries = await (await fetch("/api/entries/" + currentWeek.start + "/" + currentWeek.end)).json()
-                this.entries.forEach((el) => {
-                    el.foodID = (el.foodID.Valid) ? el.foodID.Int32 : undefined;
-                    el.daterecord = new Date((new Date(el.daterecord)).setUTCHours(8));
-                })
+				let response = await fetch("/api/entries/" + currentWeek.start + "/" + currentWeek.end)
+				if(response.ok){
+					this.entries = await response.json()
+					this.entries.forEach((el) => {
+						el.foodID = (el.foodID.Valid) ? el.foodID.Int32 : undefined;
+						el.daterecord = new Date((new Date(el.daterecord)).setUTCHours(8));
+					})
+				} else{
+					if(response.status === 401){
+						window.location.href = "/app/login.html"
+					}
+				}
             }
         }
     }
