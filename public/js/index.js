@@ -1,12 +1,12 @@
-import { createApp, toRaw } from './vue.esm-browser.js'
-import sidebaritem from '../components/sidebarItem.js'
-import contentHeader from '../components/headerComponent.js'
+import { createApp } from './vue.esm-browser.js'
+import sidebar from '../components/sidebar.js'
+import titleHeader from '../components/titleHeader.js'
 import graphHeader from '../components/graphHeader.js'
-
+import {api_call, api_login} from "./auth.js"
 
 
 createApp({
-    components: { sidebaritem, contentHeader, graphHeader },
+    components: { sidebar, titleHeader, graphHeader },
     data() {
         return {
             title: "Dashboard"
@@ -16,7 +16,7 @@ createApp({
 
 
 createApp({
-    components: { sidebaritem, contentHeader },
+    components: { sidebar, titleHeader },
     data() {
         return {
             title: "Settings",
@@ -25,7 +25,7 @@ createApp({
     },
     methods: {
         async fetchData(){
-            let response = await fetch("/api/profile")
+            let response = await api_call("/api/profile")
             if(response.ok){
                 this.loggedInUser = await response.json()
             } else{
@@ -47,7 +47,7 @@ createApp({
     },
     methods: {
         async login(){
-            let response = await fetch("/login", {method: "POST", body: JSON.stringify(this.loginCreds)})
+            let response = await api_login(JSON.stringify(this.loginCreds))
             if(!response.ok){
                 let resText = await response.json()
                 this.errorMessage.message = "Error: " + resText.Error;

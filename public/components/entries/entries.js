@@ -1,14 +1,15 @@
-import { createApp, toRaw } from './vue.esm-browser.js'
-import deleteDialog from "../components/confirmDialog.js"
-import entriesDialog from '../components/entries-dialog.js'
-import sidebaritem from '../components/sidebarItem.js'
-import contentHeader from '../components/headerComponent.js'
-import tabledEntries from '../components/tabledEntries.js'
-import entriesDatePicker from '../components/entriesDatePicker.js'
-import weightEntry from '../components/weightEntry.js'
-import { getLocalDate } from '../components/dateFunctions.js'
+import { createApp } from '../../js/vue.esm-browser.js'
+import deleteDialog from "../confirmDialog.js"
+import entriesDialog from '../entries-dialog.js'
+import sidebar from '../sidebar.js'
+import titleHeader from '../titleHeader.js'
+import tabledEntries from './tabledEntries.js'
+import entriesDatePicker from '../entriesDatePicker.js'
+import weightEntry from './weightEntry.js'
+import { getLocalDate } from '../../js/datefn.js'
+import { api_call } from '../../js/auth.js'
 createApp({
-    components: { sidebaritem, contentHeader, deleteDialog, entriesDialog, tabledEntries, entriesDatePicker, weightEntry },
+    components: { sidebar, titleHeader, deleteDialog, entriesDialog, tabledEntries, entriesDatePicker, weightEntry },
     data() {
         return {
             title: "Entries", // Title of this page
@@ -48,7 +49,7 @@ createApp({
                 selectedCopy.daterecord = getLocalDate(new Date(selectedCopy.daterecord))
 
                 if (!this.selected.hasOwnProperty('id')) {
-                    let response = (await fetch("/api/entries/", { method: "POST", body: JSON.stringify(selectedCopy) }))
+                    let response = await api_call("/api/entries/", "POST", JSON.stringify(selectedCopy))
                     if (response.ok) {
                         let data = await (response).json()
                         this.selected.id = data.addedID
@@ -58,7 +59,7 @@ createApp({
                     }
                 } else {
                     let index = this.entries.findIndex((el) => selectedCopy.id == el.id)
-                    let response = await fetch("/api/entries/" + selectedCopy.id, { method: "PATCH", body: JSON.stringify(selectedCopy) })
+                    let response = await api_call("/api/entries/" + selectedCopy.id, "PATCH", JSON.stringify(selectedCopy))
                     if (response.ok) {
                         this.entries[index] = this.selected
                     } else {
@@ -73,7 +74,7 @@ createApp({
         },
         async deleteEntry() {
             if (this.selected) {
-                let response = await fetch("/api/entries/" + this.selected.id, { method: "DELETE" })
+                let response = await api_call("/api/entries/" + this.selected.id, { method: "DELETE" })
                 if (response.ok) {
                     this.entries.splice(this.entries.findIndex((el) => this.selected.id == el.id), 1)
                 } else {
@@ -86,7 +87,7 @@ createApp({
             //this.goalsInfo = await(await fetch("/api/settings/goals")).json()
             if(currentWeek){
                 this.start = currentWeek.start
-				let response = await fetch("/api/entries/" + currentWeek.start + "/" + currentWeek.end)
+				let response = await api_call("/api/entries/" + currentWeek.start + "/" + currentWeek.end)
 				if(response.ok){
 					this.entries = await response.json()
 					this.entries.forEach((el) => {
