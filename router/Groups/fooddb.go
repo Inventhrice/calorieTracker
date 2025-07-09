@@ -1,7 +1,6 @@
 package groups
 
 import (
-	"database/sql"
 	"net/http"
 
 	"example.com/m/v2/middlewares"
@@ -10,7 +9,7 @@ import (
 
 type FoodInfo struct {
 	UserID      string  `db:"userID"`
-	ID          int     `json:"id" db:"id"`
+	ID          int     `json:"id" db:"ID"`
 	Name        string  `json:"name" db:"name"`
 	CalPerG     float32 `json:"calperg" db:"calPerG"`
 	ProteinPerG float32 `json:"proteinperg" db:"proteinPerG"`
@@ -30,7 +29,7 @@ func updateFood(ctx *gin.Context) {
 	}
 	food.ID = id
 
-	result, err := middlewares.Database.NamedExec("UPDATE food_info SET name=:name, calPerG=:calPerG, proteinPerG=:proteinPerG, fatPerG=:fatPerG, carbPerG=:carbPerG, notes=:notes WHERE id = :id", food)
+	result, err := middlewares.Database.NamedExec("UPDATE food_info SET name=:name, calPerG=:calPerG, proteinPerG=:proteinPerG, fatPerG=:fatPerG, carbPerG=:carbPerG, notes=:notes WHERE id = :ID", food)
 	if _, err := Helper_ExecError(result, err, "No food info with the provided ID found"); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
@@ -81,19 +80,10 @@ func deleteFood(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func getAllFoodIDs(userid string) ([]sql.NullInt16, error) {
-	listFoodIDs := make([]sql.NullInt16, 0)
-
-	if err := middlewares.Database.Get(&listFoodIDs, "SELECT id FROM food_info WHERE userid=?", userid); err != nil {
-		return nil, err
-	}
-	return listFoodIDs, nil
-}
-
 func getAllFoods(ctx *gin.Context) {
 	userid := helper_GetUserID(ctx)
 	listFoods := []FoodInfo{}
-	if err := middlewares.Database.Select(&listFoods, "SELECT id, name, calperg, proteinperg, fatperg, carbperg, notes, source FROM food_info WHERE userid=?", userid); err != nil {
+	if err := middlewares.Database.Select(&listFoods, "SELECT ID, name, calPerG, proteinPerG, fatPerG, carbPerG, notes, source FROM food_info WHERE userid=?", userid); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}
