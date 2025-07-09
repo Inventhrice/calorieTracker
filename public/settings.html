@@ -1,28 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Calorie Tracker</title>
-		<link rel="stylesheet" href="./css/index.css">
-	</head>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Calorie Tracker</title>
+	<link rel="stylesheet" href="./css/index.css">
+</head>
 
-	<body>
-		<script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
-		<script type="module" src="./js/index.js"></script>
-		<div id="settings" class="flex">
-			<sidebaritem></sidebaritem>
-			<div id="content" class="content-container">
-				<content-header :title=title></content-header>
-				<div id="main-content" class="content-list">
-					<label for="firstname">Firstname: </label><input type="text">
-					<label for="lastname">Lastname: </label><input type="text">
-					<label for="Goals data">JSON Data for Goals:</label><textarea></textarea>
+<body>
+	<script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
+	<script type="module" src="./js/index.js"></script>
+	<div id="settings" class="flex">
+		<sidebaritem></sidebaritem>
+		<div id="content" class="content-container">
+			<content-header :title=title></content-header>
+			<div id="main-content" class="content-list items-start text gap-y-2">
+				<div class="module-background rounded-2xl flex flex-col">
+					<span class="mx-2"><label for="firstname">Firstname: </label><input class="dialog-input m-3"
+							type="text"></span>
+					<span class="mx-2"><label for="lastname">Lastname: </label><input class="dialog-input m-3"
+							type="text"></span>
+					<span class="mx-2"><label for="pronouns">Pronouns: </label><input class="dialog-input m-3"
+							type="text"></span>
+				</div>
+				<div class="module-background rounded-2xl flex flex-col">
+					<span class="mx-2"><label for="email">Username: </label><input class="dialog-input my-2"
+							type="text"></span>
+							<span class="mx-2"><label for="password">New Password: </label><input class="dialog-input my-2"
+							type="password"></span>
+							<span class="mx-2"><label for="password">Reenter Password: </label><input class="dialog-input my-2"
+							type="password"></span>
+				</div>
+				<div class="module-background rounded-2xl flex flex-col">
+					<span class="m-2"><label for="Goals data">JSON Data for Goals:</label><textarea
+							class="w-full dialog-input my-3"></textarea></span>
 				</div>
 			</div>
 		</div>
+	</div>
 
-	</body>
+</body>
 
 </html>
