@@ -17,7 +17,12 @@ createApp({
     methods: {
         async fetchData(id = "all") {
             const response = await fetch("/api/foodDB/" + id)
-            this.allFoods = await response.json()
+            if(response.ok){
+                this.allFoods = await response.json()
+            } else{
+                this.allFoods = []
+            }
+            
         },
         showFoodDialog(foodinfo = null) {
             if (foodinfo != null) {

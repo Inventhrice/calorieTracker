@@ -26,16 +26,15 @@ createApp({
     methods: {
         async fetchData(){
             let response = await fetch("/api/profile")
-            if(!response.ok){
-                let errMsg = await response.text
-                console.log("Recieved error: " + errMsg)
-            } else{
+            if(response.ok){
                 this.loggedInUser = await response.json()
+            } else{
+                this.loggedInUser = {firstname: "", lastname: "", pronouns: ""}
             }
         }
     },
     created() {
-        fetchData()
+        this.fetchData()
     }
 }).mount('#settings')
 

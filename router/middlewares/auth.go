@@ -12,24 +12,24 @@ const numTokenBytes = 64
 
 type ActiveToken struct {
 	userID string
-	Token string
+	Token  string
 }
 
 var activeSessions []ActiveToken // mapping emails, referenced by token
 
 func AuthenticateUser(email string, password string) (string, error) {
 	storedPassword := struct {
-		UserID string `db:"id"`
+		UserID   string `db:"id"`
 		Password string `db:"password"`
 	}{"", ""}
 
-	if err := Database.Get(&storedPassword, "SELECT id, password FROM users WHERE email=?", email); err != nil{
+	if err := Database.Get(&storedPassword, "SELECT id, password FROM users WHERE email=?", email); err != nil {
 		return "", err
 	}
 
 	if match, err := argon2id.ComparePasswordAndHash(password, storedPassword.Password); err != nil || !match {
-		if !match{
-			return "", errors.New("Passwords do not match.") 
+		if !match {
+			return "", errors.New("Passwords do not match.")
 		}
 		return "", err
 	}
@@ -44,12 +44,12 @@ func AuthenticateUser(email string, password string) (string, error) {
 
 // Bearer-Token-Based Authentication
 // https://www.jetbrains.com/guide/go/tutorials/authentication-for-go-apps/auth/
-func generateToken() (string, error){
+func generateToken() (string, error) {
 	bytes := make([]byte, numTokenBytes)
-    if _, err := rand.Read(bytes); err != nil {
-        return "", err
-    }
-    return hex.EncodeToString(bytes), nil
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
 }
 
 func ChangePassword(email string, password string) error {
@@ -69,16 +69,16 @@ func removeActiveSession(userID string) {
 
 func findActiveSession(userID string) (bool, int) {
 	for index, activeToken := range activeSessions {
-		if (activeToken.userID == userID) {
+		if activeToken.userID == userID {
 			return true, index
 		}
 	}
 	return false, -1
 }
 
-func CheckLoggedIn(token string) (string, error){
+func CheckLoggedIn(token string) (string, error) {
 	for _, activeToken := range activeSessions {
-		if(activeToken.Token == token){
+		if activeToken.Token == token {
 			return activeToken.userID, nil
 		}
 	}
