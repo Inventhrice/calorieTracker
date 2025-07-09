@@ -13,6 +13,7 @@ import (
 )
 
 type Entry struct {
+	UserID     string        `db:"userID"`
 	ID         int           `json:"id" db:"ID"`
 	Meal       string        `json:"meal" db:"meal"`
 	DateRecord string        `json:"daterecord" db:"dateRecord"`
@@ -24,6 +25,10 @@ type Entry struct {
 	Fat        float32       `json:"fat" db:"fat"`
 	Carbs      float32       `json:"carbs" db:"carbs"`
 	Notes      string        `json:"notes" db:"notes"`
+}
+
+func helper_GetUserID(ctx *gin.Context) string {
+	return ctx.GetString("loggedInUser")
 }
 
 // Helper function that executes Atoi, and automatically sends a BadRequest reponse if there is an error. Returns the parsed int or -1 on an error.
@@ -66,6 +71,7 @@ func updateEntries(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}
+
 	if id == entry.ID {
 		result, err := middlewares.Database.NamedExec("UPDATE entries SET dateRecord=:dateRecord,meal=:meal,foodID=:foodID,grams=:grams,foodname=:foodname,cal=:cal,protein=:protein,fat=:fat,carbs=:carbs WHERE ID=:ID", entry)
 		if _, err := Helper_ExecError(result, err, "No entry with the provided ID found"); err != nil {
@@ -84,8 +90,9 @@ func addEntries(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}
+	entry.UserID = helper_GetUserID(ctx)
 
-	result, err := middlewares.Database.NamedExec("INSERT INTO entries (dateRecord, meal, foodID, foodname, grams, cal, protein, fat, carbs) VALUES (:dateRecord, :meal, :foodID, :foodname, :grams, :cal, :protein, :fat, :carbs)", entry)
+	result, err := middlewares.Database.NamedExec("INSERT INTO entries (userid, dateRecord, meal, foodID, foodname, grams, cal, protein, fat, carbs) VALUES (:userid, :dateRecord, :meal, :foodID, :foodname, :grams, :cal, :protein, :fat, :carbs)", entry)
 
 	if _, err := Helper_ExecError(result, err, "Entry was unable to be added"); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -96,8 +103,9 @@ func addEntries(ctx *gin.Context) {
 }
 
 func getAllEntries(ctx *gin.Context) {
+	userID := helper_GetUserID(ctx)
 	entries := []Entry{}
-	if err := middlewares.Database.Select(&entries, "SELECT * FROM processed_entries"); err != nil {
+	if err := middlewares.Database.Select(&entries, "SELECT * FROM processed_entries WHERE userid=?", userID); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}
@@ -105,11 +113,12 @@ func getAllEntries(ctx *gin.Context) {
 }
 
 func getEntriesByWeek(ctx *gin.Context) {
+	userID := helper_GetUserID(ctx)
 	entries := []Entry{}
 	startDate, _ := time.Parse(time.DateOnly, ctx.Param("start"))
 	endDate, _ := time.Parse(time.DateOnly, ctx.Param("end"))
 
-	if err := middlewares.Database.Select(&entries, "SELECT * FROM processed_entries WHERE dateRecord BETWEEN ? AND ?", startDate.Format(time.DateOnly), endDate.Format(time.DateOnly)); err != nil {
+	if err := middlewares.Database.Select(&entries, "SELECT * FROM processed_entries WHERE dateRecord BETWEEN ? AND ? AND userid=?", startDate.Format(time.DateOnly), endDate.Format(time.DateOnly), userID); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}

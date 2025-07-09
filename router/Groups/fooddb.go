@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 type FoodInfo struct {
+	UserID      string  `db:"userID"`
 	ID          int     `json:"id" db:"ID"`
 	Name        string  `json:"name" db:"name"`
 	CalPerG     float32 `json:"calperg" db:"calPerG"`
@@ -40,12 +40,16 @@ func updateFood(ctx *gin.Context) {
 }
 
 func addFood(ctx *gin.Context) {
+
 	var food FoodInfo
 	if err := ctx.BindJSON(&food); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	result, err := middlewares.Database.NamedExec("INSERT INTO food_info (name, calPerG, proteinPerG, fatPerG, carbPerG, notes, source) VALUES (:name, :calPerG, :proteinPerG, :fatPerG, :carbPerG, :notes, :source)", food)
+
+	food.UserID = helper_GetUserID(ctx)
+
+	result, err := middlewares.Database.NamedExec("INSERT INTO food_info (userid, name, calPerG, proteinPerG, fatPerG, carbPerG, notes, source) VALUES (:userid, :name, :calPerG, :proteinPerG, :fatPerG, :carbPerG, :notes, :source)", food)
 	if _, err := Helper_ExecError(result, err, "Food info was unable to be added"); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -55,9 +59,10 @@ func addFood(ctx *gin.Context) {
 }
 
 func getFood(ctx *gin.Context) {
+	userID := helper_GetUserID(ctx)
 	id := helper_getIntFromStr(ctx, ctx.Param("id"), "Invalid food info ID")
 	var food FoodInfo
-	if err := middlewares.Database.Get(&food, "SELECT * FROM food_info WHERE id=?", id); err != nil {
+	if err := middlewares.Database.Get(&food, "SELECT * FROM food_info WHERE id=? AND userid=?", id, userID); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}
@@ -76,18 +81,19 @@ func deleteFood(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func getAllFoodIDs() ([]sql.NullInt16, error) {
+func getAllFoodIDs(userid string) ([]sql.NullInt16, error) {
 	listFoodIDs := make([]sql.NullInt16, 0)
 
-	if err := middlewares.Database.Get(&listFoodIDs, "SELECT id FROM food_info"); err != nil {
+	if err := middlewares.Database.Get(&listFoodIDs, "SELECT id FROM food_info WHERE userid=?", userid); err != nil {
 		return nil, err
 	}
 	return listFoodIDs, nil
 }
 
 func getAllFoods(ctx *gin.Context) {
+	userid := helper_GetUserID(ctx)
 	listFoods := []FoodInfo{}
-	if err := middlewares.Database.Select(&listFoods, "SELECT id, name, calperg, proteinperg, fatperg, carbperg, notes, source FROM food_info"); err != nil {
+	if err := middlewares.Database.Select(&listFoods, "SELECT id, name, calperg, proteinperg, fatperg, carbperg, notes, source FROM food_info WHERE userid=?", userid); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}
