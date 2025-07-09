@@ -10,7 +10,7 @@ import (
 
 type FoodInfo struct {
 	UserID      string  `db:"userID"`
-	ID          int     `json:"id" db:"ID"`
+	ID          int     `json:"id" db:"id"`
 	Name        string  `json:"name" db:"name"`
 	CalPerG     float32 `json:"calperg" db:"calPerG"`
 	ProteinPerG float32 `json:"proteinperg" db:"proteinPerG"`
@@ -30,7 +30,7 @@ func updateFood(ctx *gin.Context) {
 	}
 	food.ID = id
 
-	result, err := middlewares.Database.NamedExec("UPDATE food_info SET name=:name, calPerG=:calPerG, proteinPerG=:proteinPerG, fatPerG=:fatPerG, carbPerG=:carbPerG, notes=:notes WHERE id = :ID", food)
+	result, err := middlewares.Database.NamedExec("UPDATE food_info SET name=:name, calPerG=:calPerG, proteinPerG=:proteinPerG, fatPerG=:fatPerG, carbPerG=:carbPerG, notes=:notes WHERE id = :id", food)
 	if _, err := Helper_ExecError(result, err, "No food info with the provided ID found"); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
