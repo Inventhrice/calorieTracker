@@ -19,8 +19,23 @@ createApp({
     components: { sidebaritem, contentHeader },
     data() {
         return {
-            title: "Settings"
+            title: "Settings",
+            loggedInUser: {firstname: "", lastname: "", pronouns: ""}
         }
+    },
+    methods: {
+        async fetchData(){
+            let response = await fetch("/api/profile")
+            if(!response.ok){
+                let errMsg = await response.text
+                console.log("Recieved error: " + errMsg)
+            } else{
+                this.loggedInUser = await response.json()
+            }
+        }
+    },
+    created() {
+        fetchData()
     }
 }).mount('#settings')
 
@@ -33,7 +48,7 @@ createApp({
     },
     methods: {
         async login(){
-            let response = await fetch("/api/profile/login", {method: "POST", body: JSON.stringify(this.loginCreds)})
+            let response = await fetch("/login", {method: "POST", body: JSON.stringify(this.loginCreds)})
             if(!response.ok){
                 let resText = await response.text()
                 this.errorMessage.message = "Error: " + resText;
