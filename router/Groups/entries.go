@@ -105,7 +105,7 @@ func addEntries(ctx *gin.Context) {
 func getAllEntries(ctx *gin.Context) {
 	userID := helper_GetUserID(ctx)
 	entries := []Entry{}
-	if err := middlewares.Database.Select(&entries, "SELECT * FROM processed_entries WHERE userid=?", userID); err != nil {
+	if err := middlewares.Database.Select(&entries, "SELECT ID, dateRecord, meal, foodname, foodID, grams, cal, carbs, protein, fat, notes FROM processed_entries WHERE userid=?", userID); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}
@@ -114,11 +114,12 @@ func getAllEntries(ctx *gin.Context) {
 
 func getEntriesByWeek(ctx *gin.Context) {
 	userID := helper_GetUserID(ctx)
+	fmt.Println(userID)
 	entries := []Entry{}
 	startDate, _ := time.Parse(time.DateOnly, ctx.Param("start"))
 	endDate, _ := time.Parse(time.DateOnly, ctx.Param("end"))
 
-	if err := middlewares.Database.Select(&entries, "SELECT * FROM processed_entries WHERE dateRecord BETWEEN ? AND ? AND userid=?", startDate.Format(time.DateOnly), endDate.Format(time.DateOnly), userID); err != nil {
+	if err := middlewares.Database.Select(&entries, "SELECT ID, dateRecord, meal, foodname, foodID, grams, cal, carbs, protein, fat, notes FROM processed_entries WHERE dateRecord BETWEEN ? AND ? AND userid=?", startDate.Format(time.DateOnly), endDate.Format(time.DateOnly), userID); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}

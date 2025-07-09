@@ -49,8 +49,8 @@ createApp({
         async login(){
             let response = await fetch("/login", {method: "POST", body: JSON.stringify(this.loginCreds)})
             if(!response.ok){
-                let resText = await response.text()
-                this.errorMessage.message = "Error: " + resText;
+                let resText = await response.json()
+                this.errorMessage.message = "Error: " + resText.Error;
                 this.errorMessage.empty = false
             } else{
                 window.location.href = "/app/index.html"

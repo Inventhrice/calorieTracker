@@ -112,4 +112,8 @@
     -moz-appearance: textfield;
   }
 
+  .error-popup{
+    @apply bg-red-400/50 rounded-2xl;
+  }
+
 }
