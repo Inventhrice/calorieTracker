@@ -13,7 +13,7 @@ import (
 )
 
 type Entry struct {
-	UserID     string        `db:"userID"`
+	UserID     string        `db:"userid"`
 	ID         int           `json:"id" db:"ID"`
 	Meal       string        `json:"meal" db:"meal"`
 	DateRecord string        `json:"daterecord" db:"dateRecord"`

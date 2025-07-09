@@ -8,7 +8,7 @@ import (
 )
 
 type FoodInfo struct {
-	UserID      string  `db:"userID"`
+	UserID      string  `db:"userid"`
 	ID          int     `json:"id" db:"ID"`
 	Name        string  `json:"name" db:"name"`
 	CalPerG     float32 `json:"calperg" db:"calPerG"`

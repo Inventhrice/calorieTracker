@@ -10,7 +10,7 @@ import (
 )
 
 type WeightData struct {
-	UserID string  `db:"userID"`
+	UserID string  `db:"userid"`
 	Date   string  `json:"daterecord" db:"dateRecord"`
 	KG     float32 `json:"kg" db:"kg"`
 }
