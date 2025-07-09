@@ -1,9 +1,9 @@
-import { createApp } from '../../js/vue.esm-browser.prod.js'
-import foodDialog from '../components/foodDB-dialog.js'
+import { createApp } from '../../js/vue.esm-browser.js'
+import foodDialog from './foodDB-dialog.js'
 import deleteDialog from "../confirmDialog.js"
-import sidebar from '../components/sidebar.js'
-import titleHeader from '../components/titleHeader.js'
-import { api_call } from '../../js/auth.js'
+import sidebar from '../sidebar.js'
+import titleHeader from '../titleHeader.js'
+import { api_call, api_get } from '../../js/auth.js'
 createApp({
     components: { sidebar, titleHeader, foodDialog, deleteDialog },
     data() {
@@ -17,7 +17,7 @@ createApp({
     },
     methods: {
         async fetchData(id = "all") {
-            const response = await api_call("/api/foodDB/" + id)
+            const response = await api_get("/api/foodDB/" + id)
             if(response.ok){
                 this.allFoods = await response.json()
             } else{

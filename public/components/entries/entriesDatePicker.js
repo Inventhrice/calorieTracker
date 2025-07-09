@@ -1,4 +1,4 @@
-import {getLocalDate, getLastMon, addDate} from "./dateFunctions.js"
+import {getLocalDate, getLastMon, addDate} from "../../js/datefn.js"
 export default {
     setup(){
         return {addDate, getLocalDate}

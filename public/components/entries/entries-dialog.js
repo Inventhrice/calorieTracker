@@ -1,4 +1,4 @@
-import {getLocalDate} from "./dateFunctions.js"
+import {getLocalDate} from "../../js/datefn.js"
 export default {
     data() {
         return {

@@ -1,15 +1,14 @@
 import { createApp } from '../../js/vue.esm-browser.js'
-import deleteDialog from "../confirmDialog.js"
-import entriesDialog from '../entries-dialog.js'
+import entriesDialog from './entries-dialog.js'
 import sidebar from '../sidebar.js'
 import titleHeader from '../titleHeader.js'
 import tabledEntries from './tabledEntries.js'
-import entriesDatePicker from '../entriesDatePicker.js'
+import entriesDatePicker from './entriesDatePicker.js'
 import weightEntry from './weightEntry.js'
 import { getLocalDate } from '../../js/datefn.js'
-import { api_call } from '../../js/auth.js'
+import { api_call, api_get } from '../../js/auth.js'
 createApp({
-    components: { sidebar, titleHeader, deleteDialog, entriesDialog, tabledEntries, entriesDatePicker, weightEntry },
+    components: { sidebar, titleHeader, entriesDialog, tabledEntries, entriesDatePicker, weightEntry },
     data() {
         return {
             title: "Entries", // Title of this page
@@ -87,7 +86,7 @@ createApp({
             //this.goalsInfo = await(await fetch("/api/settings/goals")).json()
             if(currentWeek){
                 this.start = currentWeek.start
-				let response = await api_call("/api/entries/" + currentWeek.start + "/" + currentWeek.end)
+				let response = await api_get("/api/entries/" + currentWeek.start + "/" + currentWeek.end)
 				if(response.ok){
 					this.entries = await response.json()
 					this.entries.forEach((el) => {

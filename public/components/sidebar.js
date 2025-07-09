@@ -5,7 +5,7 @@
 	</span>
 */
 
-import { api_logout } from "../js/auth"
+import { api_logout } from "../js/auth.js"
 export default {
     data() {
         return {

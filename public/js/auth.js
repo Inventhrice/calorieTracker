@@ -9,7 +9,12 @@ export async function api_login(body){
     return response
 }
 
-export async function api_call(url, methodType="GET", body=""){
+export async function api_get(url){
+    let response = await fetch(`${API_URL}${url}`)
+    return response
+}
+
+export async function api_call(url, methodType, body=""){
     let response = await fetch(`${API_URL}${url}`, {method: methodType, body: body})
     return response
 }

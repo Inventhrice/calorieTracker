@@ -2,7 +2,7 @@ import { createApp } from './vue.esm-browser.js'
 import sidebar from '../components/sidebar.js'
 import titleHeader from '../components/titleHeader.js'
 import graphHeader from '../components/graphHeader.js'
-import {api_call, api_login} from "./auth.js"
+import {api_get, api_login} from "./auth.js"
 
 
 createApp({
@@ -25,7 +25,7 @@ createApp({
     },
     methods: {
         async fetchData(){
-            let response = await api_call("/api/profile")
+            let response = await api_get("/api/profile")
             if(response.ok){
                 this.loggedInUser = await response.json()
             } else{
