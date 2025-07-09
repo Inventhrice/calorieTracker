@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Login</title>
+		<link rel="stylesheet" href="./css/index.css">
+	</head>
+	<body>
+		<script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
+		<script type="module" src="./js/index.js"></script>
+		<div class="content-container h-dvh" id="login">
+			<div id="main-content" class="content-list items-center justify-center">
+				<div class="module-background p-4 text bg-red-400" v-if="!errorMessage.empty" id="error">{{errorMessage.message}}</div>
+				<div class="module-background flex flex-col p-4 gap-2 text">
+					<label for="username">Email:</label><input class="dialog-input" type="text" v-model="loginCreds.email">
+					<label for="password">Password:</label><input class="dialog-input" type="password" v-model="loginCreds.password">
+					<span class="justify-end"><button @click="login" class="btn btn-confirm">Login</button></span>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
