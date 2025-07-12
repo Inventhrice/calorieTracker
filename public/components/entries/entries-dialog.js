@@ -66,7 +66,7 @@ export default {
 
     },
     template: `
-        <dialog class="dialog text flex flex-col" open>
+        <dialog @keyup.esc='$emit("close-dialog")' @keyup.ctrl.enter='$emit("confirm-dialog")' class="dialog text flex flex-col" open>
             <label for="date">Date</label>
             <input class="dialog-input" type="date" v-model="dateRecord" />
 
@@ -108,7 +108,7 @@ export default {
 
             <div class="flex justify-end">
                 <button class="btn" @click="$emit('close-dialog')">Cancel</button>
-                <button class="btn btn-uhoh mx-1" @click="$emit('delete-dialog', selected)">Delete</button>
+                <button class="btn btn-uhoh mx-1" @click="$emit('delete-dialog')">Delete</button>
                 <button class="btn btn-confirm" @click="$emit('confirm-dialog')">Save</button>
             </div>
         </dialog>

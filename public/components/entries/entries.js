@@ -22,11 +22,6 @@ createApp({
         }
     },
     methods: {
-        showDeleteDialog(select) {
-			this.selected = select
-			this.showEntriesDialog = false
-			this.deleteEntry()
-        },
         showEntriesDialogFn(index = undefined) {
             if (index === undefined) {
                 this.selected = {
@@ -73,17 +68,16 @@ createApp({
         },
         async deleteEntry() {
             if (this.selected) {
-                let response = await api_call("/api/entries/" + this.selected.id, { method: "DELETE" })
+                let response = await api_call("/api/entries/" + this.selected.id, "DELETE")
                 if (response.ok) {
                     this.entries.splice(this.entries.findIndex((el) => this.selected.id == el.id), 1)
                 } else {
                     console.log(response.Error)
                 }
-                this.showConfirmDeleteDialog = false
+                this.showEntriesDialog = false
             }
         },
         async fetchEntries(currentWeek) {
-            //this.goalsInfo = await(await fetch("/api/settings/goals")).json()
             if(currentWeek){
                 this.start = currentWeek.start
 				let response = await api_get("/api/entries/" + currentWeek.start + "/" + currentWeek.end)
