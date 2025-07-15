@@ -66,8 +66,8 @@ export default {
                 let goals = this.goalsinfo
                 diffCal = (goals[meal] - totalCal)
                 let tolerance = goals[meal] * (goals.percentAllowed)
-                msg = (diffCal > tolerance) ? "Great job!" :
-                    ((diffCal <= tolerance && diffCal >= tolerance * -1) ? "Spot on!" : "Next time!")
+                msg = (diffCal >= 0) ? "Great job!" :
+                    ((diffCal >= tolerance * -1) ? "Spot on!" : "Next time!")
             }
             return { daterecord: dateRecord, meal: meal, foodname: "", notes: msg, quantity: totalCal, cal: diffCal, protein: 0, carbs: 0, fat: 0 }
 
