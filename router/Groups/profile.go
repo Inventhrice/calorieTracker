@@ -38,7 +38,7 @@ func Login(ctx *gin.Context) {
 	}
 }
 
-func changepwd(ctx *gin.Context){
+func password(ctx *gin.Context){
 	userID := helper_GetUserID(ctx)
 	creds := struct{Password string `json:"password"`}{""}
 
@@ -64,6 +64,7 @@ func profile(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, user)
 }
+
 
 func CheckAuthenticated(ctx *gin.Context) {
 	token := ""
@@ -91,7 +92,8 @@ func Logout(ctx *gin.Context){
 	ctx.Status(http.StatusOK)
 }
 
+
 func InitProfileAPI(group *gin.RouterGroup) {
 	group.GET("/", CheckAuthenticated, profile)
-	group.PATCH("/password", CheckAuthenticated, changepwd)
+	group.PATCH("/password", CheckAuthenticated, password)
 }

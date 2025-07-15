@@ -114,7 +114,6 @@ func getAllEntries(ctx *gin.Context) {
 
 func getEntriesByWeek(ctx *gin.Context) {
 	userID := helper_GetUserID(ctx)
-	fmt.Println(userID)
 	entries := []Entry{}
 	startDate, _ := time.Parse(time.DateOnly, ctx.Param("start"))
 	endDate, _ := time.Parse(time.DateOnly, ctx.Param("end"))

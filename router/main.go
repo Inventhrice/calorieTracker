@@ -36,6 +36,10 @@ func InitRouter() *gin.Engine {
 
 	profileAPI := authorizedRoutes.Group("/profile")
 	groups.InitProfileAPI(profileAPI)
+
+	goalsAPI := authorizedRoutes.Group("/goals")
+	groups.InitGoalsAPI(goalsAPI)
+
 	return router
 }
 

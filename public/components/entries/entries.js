@@ -13,7 +13,7 @@ createApp({
         return {
             title: "Entries", // Title of this page
             entries: [], // All the entries fetched by GET /api/entries
-            goalsinfo: {percentAllowed: 0.1, Total: 1900, Breakfast: 380, Lunch: 665, Dinner: 665, Snacks: 190},
+			goalsinfo: {},
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
             start: null,
             showEntriesDialog: false,
@@ -77,8 +77,27 @@ createApp({
                 this.showEntriesDialog = false
             }
         },
+		async fetchGoalInfo(currentWeek=""){
+			let response = await api_get("/api/goals")
+			if(response.ok){
+				let obj = await response.json()
+				obj.goalsPerMeal = JSON.parse(obj.goalsPerMeal)
+				let returnobj = {percentAllowed: obj.acceptablePercent, Total: obj.goalLbs*obj.multiplier}
+				for (let index in this.mealTimes){
+					let meals = this.mealTimes[index]
+					let mealGoal = obj.goalsPerMeal[index]
+					returnobj[meals] = mealGoal*returnobj.Total
+				}
+				this.goalsinfo = returnobj
+			} else {
+				let msg = await response.text()
+				console.log()
+			}
+			
+		},
         async fetchEntries(currentWeek) {
             if(currentWeek){
+				this.fetchGoalInfo(currentWeek)
                 this.start = currentWeek.start
 				let response = await api_get("/api/entries/" + currentWeek.start + "/" + currentWeek.end)
 				if(response.ok){

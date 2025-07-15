@@ -10,8 +10,7 @@ import (
 var Settings map[string]string
 
 type Goals struct {
-	DateRecord   string  `json:"daterecord" db:"dateRecord"`
-	GoalLbs      float32 `json:"goallbs" db:"goallbs"`
+	GoalLbs      float32 `json:"goalLbs" db:"goalLbs"`
 	Multiplier   int     `json:"multiplier" db:"multiplier"`
 	ErrMargin    float32 `json:"acceptablePercent" db:"acceptablePercent"`
 	GoalsPerMeal string  `json:"goalsPerMeal" db:"goalsPerMeal"`
@@ -41,6 +40,17 @@ func RefreshSettings(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"data": Settings})
 }
 
+func goals(ctx *gin.Context){
+	userID := helper_GetUserID(ctx)
+	var goals Goals
+	if err := middlewares.Database.Get(&goals, "SELECT goalLbs, multiplier, acceptablePercent, goalsPerMeal FROM goals WHERE userID=?",userID); err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, goals)
+}
+
+
 func initSettingsAPI(group *gin.RouterGroup) {
 	group.GET("/:setting") // if setting == all then return everything, else return value
 	group.PATCH("/:setting")
@@ -48,9 +58,6 @@ func initSettingsAPI(group *gin.RouterGroup) {
 	group.DELETE("/:setting")
 }
 
-func initGoalsAPI(group *gin.RouterGroup) {
-	group.GET("/:daterecord") //QUERY goals table by date record, or get most recent entry
-	group.PATCH("/:daterecord")
-	group.POST("/")
-
+func InitGoalsAPI(group *gin.RouterGroup) {
+	group.GET("/", goals)
 }
