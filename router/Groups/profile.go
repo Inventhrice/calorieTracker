@@ -7,13 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// type Credentials struct {
-// 	Email string `json:"email" db:"email"`
-// 	Password string `json:"password" db:"password"`
-// }
-
 type Credentials struct {
-	Email    string `json:"email"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
@@ -22,6 +17,7 @@ type Profile struct {
 	Firstname string `json:"firstname" db:"firstname"`
 	Lastname  string `json:"lastname" db:"lastname"`
 	Pronouns  string `json:"pronouns" db:"pronouns"`
+	Username string `json:"username" db:"username"`
 }
 
 func Login(ctx *gin.Context) {
@@ -32,7 +28,7 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	if token, err := middlewares.AuthenticateUser(creds.Email, creds.Password); err != nil {
+	if token, err := middlewares.AuthenticateUser(creds.Username, creds.Password); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	} else {
@@ -42,10 +38,26 @@ func Login(ctx *gin.Context) {
 	}
 }
 
+func changepwd(ctx *gin.Context){
+	userID := helper_GetUserID(ctx)
+	password := ""
+
+	if err := ctx.BindJSON(&password); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+		return
+	}
+
+	if err := middlewares.ChangePassword(userID, password); err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+	} else{
+		ctx.Status(http.StatusOK)
+	}
+}
+
 func profile(ctx *gin.Context) {
 	userID := helper_GetUserID(ctx)
 	var user Profile
-	if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns FROM users WHERE id=?", userID); err != nil {
+	if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns, username FROM users WHERE id=?", userID); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
 		return
 	}
@@ -72,6 +84,14 @@ func CheckAuthenticated(ctx *gin.Context) {
 	}
 }
 
+
+func Logout(ctx *gin.Context){
+	userID := helper_GetUserID(ctx)
+	middlewares.RemoveActiveSession(userID)
+	ctx.Status(http.StatusOK)
+}
+
 func InitProfileAPI(group *gin.RouterGroup) {
 	group.GET("/", CheckAuthenticated, profile)
+	group.PATCH("/passworod", CheckAuthenticated, changepwd)
 }

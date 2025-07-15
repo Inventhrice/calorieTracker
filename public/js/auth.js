@@ -1,12 +1,10 @@
 const API_URL = "" 
 export async function api_logout(){
-    let response = await fetch(`${API_URL}/logout`)
-    return response
+    return api_call(`${API_URL}/logout`, "POST")
 }
 
 export async function api_login(body){
-    let response = await fetch(`${API_URL}/login`, {method: "POST", body: body})
-    return response
+    return api_call(`${API_URL}/login`, "POST", body)
 }
 
 export async function api_get(url){

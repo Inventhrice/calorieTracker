@@ -15,15 +15,15 @@ type ActiveToken struct {
 	Token  string
 }
 
-var activeSessions []ActiveToken // mapping emails, referenced by token
+var activeSessions []ActiveToken // mapping usernames, referenced by token
 
-func AuthenticateUser(email string, password string) (string, error) {
+func AuthenticateUser(username string, password string) (string, error) {
 	storedPassword := struct {
 		UserID   string `db:"id"`
 		Password string `db:"password"`
 	}{"", ""}
 
-	if err := Database.Get(&storedPassword, "SELECT id, password FROM users WHERE email=?", email); err != nil {
+	if err := Database.Get(&storedPassword, "SELECT id, password FROM users WHERE username=?", username); err != nil {
 		return "", err
 	}
 
@@ -34,7 +34,7 @@ func AuthenticateUser(email string, password string) (string, error) {
 		return "", err
 	}
 
-	removeActiveSession(storedPassword.UserID)
+	RemoveActiveSession(storedPassword.UserID)
 	genToken, _ := generateToken()
 
 	activeSessions = append(activeSessions, ActiveToken{userID: storedPassword.UserID, Token: genToken})
@@ -52,16 +52,16 @@ func generateToken() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-func ChangePassword(email string, password string) error {
+func ChangePassword(username string, password string) error {
 	hashedPassword, _ := argon2id.CreateHash(password, argon2id.DefaultParams)
-	if _, err := Database.Exec("UPDATE users SET password=? WHERE email=?", hashedPassword); err != nil {
+	if _, err := Database.Exec("UPDATE users SET password=? WHERE username=?", hashedPassword, username); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func removeActiveSession(userID string) {
+func RemoveActiveSession(userID string) {
 	if found, index := findActiveSession(userID); found {
 		activeSessions = append(activeSessions[:index], activeSessions[index+1:]...)
 	}

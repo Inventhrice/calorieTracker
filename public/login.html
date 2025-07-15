@@ -14,8 +14,8 @@
 				<span class="text-3xl lg:text-5xl text my-4">🍪Calorie Tracker🍪</span>
 				<div class="error-popup text p-3 my-3" v-if="!errorMessage.empty" id="error">{{errorMessage.message}}</div>
 				<div class="module-background lg:w-1/2 flex flex-col gap-2 text p-3" @keyup.enter="login">
-					<label class="mx-2" for="username">Email:</label>
-					<input class="dialog-input mx-2" type="text" v-model="loginCreds.email">
+					<label class="mx-2" for="username">Username:</label>
+					<input class="dialog-input mx-2" type="text" v-model="loginCreds.username">
 					<label class="mx-2" for="password">Password:</label>
 					<input class="dialog-input mx-2" type="password" v-model="loginCreds.password">
 					<span class="justify-end mx-2"><button @click="login" class="btn btn-confirm">Login</button></span>

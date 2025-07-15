@@ -21,6 +21,7 @@ func InitRouter() *gin.Engine {
 	})
 
 	router.POST("/login", groups.Login)
+	router	.POST("/logout", groups.CheckAuthenticated, groups.Logout)
 
 	authorizedRoutes := router.Group("/api", groups.CheckAuthenticated)
 

@@ -20,7 +20,7 @@ createApp({
     data() {
         return {
             title: "Settings",
-            loggedInUser: {firstname: "", lastname: "", pronouns: ""}
+            loggedInUser: {firstname: "", lastname: "", pronouns: "", username: "", password: "", repeatpwd: ""}
         }
     },
     methods: {
@@ -29,7 +29,7 @@ createApp({
             if(response.ok){
                 this.loggedInUser = await response.json()
             } else{
-                this.loggedInUser = {firstname: "", lastname: "", pronouns: ""}
+				window.location.href = "/app/login.html"
             }
         }
     },
@@ -41,7 +41,7 @@ createApp({
 createApp({
     data() {
         return {
-            loginCreds: {email: "", password: ""},
+            loginCreds: {username: "", password: ""},
             errorMessage: {message: "", empty: true}
         }
     },
