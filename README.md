@@ -21,7 +21,8 @@ services:
 
 ## Build from source
 1. Clone the repository
-2. In the /app/router directory, run `go build .`
+2. Using the tailwind CLI, run `tailwindcss -i /app/public/css/input.css -o /app/public/css/index.css`
+3. In the /app/router directory, run `go build .`
 
 ## Screenshots
 
