@@ -54,7 +54,7 @@ func generateToken() (string, error) {
 
 func ChangePassword(username string, password string) error {
 	hashedPassword, _ := argon2id.CreateHash(password, argon2id.DefaultParams)
-	if _, err := Database.Exec("UPDATE users SET password=? WHERE username=?", hashedPassword, username); err != nil {
+	if _, err := Database.Exec("UPDATE users SET password=? WHERE id=?", hashedPassword, username); err != nil {
 		return err
 	}
 

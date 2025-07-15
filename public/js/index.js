@@ -2,7 +2,7 @@ import { createApp } from './vue.esm-browser.js'
 import sidebar from '../components/sidebar.js'
 import titleHeader from '../components/titleHeader.js'
 import graphHeader from '../components/graphHeader.js'
-import {api_get, api_login} from "./auth.js"
+import {api_get, api_login, api_call} from "./auth.js"
 
 
 createApp({
@@ -20,7 +20,8 @@ createApp({
     data() {
         return {
             title: "Settings",
-            loggedInUser: {firstname: "", lastname: "", pronouns: "", username: "", password: "", repeatpwd: ""}
+            loggedInUser: {firstname: "", lastname: "", pronouns: "", username: "", password: "", repeatpwd: ""},
+			errorMessage: ""
         }
     },
     methods: {
@@ -31,7 +32,22 @@ createApp({
             } else{
 				window.location.href = "/app/login.html"
             }
-        }
+        },
+		async changePassword(){
+			let user = this.loggedInUser
+			if(user.password === user.repeatpwd){
+				let response = await api_call("/api/profile/password", "PATCH", JSON.stringify({"password": user.password}))
+				if(response.ok){
+					user.password = ""
+					user.repeatpwd = ""
+				} else{
+					let msg = await response.text()
+					console.log(msg)
+				}
+			} else{
+				this.errorMessage = "Passwords do not match."
+			}
+		}
     },
     created() {
         this.fetchData()

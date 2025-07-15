@@ -40,14 +40,14 @@ func Login(ctx *gin.Context) {
 
 func changepwd(ctx *gin.Context){
 	userID := helper_GetUserID(ctx)
-	password := ""
+	creds := struct{Password string `json:"password"`}{""}
 
-	if err := ctx.BindJSON(&password); err != nil {
+	if err := ctx.BindJSON(&creds); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	}
 
-	if err := middlewares.ChangePassword(userID, password); err != nil {
+	if err := middlewares.ChangePassword(userID, creds.Password); err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 	} else{
 		ctx.Status(http.StatusOK)
@@ -93,5 +93,5 @@ func Logout(ctx *gin.Context){
 
 func InitProfileAPI(group *gin.RouterGroup) {
 	group.GET("/", CheckAuthenticated, profile)
-	group.PATCH("/passworod", CheckAuthenticated, changepwd)
+	group.PATCH("/password", CheckAuthenticated, changepwd)
 }

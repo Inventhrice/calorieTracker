@@ -36,7 +36,8 @@
 							<label for="password">Reenter Password: </label>
 							<input  v-model="loggedInUser.repeatpwd" class="dialog-input my-2" type="password">
 						</span>
-						<span>
+						<span class="m-2 flex justify-between">
+							<span>{{errorMessage}}</span>
 							<button class="btn btn-confirm" @click="changePassword">Save</button>
 						</span>
 				</div>
