@@ -10,11 +10,11 @@
 
 <body>
     <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
-    <script type="module" src="./js/foodDB.js"></script>
+    <script type="module" src="./components/foodDB/foodDB.js"></script>
     <div id="food-db" class="flex">
-        <sidebaritem></sidebaritem>
+        <sidebar></sidebar>
         <div id="content" class="content-container">
-            <content-header :title=title></content-header>
+            <title-header :title=title></title-header>
             <div class="content-list">
                 <div class="flex justify-between content-center w-98/100 text">
                     <span class="content-center font-semibold">{{allFoods.length}} Items found</span>

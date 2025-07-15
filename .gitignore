@@ -2,5 +2,5 @@
 /public/css/index.css
 runtailwind.bat
 calorieTrackingscript.sql
-**/vue.esm-browser.prod.js
+**/vue.esm-browser*.js
 test.http

@@ -15,18 +15,31 @@ func InitRouter() *gin.Engine {
 	router.GET("/api/settings", groups.RefreshSettings)
 	router.StaticFS("/app", http.Dir("/app/public/"))
 	router.StaticFile("/favicon.ico", "/app/public/favicon.ico")
+
 	router.GET("/", func(ctx *gin.Context) {
-		ctx.Redirect(http.StatusPermanentRedirect, "/app")
+		ctx.Redirect(http.StatusPermanentRedirect, "/app/login.html")
 	})
 
-	foodDBAPI := router.Group("/api/foodDB")
+	router.POST("/login", groups.Login)
+	router	.POST("/logout", groups.CheckAuthenticated, groups.Logout)
+
+	authorizedRoutes := router.Group("/api", groups.CheckAuthenticated)
+
+	foodDBAPI := authorizedRoutes.Group("/foodDB")
 	groups.InitFoodDBApi(foodDBAPI)
 
-	entriesAPI := router.Group("/api/entries")
+	entriesAPI := authorizedRoutes.Group("/entries")
 	groups.InitEntriesApi(entriesAPI)
 
-	weightAPI := router.Group("/api/weight")
+	weightAPI := authorizedRoutes.Group("/weight")
 	groups.InitWeightAPI(weightAPI)
+
+	profileAPI := authorizedRoutes.Group("/profile")
+	groups.InitProfileAPI(profileAPI)
+
+	goalsAPI := authorizedRoutes.Group("/goals")
+	groups.InitGoalsAPI(goalsAPI)
+
 	return router
 }
 
