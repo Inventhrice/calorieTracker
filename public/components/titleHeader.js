@@ -7,6 +7,6 @@ export default {
         }
     },
     template: `<div id="header" class="top-navigation">
-                <h5 class="title-text">{{title}}</h5>
+                <h5 class="text title-text">{{title}}</h5>
             </div>`
 }
