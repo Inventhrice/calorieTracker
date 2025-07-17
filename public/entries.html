@@ -30,7 +30,7 @@
                 <tabled-entries @show-dialog="showEntriesDialogFn" :goalsinfo :entries></tabled-entries>
             </div>
             <entries-dialog v-if="showEntriesDialog" @close-dialog="this.showEntriesDialog = false" :selected
-                @confirm-dialog="editEntry" @delete-dialog="showDeleteDialog"></entries-dialog>
+                @confirm-dialog="editEntry" @delete-dialog="deleteEntry"></entries-dialog>
         </div>
     </div>
 </body>
