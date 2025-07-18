@@ -1,3 +1,5 @@
+<script>
+import { api_get } from '../../js/auth'
 export default {
     data() {
         return {
@@ -6,11 +8,15 @@ export default {
     },
     methods: {
         async fetchData() {
-            let response = await (await fetch("/api/weight/" + this.start)).json()
-            this.weightRecorded = response.kg
+            let response = await api_get("/api/weight/" + this.start)
+            if (response.ok) {
+                let data = await response.json()
+                this.weightRecorded = data.kg
+            }
+
         },
         async editWeight() {
-            let response = await fetch("/api/weight/", {
+            let response = await api_get("/api/weight/", {
                 method: "POST", body:
                     JSON.stringify({ daterecord: this.start, kg: this.weightRecorded })
             })
@@ -27,8 +33,11 @@ export default {
         this.$watch('start', () => {
             this.fetchData()
         })
-    },
-    template: `
+    }
+}
+</script>
+
+<template>
     <span>
         <label for="weight">Weight: </label>
         <input class="remove-spinner w-[4em]" name="weight" type="number" step="0.01" v-model="weightRecorded" />
@@ -36,5 +45,4 @@ export default {
             <span class="iconify btn-icon" data-icon="mdi-refresh"></span>
         </button>
     </span>
-    `
-}
+</template>
