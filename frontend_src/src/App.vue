@@ -48,12 +48,12 @@ export default {
 </script>
 
 <template>
-  <sidebar v-if="loggedin" logout="loggedin=false" :routes></sidebar>
+  <sidebar v-if="loggedin" @logout="loggedin=false" :routes></sidebar>
   <div id="content" class="content-container">
     <div v-if="loggedin" id="header" class="top-navigation">
       <h5 class="text title-text">{{ title }}</h5>
     </div>
-    <login v-if="!loggedin" login="loggedin = true"></login>
+    <login v-if="!loggedin" @login="loggedin = true"></login>
     <Component v-if="loggedin" :is="currentView"></Component>
   </div>
 </template>
