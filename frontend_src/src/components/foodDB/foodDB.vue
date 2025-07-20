@@ -20,9 +20,6 @@ export default {
                 this.allFoods = await response.json()
             } else {
                 this.allFoods = []
-                if (response.status === 401) {
-                    window.location.href = "/app/login.html"
-                }
             }
 
         },

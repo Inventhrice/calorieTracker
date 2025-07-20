@@ -102,10 +102,6 @@ export default {
                         el.foodID = (el.foodID.Valid) ? el.foodID.Int32 : undefined;
                         el.daterecord = new Date((new Date(el.daterecord)).setUTCHours(8));
                     })
-                } else {
-                    if (response.status === 401) {
-                        window.location.href = "/app/login.html"
-                    }
                 }
             }
         }
