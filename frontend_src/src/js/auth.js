@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080"
+const API_URL = ""
 export async function api_logout(){
     return api_call(`/logout`, "POST")
 }
@@ -13,6 +13,7 @@ export async function api_get(url){
         return response
     } catch(error) {
         console.error(error.message)
+        throw(error)
     }
     
 }
@@ -23,5 +24,6 @@ export async function api_call(url, methodType, body=""){
         return response
     } catch(error) {
         console.error(error.message)
+        throw(error)
     }
 }

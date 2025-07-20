@@ -21,7 +21,7 @@ export default {
     return {
       currentPath: window.location.hash,
       routes: routes,
-      loggedin: false,
+      loggedin: false
     }
   },
   computed: {
@@ -38,6 +38,12 @@ export default {
       }
     }
   },
+  methods: {
+    logout(){
+      document.cookie = "token=;Path=/"
+      this.loggedin = false
+    }
+  },
   mounted() {
     window.addEventListener('hashchange', () => {
       this.currentPath = window.location.hash
@@ -48,7 +54,7 @@ export default {
 </script>
 
 <template>
-  <sidebar v-if="loggedin" @logout="loggedin=false" :routes></sidebar>
+  <sidebar v-if="loggedin" @logout="logout" :routes></sidebar>
   <div id="content" class="content-container">
     <div v-if="loggedin" id="header" class="top-navigation">
       <h5 class="text title-text">{{ title }}</h5>

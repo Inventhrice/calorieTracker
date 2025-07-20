@@ -8,14 +8,18 @@ export default {
     },
     methods: {
         async fetchData() {
-            let response = await api_get("/api/weight/" + this.start)
-            if (response.ok) {
-                let data = await response.json()
-                this.weightRecorded = data.kg
-            } else{
+            try {
+                let response = await api_get("/api/weight/" + this.start)
+                if (response.ok) {
+                    let data = await response.json()
+                    this.weightRecorded = data.kg
+                } else{
+                    this.weightRecorded = 0    
+                }
+            } catch (error) {
+                console.error(error)
                 this.weightRecorded = 0
             }
-
         },
         async editWeight() {
             let response = await api_call("/api/weight/", "POST", JSON.stringify({ daterecord: this.start, kg: this.weightRecorded }))
@@ -29,7 +33,6 @@ export default {
     },
     created() {
         this.$watch('start', () => {
-            console.error("what")
             this.fetchData()
         })
     }
