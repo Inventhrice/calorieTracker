@@ -1,5 +1,5 @@
 <script>
-import { api_get } from '../../js/auth'
+import { api_call, api_get } from '../../js/auth'
 export default {
     data() {
         return {
@@ -12,15 +12,13 @@ export default {
             if (response.ok) {
                 let data = await response.json()
                 this.weightRecorded = data.kg
+            } else{
+                this.weightRecorded = 0
             }
 
         },
         async editWeight() {
-            let response = await api_get("/api/weight/", {
-                method: "POST", body:
-                    JSON.stringify({ daterecord: this.start, kg: this.weightRecorded })
-            })
-
+            let response = await api_call("/api/weight/", "POST", JSON.stringify({ daterecord: this.start, kg: this.weightRecorded }))
             if (!response.ok) {
                 console.log(response.Error)
             }
@@ -31,6 +29,7 @@ export default {
     },
     created() {
         this.$watch('start', () => {
+            console.error("what")
             this.fetchData()
         })
     }
