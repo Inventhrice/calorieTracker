@@ -6,6 +6,7 @@ import foodDB from './components/foodDB/foodDB.vue';
 import settings from './components/settings.vue'
 import Sidebar from './components/sidebar.vue';
 import login from './components/login.vue';
+import { api_get } from './js/auth';
 
 
 const routes = {
@@ -42,12 +43,28 @@ export default {
     logout(){
       document.cookie = "token=;Path=/"
       this.loggedin = false
+    },
+    async checkLoggedin(){
+      if(document.cookie["token"] != ""){
+        let response = await api_get("/api/profile")
+        if(response.ok){
+          this.loggedin = response.status == 200
+        } else{
+          this.loggedin = false
+        }
+        
+      } else {
+        this.loggedin = false
+      }
+      
     }
   },
   mounted() {
     window.addEventListener('hashchange', () => {
       this.currentPath = window.location.hash
+      this.checkLoggedin()
     })
+    this.checkLoggedin()
   }
 }
 
