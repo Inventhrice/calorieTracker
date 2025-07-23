@@ -23,10 +23,15 @@ services:
         depends_on: [name of mariadb service]
 ```
 
-## Build from source
+## Building the application
+### From the Dockerfike
+Just execute `docker build .` in the /app directory.
+
+### From Source
+**Requirements:** npm and golang must be installed on the system.
 1. Clone the repository
-2. Using the tailwind CLI, run `tailwindcss -i /app/public/css/input.css -o /app/public/css/index.css`
-3. In the /app/router directory, run `go build .`
+2. In the /app/frontend_src directory, run `npm install`, then run `npm run build`. This step will automatically make a directory called public.
+3. In the /app/router directory, run `go run .`
 
 ## Screenshots
 <img width="1920" height="878" alt="image" src="https://github.com/user-attachments/assets/9c65e260-645c-443f-ba5d-ec9b91c447ed" />
