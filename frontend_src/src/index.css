@@ -38,15 +38,15 @@
   }
 
   .text {
-    @apply text-gray-300 opacity-80;
+    @apply text-blue-500 dark:text-gray-300 opacity-80;
   }
   
   .title-text {
-    @apply text-xl text-gray-300 tracking-wider font-semibold opacity-80 ml-6 my-auto transition duration-300 ease-in-out;
+    @apply text-xl tracking-wider font-semibold ml-6 my-auto transition duration-300 ease-in-out;
   }
 
   .module-background {
-    @apply bg-gray-900/50;
+    @apply bg-blue-900/50 text-gray-300  dark:bg-gray-900/50;
   }
 
   th {
@@ -78,18 +78,18 @@
   }
 
   .dialog {
-    @apply bg-gray-300 dark:dark:bg-black opacity-100 rounded-xl  max-h-screen
+    @apply bg-white dark:bg-black opacity-100 rounded-xl  max-h-screen
     fixed top-1/2 left-1/2 -translate-1/2 z-auto overflow-y-auto
     px-5 py-2 gap-2;
 
   }
 
   label{
-    @apply pr-2 text-gray-300 font-semibold;
+    @apply pr-2 font-semibold;
   }
 
   .dialog-input {
-    @apply bg-gray-300 dark:bg-gray-700 rounded pl-1 py-1;
+    @apply bg-gray-400/50 dark:bg-gray-700 rounded pl-1 py-1;
   }
 
   .graph {

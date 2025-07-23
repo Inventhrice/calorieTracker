@@ -1,6 +1,2 @@
 **/.env
-/public/css/index.css
-runtailwind.bat
-calorieTrackingscript.sql
-**/vue.esm-browser*.js
-test.http
+public

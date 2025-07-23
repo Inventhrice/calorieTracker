@@ -1,18 +1,23 @@
-FROM debian:latest
+FROM golang:1.24-alpine AS router
 
-WORKDIR /app
-
-RUN apt update && apt-get install -y wget ca-certificates
-
-RUN wget https://go.dev/dl/go1.24.0.linux-amd64.tar.gz && tar -C /usr/local -xzf go1.24.0.linux-amd64.tar.gz && rm ./go1.24.0.linux-amd64.tar.gz
-ENV PATH="/usr/local/go/bin:${PATH}"
-
+WORKDIR /app/router
 COPY router /app/router
-COPY public /app/public
+RUN go mod download 
+RUN GOOS=linux go build -o ./server .
 
-RUN cd './router/' && go mod download && go build -o server .
 
+FROM node:latest AS frontend
+WORKDIR /app/src
+COPY frontend_src /app/src
+
+RUN npm install
+RUN npm run build
+
+
+FROM scratch
+WORKDIR /app
+COPY --from=router /app/router/server /app/router/server
+COPY --from=frontend /app/public /app/public
 EXPOSE 8080
-
-CMD ["./router/server"]
+CMD ["/app/router/server"]
 
