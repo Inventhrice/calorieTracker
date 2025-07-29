@@ -23,9 +23,9 @@ services:
         depends_on: [name of mariadb service]
 ```
 
-## Building the application
-### From the Dockerfike
-Just execute `docker build .` in the /app directory.
+## Building
+### From the Dockerfile
+Execute `docker build .` in the /app directory.
 
 ### From Source
 **Requirements:** npm and golang must be installed on the system.
@@ -33,11 +33,16 @@ Just execute `docker build .` in the /app directory.
 2. In the /app/frontend_src directory, run `npm install`, then run `npm run build`. This step will automatically make a directory called public.
 3. In the /app/router directory, run `go run .`
 
+## Development Environment
+### Frontend
+This does not come with docker instructions, as I recommend you use npm on your local machine. Please follow the relavent instructions under the "Building > From Source" section.
+
+### Backend
+Execute `docker compose -f docker-compose.dev.yml up -d calrouter`.
+
+### Complete
+Execute `docker compose -f docker-compose.dev.yml build calorietracker` to compile a complete image.
+
 ## Screenshots
 <img width="1920" height="878" alt="image" src="https://github.com/user-attachments/assets/9c65e260-645c-443f-ba5d-ec9b91c447ed" />
 <img width="1920" height="878" alt="image" src="https://github.com/user-attachments/assets/a83c6d96-abc9-45b4-b5db-417f46511da5" />
-
-
-
-
-

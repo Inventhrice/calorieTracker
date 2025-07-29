@@ -8,12 +8,17 @@ services:
           - ./mariadbData:/var/lib/mysql/
     ports:
         - "3307:3306"
-  calRouter:
-    container_name: calRouter
-    image: calorierouter:latest
+  calrouter:
+    container_name: cal_router
+    build:
+      context: .
+      target: router
+    command: "/app/router/server"
     ports:
-        - "8080:8080"
+      - "8080:8080"
     env_file: .env
+  calorietracker:
+    build: .
 networks:
   default:
     name: N_calorieTracker
