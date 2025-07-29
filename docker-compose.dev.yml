@@ -1,0 +1,19 @@
+services:
+  mariadb:
+    container_name: db
+    image: mariadb
+    environment:
+        MYSQL_ROOT_PASSWORD: "testdbpwd"
+    volumes: 
+          - ./mariadbData:/var/lib/mysql/
+    ports:
+        - "3307:3306"
+  calRouter:
+    container_name: calRouter
+    image: calorierouter:latest
+    ports:
+        - "8080:8080"
+    env_file: .env
+networks:
+  default:
+    name: N_calorieTracker
