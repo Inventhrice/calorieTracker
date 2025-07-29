@@ -89,41 +89,43 @@ export default {
                 <span>Add new food</span>
             </button>
         </div>
-        <table class="w-98/100 table-border table-auto text">
-            <thead class="module-background">
-                <tr>
-                    <th class="text-left pl-2">Name</th>
-                    <th>Calorie (g)</th>
-                    <th>Protein (g)</th>
-                    <th>Fat (g)</th>
-                    <th>Carb (g)</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="table-border" v-for="foodinfo in allFoods" :key="foodinfo.id">
-                    <td class="text-left pl-2">
-                        <a v-if=foodinfo.source.Valid :href=foodinfo.source.String
-                            class="font-semibold underline">{{ foodinfo.name }}</a>
-                        <span v-else>{{ foodinfo.name }}</span>
-                    </td>
-                    <td>{{ foodinfo.calperg }}</td>
-                    <td>{{ foodinfo.proteinperg }}</td>
-                    <td>{{ foodinfo.fatperg }}</td>
-                    <td>{{ foodinfo.carbperg }}</td>
-                    <td class="text-center py-1">
-                        <span class="p-1">
-                            <button class="btn" @click="showFoodDialog(foodinfo)"> <span class="iconify btn-icon"
-                                    data-icon="mdi-pencil"></span> </button>
-                        </span>
-                        <span class="p-1">
-                            <button class="btn btn-uhoh px-1" @click="showDeleteDialog(foodinfo)"> <span
-                                    class="iconify btn-icon" data-icon="mdi-trash-can"></span> </button>
-                        </span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="flex w-full">
+            <table class="w-98/100 table-border table-auto text">
+                <thead class="module-background">
+                    <tr>
+                        <th class="text-left pl-2">Name</th>
+                        <th>Calorie (g)</th>
+                        <th>Protein (g)</th>
+                        <th>Fat (g)</th>
+                        <th>Carb (g)</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-border" v-for="foodinfo in allFoods" :key="foodinfo.id">
+                        <td class="text-left pl-2">
+                            <a v-if=foodinfo.source.Valid :href=foodinfo.source.String
+                                class="font-semibold underline">{{ foodinfo.name }}</a>
+                            <span v-else>{{ foodinfo.name }}</span>
+                        </td>
+                        <td>{{ foodinfo.calperg }}</td>
+                        <td>{{ foodinfo.proteinperg }}</td>
+                        <td>{{ foodinfo.fatperg }}</td>
+                        <td>{{ foodinfo.carbperg }}</td>
+                        <td class="text-center py-1">
+                            <span class="p-1">
+                                <button class="btn" @click="showFoodDialog(foodinfo)"> <span class="iconify btn-icon"
+                                        data-icon="mdi-pencil"></span> </button>
+                            </span>
+                            <span class="p-1">
+                                <button class="btn btn-uhoh px-1" @click="showDeleteDialog(foodinfo)"> <span
+                                        class="iconify btn-icon" data-icon="mdi-trash-can"></span> </button>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <food-dialog v-if=showDialog @close-dialog="this.showDialog = false" :selected
         @confirm-dialog="editFood"></food-dialog>

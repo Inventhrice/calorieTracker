@@ -121,7 +121,9 @@ export default {
                 </button>
             </span>
         </div>
-        <tabled-entries @show-dialog="showEntriesDialogFn" :goalsinfo :entries></tabled-entries>
+        <div class="flex w-full">
+            <tabled-entries @show-dialog="showEntriesDialogFn" :goalsinfo :entries></tabled-entries>
+        </div>
     </div>
     <entries-dialog v-if="showEntriesDialog" @close-dialog="this.showEntriesDialog = false" :selected
         @confirm-dialog="editEntry" @delete-dialog="deleteEntry"></entries-dialog>
