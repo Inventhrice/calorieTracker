@@ -46,6 +46,7 @@ func InitDB() error {
 }
 
 func runMigrations() error {
+	fmt.Println("Running migrations...")
 	var migrationVersion string
 	if files, err := os.ReadDir(migrationsDir); err != nil {
 		return err
@@ -53,7 +54,8 @@ func runMigrations() error {
 		slices.SortFunc(files, func(a, b fs.DirEntry) int {
 			return strings.Compare(a.Name(), b.Name())
 		})
-		if err := Database.Get(&migrationVersion, "SELECT value FROM migrations WHERE key=?", "migrations"); err != nil {
+		if err := Database.Get(&migrationVersion, "SELECT value FROM metadata WHERE `key`=?", "migrations"); err != nil {
+			fmt.Println("No value found in metadata table, running the inital migration.")
 			if err := executeMigrationScript(files[0].Name()); err != nil {
 				return err
 			}
@@ -63,8 +65,12 @@ func runMigrations() error {
 			return strings.Contains(a.Name(), migrationVersion)
 		})
 		for i := index + 1; i < len(files); i++ {
-			return executeMigrationScript(files[i].Name())
+			fmt.Println("Running migration " + files[i].Name())
+			if err := executeMigrationScript(files[i].Name()); err != nil {
+				return err
+			}
 		}
+		fmt.Println("Migrations complete with no errors!")
 		return nil
 	}
 }
