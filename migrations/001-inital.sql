@@ -6,6 +6,31 @@ DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `weightTrack`;
 DROP TABLE IF EXISTS `metadata`;
 
+CREATE TABLE `users` (
+  `id` uuid NOT NULL,
+  `firstname` varchar(300) DEFAULT NULL,
+  `lastname` varchar(300) DEFAULT NULL,
+  `pronouns` varchar(50) DEFAULT NULL,
+  `email` varchar(200) DEFAULT NULL,
+  `password` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `food_info` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `calPerG` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `proteinPerG` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `fatPerG` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `carbPerG` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `notes` varchar(3000) NOT NULL,
+  `source` varchar(3000) NOT NULL,
+  `userid` uuid DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `userid` (`userid`),
+  CONSTRAINT `food_info_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
 CREATE TABLE `entries` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `dateRecord` date NOT NULL,
@@ -23,21 +48,6 @@ CREATE TABLE `entries` (
   PRIMARY KEY (`ID`),
   KEY `foodID` (`foodID`),
   CONSTRAINT `entries_ibfk_1` FOREIGN KEY (`foodID`) REFERENCES `food_info` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
-
-CREATE TABLE `food_info` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `calPerG` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `proteinPerG` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `fatPerG` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `carbPerG` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `notes` varchar(3000) NOT NULL,
-  `source` varchar(3000) NOT NULL,
-  `userid` uuid DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `userid` (`userid`),
-  CONSTRAINT `food_info_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 CREATE TABLE `goals` (
@@ -59,16 +69,6 @@ CREATE TABLE `settings` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-CREATE TABLE `users` (
-  `id` uuid NOT NULL,
-  `firstname` varchar(300) DEFAULT NULL,
-  `lastname` varchar(300) DEFAULT NULL,
-  `pronouns` varchar(50) DEFAULT NULL,
-  `email` varchar(200) DEFAULT NULL,
-  `password` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 CREATE TABLE `weightTrack` (
   `dateRecord` date NOT NULL,
   `kg` decimal(10,2) NOT NULL DEFAULT 0.00,
@@ -79,9 +79,9 @@ CREATE TABLE `weightTrack` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 CREATE TABLE IF NOT EXISTS `metadata` (
-  `key` VARCHAR(200),
+  `key` VARCHAR(200) NOT NULL,
   `value` VARCHAR(2000),
-  PRIMARY KEY(`key`)
+  PRIMARY KEY (`key`)
 );
 
-INSERT INTO `metadata` ("key", "value") VALUES ("migrations", "1");
+INSERT INTO metadata (`key`, value) VALUES ('migrations', '1');

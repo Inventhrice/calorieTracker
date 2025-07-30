@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"database/sql"
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -10,6 +10,8 @@ import (
 
 	"github.com/jmoiron/sqlx"
 )
+
+const migrationsDir = "/app/migrations/"
 
 var (
 	Database *sqlx.DB
@@ -45,40 +47,41 @@ func InitDB() error {
 
 func runMigrations() error {
 	var migrationVersion string
-	migrationsDir := "/app/migrations/"
 	if files, err := os.ReadDir(migrationsDir); err != nil {
 		return err
 	} else {
 		slices.SortFunc(files, func(a, b fs.DirEntry) int {
 			return strings.Compare(a.Name(), b.Name())
 		})
-		if err := Database.Get(&migrationVersion, "SELECT value FROM migrations WHERE key=\"migrations\""); err != nil {
-			if err == sql.ErrNoRows {
-				return executeMigrationScript(files[0].Name())
-			} else {
+		if err := Database.Get(&migrationVersion, "SELECT value FROM migrations WHERE key=?", "migrations"); err != nil {
+			if err := executeMigrationScript(files[0].Name()); err != nil {
 				return err
 			}
-
-		} else {
-			index := slices.IndexFunc(files, func(a fs.DirEntry) bool {
-				return strings.Contains(a.Name(), migrationVersion)
-			})
-			for i := index + 1; i < len(files); i++ {
-				return executeMigrationScript(files[i].Name())
-			}
-			return nil
+			migrationVersion = "1"
 		}
+		index := slices.IndexFunc(files, func(a fs.DirEntry) bool {
+			return strings.Contains(a.Name(), migrationVersion)
+		})
+		for i := index + 1; i < len(files); i++ {
+			return executeMigrationScript(files[i].Name())
+		}
+		return nil
 	}
 }
 
 func executeMigrationScript(filename string) error {
-	if data, err := os.ReadFile(filename); err != nil {
+	if data, err := os.ReadFile(migrationsDir + filename); err != nil {
 		return err
 	} else {
 		tx, _ := Database.Begin()
-		if _, err := tx.Exec(string(data)); err != nil {
-			tx.Rollback()
-			return err
+		for _, cmd := range strings.Split(string(data), ";") {
+			if cmd != "" {
+				if _, err := tx.Exec(cmd); err != nil {
+					tx.Rollback()
+					return errors.New("Query " + cmd + " failed with error: " + err.Error())
+				}
+			}
+
 		}
 		tx.Commit()
 		return nil

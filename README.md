@@ -38,8 +38,11 @@ services:
             - mariadb
 ```
 3. Start the database container using `docker compose up -d mariadb`
-4. Create the inital database using the following command: 
-5. Start the application using `docker compose up -d calorierouter`
+4. Create the database, user, and permissions by running 
+```bash
+docker exec -it calorierouter_db bash -c "mariadb -e \"GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';\""
+```
+4. Start the application using `docker compose up -d calorierouter`
 
 ## Building
 ### From the Dockerfile

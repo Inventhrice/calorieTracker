@@ -9,3 +9,5 @@ CREATE VIEW `processed_entries` AS
 	if(`e`.`foodID` is null,`e`.`carbs`,`e`.`grams` * `fi`.`carbPerG`) AS `carbs`,
 	`e`.`notes` AS `notes`,`e`.`userid` AS `userid` from 
 	(`entries` `e` left join `food_info` `fi` on(`e`.`foodID` = `fi`.`ID`)) order by `e`.`dateRecord`;
+
+UPDATE metadata SET value="2" WHERE `key`="migrations";
