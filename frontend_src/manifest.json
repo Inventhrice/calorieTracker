@@ -3,9 +3,14 @@
     "start_url": "/",
     "icons": [
         {
-            "src": "/assets/icons/cookie-160x160.webp",
-            "sizes": "160x160",
-            "type": "image/webp"
+            "src": "/assets/icons/cookie-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/icons/cookie-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
         }
     ],
     "display": "standalone"
