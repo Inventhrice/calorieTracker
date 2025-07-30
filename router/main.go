@@ -15,6 +15,7 @@ func InitRouter() *gin.Engine {
 	router.GET("/api/settings", groups.RefreshSettings)
 	router.StaticFile("/", "/app/public/index.html")
 	router.StaticFile("/favicon.ico", "/app/public/favicon.ico")
+	router.StaticFile("/serviceworker.js", "/app/public/serviceworker.js")
 	router.StaticFS("/assets", http.Dir("/app/public/assets"))
 
 	router.POST("/login", groups.Login)

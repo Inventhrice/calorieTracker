@@ -7,7 +7,7 @@ createApp(App).mount('#app')
 const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
     try {
-      const registration = await navigator.serviceWorker.register("/assets/serviceworker.js", {
+      const registration = await navigator.serviceWorker.register("/serviceworker.js", {
         scope: "/",
       });
       if (registration.installing) {
