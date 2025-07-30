@@ -9,19 +9,37 @@ An application that helps you keep track of your calorie goals. Written with ❤
 This application requires a MariaDB instance, with a user and database created for this application. The user must have all permissions on the application's database.
 
 ### With Docker Compose
-1. Run the migrations script in /migrations
-2. Make a copy of .env.example to .env, and fill out the variables as needed.
-3. Refer to the docker compose file below.
+1. Make a copy of .env.example to .env, and fill out the variables as needed.
+2. Refer to the docker compose file below.
 ```yaml
 services:
+    mariadb:
+        container_name: calorierouter_db
+        image: lscr.io/linuxserver/mariadb
+        environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=EST
+        - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+        - MYSQL_DATABASE=${DB_DBNAME}
+        - MYSQL_USER=${DB_USER}
+        - MYSQL_PASSWORD=${DB_PASSWORD}
+        volumes:
+            - ./mariadb:/var/lib/mysql/
+        ports:
+            - "3307:3306"
     calorierouter:
         image: ghcr.io/Inventhrice/calorierouter:latest
         ports:
             - "8080:8080"
         env_file: .env
         restart: unless_stopped
-        depends_on: [name of mariadb service]
+        depends_on: 
+            - mariadb
 ```
+3. Start the database container using `docker compose up -d mariadb`
+4. Create the inital database using the following command: 
+5. Start the application using `docker compose up -d calorierouter`
 
 ## Building
 ### From the Dockerfile

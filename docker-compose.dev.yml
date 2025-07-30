@@ -1,9 +1,15 @@
 services:
   mariadb:
     container_name: db
-    image: mariadb
+    image: lscr.io/linuxserver/mariadb
     environment:
-        MYSQL_ROOT_PASSWORD: "testdbpwd"
+        - PUID=1000
+        - PGID=1000
+        - TZ=EST
+        - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+        - MYSQL_DATABASE=${DB_DBNAME}
+        - MYSQL_USER=${DB_USER}
+        - MYSQL_PASSWORD=${DB_PASSWORD}
     volumes: 
           - ./mariadbData:/var/lib/mysql/
     ports:

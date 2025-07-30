@@ -18,6 +18,7 @@ FROM scratch
 WORKDIR /app
 COPY --from=router /app/router/server /app/router/server
 COPY --from=frontend /app/public /app/public
+COPY migrations /app/migrations
 EXPOSE 8080
 CMD ["/app/router/server"]
 
