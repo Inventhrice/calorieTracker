@@ -58,6 +58,8 @@ Execute `docker build .` in the /app directory.
 ### Frontend
 This does not come with docker instructions, as I recommend you use npm on your local machine. Please follow the relavent instructions under the "Building > From Source" section.
 
+Make sure you modify the API_URL variable in /app/frontend_src/js/auth.js
+
 ### Backend
 Execute `docker compose -f docker-compose.dev.yml up -d calrouter`.
 
