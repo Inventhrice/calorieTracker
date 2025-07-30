@@ -11,7 +11,7 @@ CREATE TABLE `users` (
   `firstname` varchar(300) DEFAULT NULL,
   `lastname` varchar(300) DEFAULT NULL,
   `pronouns` varchar(50) DEFAULT NULL,
-  `email` varchar(200) DEFAULT NULL,
+  `username` varchar(200) DEFAULT NULL,
   `password` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
