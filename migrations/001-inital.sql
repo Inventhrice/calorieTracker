@@ -1,4 +1,11 @@
 DROP TABLE IF EXISTS `entries`;
+DROP TABLE IF EXISTS `food_info`;
+DROP TABLE IF EXISTS `goals`;
+DROP TABLE IF EXISTS `settings`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `weightTrack`;
+DROP TABLE IF EXISTS `metadata`;
+
 CREATE TABLE `entries` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `dateRecord` date NOT NULL,
@@ -18,8 +25,6 @@ CREATE TABLE `entries` (
   CONSTRAINT `entries_ibfk_1` FOREIGN KEY (`foodID`) REFERENCES `food_info` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-
-DROP TABLE IF EXISTS `food_info`;
 CREATE TABLE `food_info` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
@@ -35,8 +40,6 @@ CREATE TABLE `food_info` (
   CONSTRAINT `food_info_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-
-DROP TABLE IF EXISTS `goals`;
 CREATE TABLE `goals` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `dateRecord` date NOT NULL,
@@ -48,8 +51,6 @@ CREATE TABLE `goals` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-
-DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `keyName` varchar(30) DEFAULT NULL,
@@ -58,8 +59,6 @@ CREATE TABLE `settings` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` uuid NOT NULL,
   `firstname` varchar(300) DEFAULT NULL,
@@ -70,8 +69,6 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
-DROP TABLE IF EXISTS `weightTrack`;
 CREATE TABLE `weightTrack` (
   `dateRecord` date NOT NULL,
   `kg` decimal(10,2) NOT NULL DEFAULT 0.00,
@@ -81,14 +78,10 @@ CREATE TABLE `weightTrack` (
   UNIQUE KEY `weightTrack_unique` (`dateRecord`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-DROP VIEW IF EXISTS `processed_entries`;
+CREATE TABLE IF NOT EXISTS `metadata` (
+  `key` VARCHAR(200),
+  `value` VARCHAR(2000),
+  PRIMARY KEY(`key`)
+);
 
-CREATE VIEW `processed_entries` AS 
-	select `e`.`ID` AS `ID`,`e`.`dateRecord` AS `dateRecord`,`e`.`meal` AS `meal`,
-	if(`e`.`foodID` is null,`e`.`foodname`,`fi`.`name`) AS `foodname`,`e`.`foodID` AS `foodID`,`e`.`grams` AS `grams`,
-	if(`e`.`foodID` is null,`e`.`cal`,`e`.`grams` * `fi`.`calPerG`) AS `cal`,
-	if(`e`.`foodID` is null,`e`.`protein`,`e`.`grams` * `fi`.`proteinPerG`) AS `protein`,
-	if(`e`.`foodID` is null,`e`.`fat`,`e`.`grams` * `fi`.`fatPerG`) AS `fat`,
-	if(`e`.`foodID` is null,`e`.`carbs`,`e`.`grams` * `fi`.`carbPerG`) AS `carbs`,
-	`e`.`notes` AS `notes`,`e`.`userid` AS `userid` from 
-	(`entries` `e` left join `food_info` `fi` on(`e`.`foodID` = `fi`.`ID`)) order by `e`.`dateRecord`;
+INSERT INTO `metadata` ("key", "value") VALUES ("migrations", "1");
