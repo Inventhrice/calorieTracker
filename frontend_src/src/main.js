@@ -1,13 +1,14 @@
 import { createApp } from 'vue'
 import './index.css'
 import App from './App.vue'
+const swURL = new URL('./js/serviceworker.js', import.meta.url).href
 
 createApp(App).mount('#app')
 
 const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
     try {
-      const registration = await navigator.serviceWorker.register("/serviceworker.js", {
+      const registration = await navigator.serviceWorker.register(swURL, {
         scope: "/",
       });
       if (registration.installing) {
