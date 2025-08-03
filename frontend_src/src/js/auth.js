@@ -27,3 +27,16 @@ export async function api_call(url, methodType, body=""){
         throw(error)
     }
 }
+
+export async function getMealsInfo(){
+    try{
+        let response = await api_get("/api/settings/all")
+        if(response.ok){
+            let data = await response.json()
+            return JSON.parse(data.data)
+        }
+    } catch(error){
+        console.error(error.message)
+        throw(error)
+    }
+}
