@@ -10,7 +10,6 @@ import { api_get } from './js/auth';
 
 
 const routes = {
-  "/": { link: "#/", icon: "view-dashboard", text: "Dashboard", component: dashboard },
   "/entries": { link: "#/entries", icon: "create", text: "Entries", component: entries },
   "/foodDB": { link: "#/foodDB", icon: "food", text: "Food Information", component: foodDB },
   "/settings": { link: "#/settings", icon: "settings", text: "Settings", component: settings }
