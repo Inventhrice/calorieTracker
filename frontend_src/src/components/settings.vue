@@ -8,19 +8,45 @@ export default {
             loginpwd:  {"Password": "", "Repeat Password": "" },
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
             userGoals: { "Weight": 0, "% Error": 0, "Multiplier": 0 },
-            mealGoals: { breakfast: 0, lunch: 0, dinner: 0, snacks: 0 },
             macroGoals: { calories: 0, protein: 0, fat: 0, carbs: 0 },
+            mealGoals: {},
             errorMessage: "",
             changepwd: false
         }
     },
     methods: {
+        async fetchPreferences() {
+            let response = await api_get("/api/goals")
+            if (response.ok) {
+                let userData = await response.json()
+                this.userGoals["Weight"] = userData.goalLbs
+                this.userGoals["Multiplier"] = userData.multiplier
+                this.userGoals["% Error"] = userData.acceptablePercent
+                for (let index in mealTimes){
+                    this.mealGoals[this.mealTimes[index]] = JSON.parse(userData.goalsPerMeal)[index]
+                }
+                
+            }
+        },
+        async fetchUserInfo() {
+            let response = await api_get("/api/profile")
+            if (response.ok){
+                let userinfo = await response.json()
+                this.loggedInUser["First Name"] = userinfo.firstname
+                this.loggedInUser["Last Name"] = userinfo.lastname
+                this.loggedInUser["Pronouns"] = userinfo.pronouns
+                this.loggedInUser["Username"] = userinfo.username
+            } else{
+                console.log("User info has an error in being fetched.")
+            }
+        },
         async fetchData() {
             let response = await api_get("/api/profile")
             if (response.ok) {
-                this.loggedInUser = await response.json()
+                await this.fetchPreferences()
+                await this.fetchUserInfo()
             } else {
-                window.location.href = "/app/login.html"
+                console.error("Not signed in.")
             }
         },
         async changePassword() {
@@ -77,6 +103,8 @@ export default {
                     <input type="text" class="dialog-input grow my-2" v-model="goals[key]">
                 </span>
             </div>
+
+            <span class="col-span-1"></span>
 
             <!-- TEMP -->
             <div class="flex flex-col">
