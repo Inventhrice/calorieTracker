@@ -23,10 +23,12 @@ func AuthenticateUser(username string, password string) (string, error) {
 		Password string `db:"password"`
 	}{"", ""}
 
+	// Get the hashed password from the database
 	if err := Database.Get(&storedPassword, "SELECT id, password FROM users WHERE username=?", username); err != nil {
 		return "", err
 	}
 
+	// Compare the Passwords
 	if match, err := argon2id.ComparePasswordAndHash(password, storedPassword.Password); err != nil || !match {
 		if !match {
 			return "", errors.New("Passwords do not match.")
@@ -34,10 +36,14 @@ func AuthenticateUser(username string, password string) (string, error) {
 		return "", err
 	}
 
-	RemoveActiveSession(storedPassword.UserID)
-	genToken, _ := generateToken()
-
-	activeSessions = append(activeSessions, ActiveToken{userID: storedPassword.UserID, Token: genToken})
+	// Checks if the user is already logged in, if so, returns the token already assigned. Else, generates and stores the token.
+	var genToken string
+	if found, index := findActiveSession(storedPassword.UserID); found {
+		genToken = activeSessions[index].Token
+	} else {
+		genToken, _ = generateToken()
+		activeSessions = append(activeSessions, ActiveToken{userID: storedPassword.UserID, Token: genToken})
+	}
 
 	return genToken, nil
 }
