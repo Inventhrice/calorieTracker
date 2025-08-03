@@ -1,6 +1,5 @@
 <script>
 import sidebar from './components/sidebar.vue';
-import dashboard from './components/dashboard.vue';
 import entries from './components/entries/entries.vue';
 import foodDB from './components/foodDB/foodDB.vue';
 import settings from './components/settings.vue'
@@ -27,14 +26,14 @@ export default {
   computed: {
     currentView() {
       if (this.routes) {
-        return this.routes[this.currentPath.slice(1) || '/'].component
+        return this.routes[this.currentPath.slice(1) || '/entries'].component
       } else {
         return entries
       }
     },
     title() {
       if (this.routes) {
-        return this.routes[this.currentPath.slice(1) || '/'].text
+        return this.routes[this.currentPath.slice(1) || '/entries'].text
       }
     }
   },
