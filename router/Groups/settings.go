@@ -40,16 +40,15 @@ func RefreshSettings(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"data": Settings})
 }
 
-func goals(ctx *gin.Context){
+func goals(ctx *gin.Context) {
 	userID := helper_GetUserID(ctx)
 	var goals Goals
-	if err := middlewares.Database.Get(&goals, "SELECT goalLbs, multiplier, acceptablePercent, goalsPerMeal FROM goals WHERE userID=?",userID); err != nil {
+	if err := middlewares.Database.Get(&goals, "SELECT goalLbs, multiplier, acceptablePercent, goalsPerMeal FROM goals WHERE userID=?", userID); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, goals)
 }
-
 
 func initSettingsAPI(group *gin.RouterGroup) {
 	group.GET("/:setting") // if setting == all then return everything, else return value
@@ -59,5 +58,5 @@ func initSettingsAPI(group *gin.RouterGroup) {
 }
 
 func InitGoalsAPI(group *gin.RouterGroup) {
-	group.GET("/", goals)
+	group.GET("/", CheckAuthenticated, goals)
 }

@@ -10,33 +10,28 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func InitRouter() *gin.Engine {
-	router := gin.Default()
-	router.GET("/api/settings", groups.RefreshSettings)
+func initStaticRoutes(router *gin.Engine) {
 	router.StaticFile("/", "/app/public/index.html")
 	router.StaticFile("/favicon.ico", "/app/public/favicon.ico")
 	router.StaticFile("/serviceworker.js", "/app/public/serviceworker.js")
 	router.StaticFS("/assets", http.Dir("/app/public/assets"))
+}
+
+func InitRouter() *gin.Engine {
+	router := gin.Default()
+	router.GET("/api/settings", groups.RefreshSettings)
+	initStaticRoutes(router)
 
 	router.POST("/login", groups.Login)
 	router.POST("/logout", groups.CheckAuthenticated, groups.Logout)
 
 	authorizedRoutes := router.Group("/api", groups.CheckAuthenticated)
 
-	foodDBAPI := authorizedRoutes.Group("/foodDB")
-	groups.InitFoodDBApi(foodDBAPI)
-
-	entriesAPI := authorizedRoutes.Group("/entries")
-	groups.InitEntriesApi(entriesAPI)
-
-	weightAPI := authorizedRoutes.Group("/weight")
-	groups.InitWeightAPI(weightAPI)
-
-	profileAPI := authorizedRoutes.Group("/profile")
-	groups.InitProfileAPI(profileAPI)
-
-	goalsAPI := authorizedRoutes.Group("/goals")
-	groups.InitGoalsAPI(goalsAPI)
+	groups.InitFoodDBApi(authorizedRoutes.Group("/foodDB"))
+	groups.InitEntriesApi(authorizedRoutes.Group("/entries"))
+	groups.InitWeightAPI(authorizedRoutes.Group("/weight"))
+	groups.InitProfileAPI(authorizedRoutes.Group("/profile"))
+	groups.InitGoalsAPI(authorizedRoutes.Group("/goals"))
 
 	return router
 }
