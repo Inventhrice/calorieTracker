@@ -8,11 +8,11 @@ DROP TABLE IF EXISTS `metadata`;
 
 CREATE TABLE `users` (
   `id` uuid NOT NULL,
-  `firstname` varchar(300) DEFAULT NULL,
-  `lastname` varchar(300) DEFAULT NULL,
-  `pronouns` varchar(50) DEFAULT NULL,
-  `username` varchar(200) DEFAULT NULL,
-  `password` varchar(200) DEFAULT NULL,
+  `firstname` varchar(300) DEFAULT "''" NOT NULL,
+  `lastname` varchar(300) DEFAULT  "''" NOT NULL,
+  `pronouns` varchar(50) DEFAULT   "''" NOT NULL,
+  `username` varchar(200) DEFAULT  "''" NOT NULL,
+  `password` varchar(200) DEFAULT  "''" NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
