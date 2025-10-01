@@ -10,7 +10,7 @@ export default {
             userGoals: { "Weight": 84.5, "% Error": 15, "Multiplier": 10 },
             macroGoals: { "Total Calories": 1900, "Protein": 0, "Fat": 0, "Carbs": 0 },
             mealGoals: { "Breakfast": 0, "Lunch": 0, "Dinner": 0, "Snacks": 0 },
-            errorMessage: "",
+            errMsg: {},
             changepwd: false
         }
     },
@@ -19,10 +19,10 @@ export default {
             let response = await api_get("/api/goals")
             if (response.ok) {
                 let userData = await response.json()
-                this.userGoals["Weight"] = userData.goalLbs / 2.2
+                this.userGoals["WeightLBS"] = userData.goalLbs
                 this.userGoals["Multiplier"] = userData.multiplier
                 this.userGoals["% Error"] = userData.acceptablePercent * 100
-                for (let index in mealTimes) {
+                for (let index in this.mealTimes) {
                     this.mealGoals[this.mealTimes[index]] = JSON.parse(userData.goalsPerMeal)[index]
                 }
                 this.macroGoals["Total Calories"] = this.userGoals["Weight"] * this.userGoals["Multiplier"]
@@ -61,19 +61,47 @@ export default {
                     console.log(msg)
                 }
             } else {
-                this.errorMessage = "Passwords do not match."
+                this.errMsg['Password'] = "Passwords do not match."
             }
         }
     },
     created() {
         this.fetchData()
+    },
+    computed: {
+        calErrorMargin:{
+            get(){
+                return this.userGoals['% Error']*this.totalCals/100
+            }
+        },
+        totalCals: {
+            get(){
+                return this.userGoals["WeightLBS"]*this.userGoals['Multiplier']
+            }
+        },
+        targetWeight: {
+            get(){
+                return (this.userGoals["WeightLBS"]/2.2).toFixed(2)
+            },
+            set(newVal){
+                this.userGoals["WeightLBS"] = (newVal * 2.2).toFixed(2)
+            }
+        },
+        mealTimesArray: {
+            get(){
+                return this.mealTimes
+            },
+            set(newVal){
+                this.mealTimes = newVal.trim().split(',')
+            }
+        }
     }
 }
 </script>
 
 <template>
-    <div class="flex flex-row md:grid md:grid-cols-2 mt-2 ml-2 gap-y-3">
-        <div class="module-background rounded-xl w-fit h-fit flex flex-col">
+    <div class="content-list items-start space-y-3">
+        <div class="module-background containerDefaultsq flex flex-col">
             <span class="informationSpan" v-for="info, key in loggedInUser">
                 <label :for="key">{{ key }}:</label>
                 <input v-model="loggedInUser[key]" class="dialog-input grow my-3" type="text">
@@ -82,57 +110,63 @@ export default {
                 <button class="btn btn-uhoh" @click="updateInformation">Save information</button>
                 <button class="btn" @click="changepwd = !changepwd">Change Password</button>
             </span>
-
-            <div v-if="changepwd" class="">
+        </div>
+        <div v-if="changepwd" class="module-background containerDefaults flex flex-col">
                 <span class="informationSpan" v-for="data, key in loginpwd">
                     <label :for="key">{{ key }}: </label>
                     <input v-model="loginpwd[key]" class="dialog-input grow my-2" type="password">
                 </span>
                 <span class="m-2 flex justify-between">
-                    <span>{{ errorMessage }}</span>
+                    <span>{{ errMsg['Password'] }}</span>
                     <button class="btn btn-confirm" @click="changePassword">Save Password</button>
                 </span>
             </div>
+        <div class="module-background containerDefaults flex flex-col">
+            <span class="text-2xl font-bold pb-3">GOALS</span>
+            <span>
+                <label>Target Weight (kg): </label>
+                <input type="number" class="w-[4em]" v-model="targetWeight"> | 
+                <span class="opacity-50"><input type="number" class="remove-spinner w-[2.5em]" readonly :value="this.userGoals['WeightLBS']"> lbs</span>
+            </span>
+            <span>
+                <label>Multiplier:</label>
+                <input type="number" class="w-[4em]" v-model="this.userGoals['Multiplier']"> |
+                <span class="pr-2 opacity-50"><input type="number" class="remove-spinner w-[2.5em]" readonly :value="this.totalCals"> calories</span> 
+            </span>
+            <span>
+                <label>% Error</label>
+                <input type="number" class="w-[4em]" v-model="this.userGoals['% Error']">
+                <span class="px-2 opacity-50"><input type="number" class="remove-spinner w-[2.5em]" readonly :value="this.calErrorMargin">cals</span>
+            </span>
         </div>
-        <div class="module-background rounded-xl justify-self-center grid grid-cols-2 gap-y-3">
-            <span class="text-xl py-2 text-center">Goals Information</span>
-            <span class="text-xl py-2 text-center">Computed Values</span>
-            
-
-            <div class="flex flex-col">
-                <span v-for="goals, key in userGoals" :key class="informationSpan">
-                    <label for="key"> {{ key }}: </label>
-                    <input type="text" class="dialog-input grow my-2" v-model="goals[key]">
+        <div class="module-background containerDefaults grid grid-cols-2 gap-3">
+            <div class="flex flex-col" v-for="(meal, mealName) in this.mealGoals" :key="mealName">
+                <label>{{ mealName }}</label>
+                <span>
+                    <label>% Allotted</label>
+                    <input type="number" class="w-[4em]" v-model="this.mealGoals[mealName]"> |
+                    <label>Error: </label>
+                </span>
+                <span class="grid grid-cols-2 gap-1 m-1">
+                    <span>
+                        Calories:
+                        <span class="opacity-50">{{meal*this.macroGoals['Total Calories']}} cal</span>
+                    </span>
+                    <span>
+                        Fat:
+                        <span class="opacity-50">{{meal*this.macroGoals['Fat']}} g</span>
+                    </span>
+                    
+                    <span>
+                        Carbs:
+                        <span class="opacity-50">{{meal*this.macroGoals['Carbs']}} g</span>
+                    </span>
+                    <span>
+                        Protein:
+                        <span class="opacity-50">{{meal*this.macroGoals['Protein']}} g</span>
+                    </span>
                 </span>
             </div>
-
-            <span class="col-span-1"></span>
-
-            <!-- TEMP -->
-            <div class="flex flex-col">
-                <span v-for="goals, key in mealGoals" :key class="informationSpan">
-                    <label for="key"> {{ key }} (%):</label>
-                    <input type="text" class="dialog-input grow my-2" v-model="goals[key]">
-                </span>
-            </div>
-
-            <span class="col-span-1"></span>
-
-            <div class="flex flex-col">
-                <span v-for="goals, key in macroGoals" :key class="informationSpan">
-                    <label for="key"> {{ key }}*: </label>
-                    <input type="text" class="dialog-input grow my-2" v-model="goals[key]">
-                </span>
-            </div>
-
-            <span class="col-span-1"></span>
-
-            <span class="col-span-2 px-2">Total Calories Goal is calculated using your goal weight in lbs, and
-                multiplying it with the Multiplier</span>
-            <span class="col-span-2 px-2">Protein Goal is calculated by grams/lb of body weight</span>
-            <span class="col-span-2 px-2">Fat Goal is calculated by </span>
-            <span class="col-span-2 px-2">Carbs Goal is calculated by whatever remains</span>
-
         </div>
     </div>
 </template>
@@ -142,5 +176,9 @@ export default {
 
 .informationSpan {
     @apply flex mx-2 place-items-center;
+}
+
+.containerDefaults{
+    @apply rounded-xl w-fit h-fit p-2;
 }
 </style>
