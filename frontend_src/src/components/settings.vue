@@ -1,6 +1,8 @@
 <script>
 import { api_call, api_get } from "../js/auth.js"
+import errPopup from "./errPopup.vue"
 export default {
+    components: {errPopup},
     data() {
         return {
             title: "Settings",
@@ -8,7 +10,7 @@ export default {
             loginpwd: { "Password": "", "Repeat Password": "" },
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
             userGoals: { "Weight": 84.5, "% Error": 15, "Multiplier": 10 },
-            macroGoals: { "Total Calories": 1900, "Protein": 0, "Fat": 0, "Carbs": 0 },
+            macroGoals: { "Calories": 1900, "Protein": 0, "Fat": 0, "Carbs": 0 },
             mealGoals: { "Breakfast": 0, "Lunch": 0, "Dinner": 0, "Snacks": 0 },
             errMsg: {},
             changepwd: false
@@ -23,9 +25,8 @@ export default {
                 this.userGoals["Multiplier"] = userData.multiplier
                 this.userGoals["% Error"] = userData.acceptablePercent * 100
                 for (let index in this.mealTimes) {
-                    this.mealGoals[this.mealTimes[index]] = JSON.parse(userData.goalsPerMeal)[index]
+                    this.mealGoals[this.mealTimes[index]] = JSON.parse(userData.goalsPerMeal)[index] * 100
                 }
-                this.macroGoals["Total Calories"] = this.userGoals["Weight"] * this.userGoals["Multiplier"]
             }
         },
         async fetchUserInfo() {
@@ -71,12 +72,14 @@ export default {
     computed: {
         calErrorMargin:{
             get(){
-                return this.userGoals['% Error']*this.totalCals/100
+                return this.userGoals['% Error']*this.totalMacros["Calories"]/100
             }
         },
-        totalCals: {
+        totalMacros: {
             get(){
-                return this.userGoals["WeightLBS"]*this.userGoals['Multiplier']
+                let tMacros = {"Calories": 0, "Protein": 0, "Fat": 0, "Carbs": 0 }
+                tMacros["Calories"] = this.userGoals["WeightLBS"]*this.userGoals['Multiplier']
+                return tMacros
             }
         },
         targetWeight: {
@@ -87,12 +90,13 @@ export default {
                 this.userGoals["WeightLBS"] = (newVal * 2.2).toFixed(2)
             }
         },
-        mealTimesArray: {
+        mealsAllottedAddsUp: {
             get(){
-                return this.mealTimes
-            },
-            set(newVal){
-                this.mealTimes = newVal.trim().split(',')
+                let add = 0
+                for(let meal in this.mealGoals){
+                    add += this.mealGoals[meal]
+                }
+                return add == 100
             }
         }
     }
@@ -121,49 +125,43 @@ export default {
                     <button class="btn btn-confirm" @click="changePassword">Save Password</button>
                 </span>
             </div>
-        <div class="module-background containerDefaults flex flex-col">
+        <div class="module-background containerDefaults grid grid-cols-2">
             <span class="text-2xl font-bold pb-3">GOALS</span>
+            <span></span>
             <span>
                 <label>Target Weight (kg): </label>
-                <input type="number" class="w-[4em]" v-model="targetWeight"> | 
-                <span class="opacity-50"><input type="number" class="remove-spinner w-[2.5em]" readonly :value="this.userGoals['WeightLBS']"> lbs</span>
+                <input type="number" class="dialog-input w-[5em]" v-model="targetWeight">
             </span>
+            
+            <span>in Lbs: <span class="opacity-50">{{ this.userGoals['WeightLBS'] }} lbs</span></span>
+            
             <span>
                 <label>Multiplier:</label>
-                <input type="number" class="w-[4em]" v-model="this.userGoals['Multiplier']"> |
-                <span class="pr-2 opacity-50"><input type="number" class="remove-spinner w-[2.5em]" readonly :value="this.totalCals"> calories</span> 
+                <input type="number" class="dialog-input w-[4em]" v-model="this.userGoals['Multiplier']">
             </span>
+            <span>Total Calories: <span class="opacity-50"> {{ this.totalMacros["Calories"] }} calories</span></span>
             <span>
                 <label>% Error</label>
-                <input type="number" class="w-[4em]" v-model="this.userGoals['% Error']">
-                <span class="px-2 opacity-50"><input type="number" class="remove-spinner w-[2.5em]" readonly :value="this.calErrorMargin">cals</span>
+                <input type="number" class="dialog-input w-[4em]" v-model="this.userGoals['% Error']">
             </span>
-        </div>
-        <div class="module-background containerDefaults grid grid-cols-2 gap-3">
+            <span>Margin of Error: <span class="opacity-50"> {{ this.calErrorMargin }} cals</span></span>
+
+            <span class="col-span-full py-5"></span>
+
+            <div class="col-span-full flex flex-row items-center" v-if="!this.mealsAllottedAddsUp">
+                <err-popup></err-popup> The allotted percent towards meals do not add up to 100%
+            </div>
             <div class="flex flex-col" v-for="(meal, mealName) in this.mealGoals" :key="mealName">
                 <label>{{ mealName }}</label>
                 <span>
-                    <label>% Allotted</label>
-                    <input type="number" class="w-[4em]" v-model="this.mealGoals[mealName]"> |
-                    <label>Error: </label>
+                    <label>% Allotted </label>
+                    <input type="number" class="dialog-input w-[4em]" v-model="this.mealGoals[mealName]"> |
+                    <label>Margin: {{ meal*this.calErrorMargin/100 }} cals </label>
                 </span>
                 <span class="grid grid-cols-2 gap-1 m-1">
-                    <span>
-                        Calories:
-                        <span class="opacity-50">{{meal*this.macroGoals['Total Calories']}} cal</span>
-                    </span>
-                    <span>
-                        Fat:
-                        <span class="opacity-50">{{meal*this.macroGoals['Fat']}} g</span>
-                    </span>
-                    
-                    <span>
-                        Carbs:
-                        <span class="opacity-50">{{meal*this.macroGoals['Carbs']}} g</span>
-                    </span>
-                    <span>
-                        Protein:
-                        <span class="opacity-50">{{meal*this.macroGoals['Protein']}} g</span>
+                    <span v-for="macro, macroName in this.totalMacros">
+                        <span>{{ macroName }}: </span>
+                        <span class="opacity-50">{{meal*macro/100}} {{ macroName == "Calories" ? 'cals' : 'g' }} </span>
                     </span>
                 </span>
             </div>
