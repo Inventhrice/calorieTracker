@@ -98,7 +98,7 @@ export default {
                 <th>Meal</th>
                 <th>Food</th>
                 <th>Quantity</th>
-                <th>Calorie (g)</th>
+                <th>Calorie </th>
                 <th>Protein (g)</th>
                 <th>Fat (g)</th>
                 <th>Carb (g)</th>
