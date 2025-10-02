@@ -1,4 +1,5 @@
 <script>
+import { api_get } from "../../js/auth.js"
 import { getLocalDate } from "../../js/datefn.js"
 export default {
     data() {
@@ -33,7 +34,7 @@ export default {
     },
     methods: {
         async fetchAllFoods() {
-            const response = await fetch("/api/foodDB/all")
+            const response = await api_get("/api/foodDB/all")
             this.allFoods = await response.json()
         },
         updateValues(quantity) {
