@@ -36,9 +36,10 @@ export default {
         async fetchAllFoods() {
             const response = await api_get("/api/foodDB/all")
             this.allFoods = await response.json()
+            this.updateValues(this.selected.quantity)
         },
         updateValues(quantity) {
-            if (this.isFoodID) {
+            if (this.isFoodID && this.foodinfo) {
                 let foodinfo = this.foodinfo
                 this.selected.foodname = foodinfo.name
                 this.selected.cal = foodinfo.calperg * quantity
@@ -65,7 +66,6 @@ export default {
         })
 
         this.fetchAllFoods()
-
     }
 }
 </script>
