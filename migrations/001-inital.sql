@@ -1,12 +1,4 @@
-DROP TABLE IF EXISTS `entries`;
-DROP TABLE IF EXISTS `food_info`;
-DROP TABLE IF EXISTS `goals`;
-DROP TABLE IF EXISTS `settings`;
-DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `weightTrack`;
-DROP TABLE IF EXISTS `metadata`;
-
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` uuid NOT NULL,
   `firstname` varchar(300) DEFAULT "''" NOT NULL,
   `lastname` varchar(300) DEFAULT  "''" NOT NULL,
@@ -16,7 +8,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `food_info` (
+CREATE TABLE IF NOT EXISTS `food_info` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `calPerG` decimal(10,2) NOT NULL DEFAULT 0.00,
@@ -31,7 +23,7 @@ CREATE TABLE `food_info` (
   CONSTRAINT `food_info_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-CREATE TABLE `entries` (
+CREATE TABLE IF NOT EXISTS `entries` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `dateRecord` date NOT NULL,
   `meal` varchar(30) NOT NULL,
@@ -50,7 +42,7 @@ CREATE TABLE `entries` (
   CONSTRAINT `entries_ibfk_1` FOREIGN KEY (`foodID`) REFERENCES `food_info` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-CREATE TABLE `goals` (
+CREATE TABLE IF NOT EXISTS `goals` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `dateRecord` date NOT NULL,
   `goalLbs` decimal(10,2) DEFAULT NULL,
@@ -61,7 +53,7 @@ CREATE TABLE `goals` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-CREATE TABLE `settings` (
+CREATE TABLE IF NOT EXISTS `settings` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `keyName` varchar(30) DEFAULT NULL,
   `value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`value`)),
@@ -69,7 +61,7 @@ CREATE TABLE `settings` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-CREATE TABLE `weightTrack` (
+CREATE TABLE IF NOT EXISTS `weightTrack` (
   `dateRecord` date NOT NULL,
   `kg` decimal(10,2) NOT NULL DEFAULT 0.00,
   `lbs` decimal(10,2) GENERATED ALWAYS AS (`kg` * 2.2) VIRTUAL,
