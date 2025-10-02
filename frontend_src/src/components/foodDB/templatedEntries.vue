@@ -1,8 +1,6 @@
 <script>
 import { api_get } from '../../js/auth';
-import entriesDialog from '..entries/entries-dialog';
 export default {
-    components: {entriesDialog},
     data() {
         return {
             listTemplates: [
@@ -62,6 +60,4 @@ export default {
             <span> Quantity: {{ templates.quantity }}</span>
         </div>
     </div>
-    <entries-dialog v-if="showEntriesDialog" @close-dialog="this.showEntriesDialog = false" :selected
-        @confirm-dialog="editTemplate" @delete-dialog="deleteTemplate"></entries-dialog>
 </template>

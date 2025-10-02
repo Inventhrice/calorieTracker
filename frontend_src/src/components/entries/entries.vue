@@ -3,12 +3,12 @@ import entriesDialog from './entries-dialog.vue'
 import tabledEntries from './tabledEntries.vue'
 import entriesDatePicker from './entriesDatePicker.vue'
 import weightEntry from './weightEntry.vue'
-import templatedEntries from './templatedEntries.vue'
+import listTemplates from './listTemplates.vue'
 import { getLocalDate } from '../../js/datefn.js'
 import { api_call, api_get } from '../../js/auth.js'
 
 export default {
-    components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog, templatedEntries },
+    components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog, listTemplates },
     data() {
         return {
             title: "Entries", // Title of this page
@@ -34,6 +34,11 @@ export default {
                 if (found.foodID === undefined) this.selected.foodID = undefined
                 this.selected.daterecord = new Date(this.selected.daterecord)
             }
+            this.showEntriesDialog = true
+        },
+        makeTemplateEntry(selected){
+            selected.daterecord = new Date(getLocalDate(undefined) + "T00:00:00")
+            this.selected = selected
             this.showEntriesDialog = true
         },
         async editEntry() {
@@ -123,7 +128,7 @@ export default {
             </span>
         </div>
         <div class="flex w-full">
-            <templated-entries></templated-entries>
+            <list-templates @show-dialog="makeTemplateEntry"></list-templates>
         </div>
         <div class="flex w-full">
             <tabled-entries @show-dialog="showEntriesDialogFn" :goalsinfo :entries></tabled-entries>
