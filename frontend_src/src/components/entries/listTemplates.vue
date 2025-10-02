@@ -1,39 +1,13 @@
 <script>
-import { api_get } from '../../js/auth';
+import { getAllTemplates } from "../foodDB/templatedEntries.vue"
 export default {
-    data() {
-        return {
-            listTemplates: [
-                {name: "Tea (Breakfast)", foodID: 2, foodName: "Tea", quantity: 1, meal: "Breakfast"},
-                {name: "Tea (Dinner)", foodID: 2, foodName: "Tea", quantity: 1, meal: "Dinner"},
-                {name: "Rice", foodID: 1, foodName: "Rice", quantity: 250, meal: "Lunch"},
-                {name: "Tea (Breakfast)", foodID: 2, foodName: "Tea", quantity: 1, meal: "Breakfast"},
-                {name: "Tea (Dinner)", foodID: 2, foodName: "Tea", quantity: 1, meal: "Dinner"},
-                {name: "Rice", foodID: 1, foodName: "Rice", quantity: 250, meal: "Lunch"},
-                {name: "Tea (Breakfast)", foodID: 2, foodName: "Tea", quantity: 1, meal: "Breakfast"},
-                {name: "Tea (Dinner)", foodID: 2, foodName: "Tea", quantity: 1, meal: "Dinner"},
-                {name: "Rice", foodID: 1, foodName: "Rice", quantity: 250, meal: "Lunch"},
-                {name: "Tea (Breakfast)", foodID: 2, foodName: "Tea", quantity: 1, meal: "Breakfast"},
-                {name: "Tea (Dinner)", foodID: 2, foodName: "Tea", quantity: 1, meal: "Dinner"},
-                {name: "Rice", foodID: 1, foodName: "Rice", quantity: 250, meal: "Lunch"}
-            ],
-            selected: {},
-            showEntriesDialog: false
+    computed: {
+        listTemplates:{
+            get(){
+                let temp = await getAllTemplates()
+                return temp
+            }
         }
-    },
-    methods: {
-        async fetchData() {
-
-        },
-        async editTemplate() {
-
-        },
-        async deleteTemplate(){
-
-        }
-    },
-    created() {
-        this.fetchData()
     }
 }
 

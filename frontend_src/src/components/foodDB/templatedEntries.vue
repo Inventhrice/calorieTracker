@@ -1,5 +1,16 @@
 <script>
 import { api_get } from '../../js/auth';
+
+export async function getAllTemplates(){
+    let response = await api_get("/api/templates")
+    if(response.ok){
+        let allTemplates = await response.json()
+        return allTemplates
+    } else{
+        return []
+    }
+}
+
 export default {
     data() {
         return {
@@ -23,18 +34,33 @@ export default {
     },
     methods: {
         async fetchData() {
-
+            this.listTemplates = await getAllTemplates()
         },
         async editTemplate() {
-
+            let response = await api_call("/api/template/" + this.selected.id, "PATCH", this.selected)
+            if(!response.ok){
+                console.error("Unable to edit the template.")
+            }
+            this.listTemplates[this.selected.id] = this.selected
         },
         async deleteTemplate(){
-
+            let response = await api_call("/api/template/" + this.selected.id, "DELETE")
+            if(!response.ok){
+                console.error("Unable to delete the template.")
+            }
+            this.listTemplates.splice(this.listTemplates.findIndex((el) => this.selected.id == el.id), 1)
+        },
+        async addTemplate(){
+            let response = await api_call("/api/template/", "POST", this.selected)
+            if(!response.ok){
+                console.error("Unable to create the template")
+            }
+            this.listTemplates.push(this.selected)
         },
         async showTemplate(index = undefined){
             if (index === undefined){
                 this.selected = {daterecord: new Date(getLocalDate(undefined) + "T00:00:00"), foodname: "", foodID: undefined,
-                    quantity: 0, cal: 0, protein: 0, fat: 0, carbs: 0, notes: ""}
+                    quantity: 0, cal: 0, protein: 0, fat: 0, carbs: 0, notes: "", meal: "Breakfast"}
             } else{
                 this.selected = this.listTemplates[index]
             }
