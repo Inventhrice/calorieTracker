@@ -9,7 +9,7 @@ export default {
             loggedInUser: { "First Name": "", "Last Name": "", "Pronouns": "", "Username": "" },
             loginpwd: { "Password": "", "Repeat Password": "" },
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
-            userGoals: { "Weight": 84.5, "% Error": 15, "Multiplier": 10 },
+            userGoals: { "Weight": 84.5, "% Error": 15, "Multiplier": 10, "ProteinGPerLb": 0.8, "FatGPerLb": 0.4},
             mealGoals: { "Breakfast": 0, "Lunch": 0, "Dinner": 0, "Snacks": 0 },
             errMsg: {},
             changepwd: false
@@ -98,8 +98,14 @@ export default {
         },
         totalMacros: {
             get() {
+                const FAT_CALPERGRAM = 9
+                const PROTEIN_CALPERGRAM = 4
+                const CARB_CALPERGRAM = 4
                 let tMacros = { "Calories": 0, "Protein": 0, "Fat": 0, "Carbs": 0 }
                 tMacros["Calories"] = this.weightLbs * this.userGoals['Multiplier']
+                tMacros["Protein"] = Math.round(this.weightLbs * this.userGoals["ProteinGPerLb"])
+                tMacros["Fat"] = Math.round(this.weightLbs * this.userGoals["FatGPerLb"])
+                tMacros["Carbs"] = (tMacros["Calories"] - ((tMacros["Fat"] * FAT_CALPERGRAM) + (tMacros["Protein"] * PROTEIN_CALPERGRAM)))/CARB_CALPERGRAM
                 return tMacros
             }
         },
@@ -168,6 +174,14 @@ export default {
                 <span>
                     Margin of Error:
                     <span class="opacity-50"> {{ this.calErrorMargin }} cals</span>
+                </span>
+                <span>
+                    Protein (g/lb body weight):
+                    <input type="number" class="dialog-input w-[4em]" v-model="this.userGoals['ProteinGPerLb']" />
+                </span>
+                <span>
+                    Fat (g/lb body weight):
+                    <input type="number" class="dialog-input w-[4em]" v-model="this.userGoals['FatGPerLb']" />
                 </span>
             </div>
 
