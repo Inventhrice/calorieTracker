@@ -11,17 +11,24 @@ services:
         - MYSQL_USER=${DB_USER}
         - MYSQL_PASSWORD=${DB_PASSWORD}
     volumes: 
-          - ./mariadbData:/var/lib/mysql/
+          - ./mariadbData:/config
     ports:
         - "3307:3306"
   caltracker:
-    container_name: cal_router
     image: calorietracker
     build:
       context: .
     command: "/app/router/server"
     ports:
       - "8080:8080"
+    env_file: .env
+  calrouter:
+    build:
+      context: .
+      target: router
+    ports:
+      - "8080:8080"
+    command: "/app/router/server"
     env_file: .env
 networks:
   default:
