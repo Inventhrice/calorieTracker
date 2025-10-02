@@ -3,11 +3,12 @@ import entriesDialog from './entries-dialog.vue'
 import tabledEntries from './tabledEntries.vue'
 import entriesDatePicker from './entriesDatePicker.vue'
 import weightEntry from './weightEntry.vue'
+import templatedEntries from './templatedEntries.vue'
 import { getLocalDate } from '../../js/datefn.js'
 import { api_call, api_get } from '../../js/auth.js'
 
 export default {
-    components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog },
+    components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog, templatedEntries },
     data() {
         return {
             title: "Entries", // Title of this page
@@ -120,6 +121,9 @@ export default {
                     <span>Add entry</span>
                 </button>
             </span>
+        </div>
+        <div class="flex w-full">
+            <templated-entries></templated-entries>
         </div>
         <div class="flex w-full">
             <tabled-entries @show-dialog="showEntriesDialogFn" :goalsinfo :entries></tabled-entries>
