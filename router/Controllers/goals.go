@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	models "example.com/m/v2/Models"
 	"example.com/m/v2/middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -18,31 +19,44 @@ type Goals struct {
 }
 
 func getGoal(ctx *gin.Context) {
-	userID := helper_GetUserID(ctx)
-	var goals Goals
-	if err := middlewares.Database.Get(&goals, "SELECT goalLbs, multiplier, acceptablePercent, goalsPerMeal FROM goals WHERE userID=?", userID); err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
-		return
+	var errmsg string
+	if userID, err := helper_GetUserID(ctx); err != nil {
+		errmsg = err.Error()
+	} else {
+		var goals Goals
+		if err := middlewares.Database.Get(&goals, "SELECT goalLbs, multiplier, acceptablePercent, goalsPerMeal FROM goals WHERE userID=?", userID); err != nil {
+			errmsg = err.Error()
+		} else {
+			ctx.JSON(http.StatusOK, goals)
+			return
+		}
 	}
-	ctx.JSON(http.StatusOK, goals)
+	Helper_ctx400(ctx, errmsg)
 }
 
 func addGoal(ctx *gin.Context) {
-	userID := helper_GetUserID(ctx)
-	var goals Goals
-	goals.UserID = userID
+	var errmsg string
+	if userID, err := helper_GetUserID(ctx); err != nil {
+		errmsg = err.Error()
+	} else {
+		var goals Goals
+		goals.UserID = userID
 
-	if err := ctx.BindJSON(&goals); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
-		return
+		if err := ctx.BindJSON(&goals); err != nil {
+			errmsg = err.Error()
+		}
+
+		result, err := middlewares.Database.NamedExec("INSERT INTO goals (goalLbs, multiplier, acceptablePercent, goalsPerMeal, proteinGPerLBS, fatGPerLBS, userid) VALUES (:goalLbs, :multiplier, :acceptablePercent, :goalsPerMeal, :proteinGPerLBS, :fatGPerLBS, :userid)", goals)
+
+		if _, err := models.Helper_ExecError(result, err, "Goals Entry/Info was unable to be added"); err != nil {
+			errmsg = err.Error()
+		} else {
+			ctx.JSON(http.StatusOK, gin.H{"message": "Goal added successfully"})
+			return
+		}
+
 	}
-
-	result, err := middlewares.Database.NamedExec("INSERT INTO goals (goalLbs, multiplier, acceptablePercent, goalsPerMeal, proteinGPerLBS, fatGPerLBS, userid) VALUES (:goalLbs, :multiplier, :acceptablePercent, :goalsPerMeal, :proteinGPerLBS, :fatGPerLBS, :userid)", goals)
-
-	if _, err := Helper_ExecError(result, err, "Goals Entry/Info was unable to be added"); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
-	ctx.JSON(http.StatusOK, gin.H{"message": "Goal added successfully"})
+	Helper_ctx400(ctx, errmsg)
 
 }
 

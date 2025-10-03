@@ -58,57 +58,76 @@ func Login(ctx *gin.Context) {
 }
 
 func updatePassword(ctx *gin.Context) {
-	userID := helper_GetUserID(ctx)
-	creds := struct {
-		Password string `json:"password"`
-	}{""}
-
-	if err := ctx.BindJSON(&creds); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
-		return
-	}
-
-	if err := middlewares.ChangePassword(userID, creds.Password); err != nil {
-		ctx.JSON(http.StatusBadRequest, err.Error())
+	var errmsg string
+	if userID, err := helper_GetUserID(ctx); err != nil {
+		errmsg = err.Error()
 	} else {
-		ctx.Status(http.StatusOK)
+		creds := struct {
+			Password string `json:"password"`
+		}{""}
+
+		if err := ctx.BindJSON(&creds); err != nil {
+			errmsg = err.Error()
+		} else {
+			if err := middlewares.ChangePassword(userID, creds.Password); err != nil {
+				errmsg = err.Error()
+			} else {
+				ctx.Status(http.StatusOK)
+				return
+			}
+		}
+
 	}
+	Helper_ctx400(ctx, errmsg)
 }
 
 func Logout(ctx *gin.Context) {
-	userID := helper_GetUserID(ctx)
-	middlewares.RemoveActiveSession(userID)
-	ctx.Status(http.StatusOK)
+	var errmsg string
+	if userID, err := helper_GetUserID(ctx); err != nil {
+		errmsg = err.Error()
+	} else {
+		middlewares.RemoveActiveSession(userID)
+		ctx.Status(http.StatusOK)
+	}
+	Helper_ctx400(ctx, errmsg)
 }
 
 func profile(ctx *gin.Context) {
-	userID := helper_GetUserID(ctx)
-	var user Profile
-	if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns, username FROM users WHERE id=?", userID); err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
-		return
+	var errmsg string
+	if userID, err := helper_GetUserID(ctx); err != nil {
+		errmsg = err.Error()
+	} else {
+		var user Profile
+		if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns, username FROM users WHERE id=?", userID); err != nil {
+			errmsg = err.Error()
+		} else {
+			ctx.JSON(http.StatusOK, user)
+		}
 	}
-
-	ctx.JSON(http.StatusOK, user)
+	Helper_ctx400(ctx, errmsg)
 }
 
 func updateProfile(ctx *gin.Context) {
-	userID := helper_GetUserID(ctx)
-	var data Profile
+	var errmsg string
+	if userID, err := helper_GetUserID(ctx); err != nil {
+		errmsg = err.Error()
+	} else {
+		var data Profile
 
-	if err := ctx.BindJSON(&data); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
-		return
+		if err := ctx.BindJSON(&data); err != nil {
+			errmsg = err.Error()
+		} else {
+			data.ID = userID
+
+			if _, err := middlewares.Database.Exec("UPDATE users SET firstname=?, lastname=?, pronouns=? WHERE id = ?", data); err != nil {
+				errmsg = err.Error()
+			} else {
+				ctx.Status(http.StatusOK)
+			}
+		}
+
 	}
-
-	data.ID = userID
-
-	if _, err := middlewares.Database.Exec("UPDATE users SET firstname=?, lastname=?, pronouns=? WHERE id = ?", data); err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"Error": err.Error()})
-		return
-	}
-
-	ctx.Status(http.StatusOK)
+	Helper_ctx400(ctx, errmsg)
 }
 
 func InitProfileAPI(group *gin.RouterGroup) {
