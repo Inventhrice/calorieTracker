@@ -10,78 +10,95 @@ import (
 )
 
 func updateEntries(ctx *gin.Context) {
+	var errmsg string
+
 	if id, err := helper_getIntFromStr(ctx.Param("id")); err != nil {
-		Helper_ctx400(ctx, "Invalid entry ID")
+		errmsg = "Invalid entry ID"
 	} else {
 		var entry models.Entry
 		if err := ctx.BindJSON(&entry); err != nil {
-			Helper_ctx400(ctx, err.Error())
+			errmsg = err.Error()
 		} else {
 			if id == entry.ID {
 				if err := models.M_updateEntry(entry); err != nil {
-					Helper_ctx400(ctx, err.Error())
+					errmsg = err.Error()
 				} else {
 					ctx.Status(http.StatusOK)
+					return
 				}
 			} else {
-				Helper_ctx400(ctx, fmt.Sprintf("IDs do not match, aborting request. id: %v, entry.ID: %v", id, entry.ID))
+				errmsg = fmt.Sprintf("IDs do not match, aborting request. id: %v, entry.ID: %v", id, entry.ID)
 			}
 		}
 	}
+	Helper_ctx400(ctx, errmsg)
 }
 
 func addEntries(ctx *gin.Context) {
+	var errmsg string
 	var entry models.Entry
 	if err := ctx.BindJSON(&entry); err != nil {
-		Helper_ctx400(ctx, err.Error())
+		errmsg = err.Error()
 	} else {
 		if entry.UserID, err = helper_GetUserID(ctx); err != nil {
-			Helper_ctx400(ctx, err.Error())
+			errmsg = err.Error()
 		} else {
 			if newID, err := models.M_addEntry(entry); err != nil {
-				Helper_ctx400(ctx, err.Error())
+				errmsg = err.Error()
 			} else {
 				ctx.JSON(http.StatusOK, gin.H{"message": "Entry added successfully", "addedID": newID})
+				return
 			}
 		}
 	}
+	Helper_ctx400(ctx, errmsg)
 }
 
 func getAllEntries(ctx *gin.Context) {
+	var errmsg string
 	if userID, err := helper_GetUserID(ctx); err != nil {
-		Helper_ctx400(ctx, err.Error())
+		errmsg = err.Error()
 	} else {
 		entries := []models.Entry{}
 		if err := middlewares.Database.Select(&entries, "SELECT ID, dateRecord, meal, foodname, foodID, grams, cal, carbs, protein, fat, notes FROM processed_entries WHERE userid=?", userID); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+			errmsg = err.Error()
 		} else {
 			ctx.JSON(http.StatusOK, entries)
+			return
 		}
 	}
+
+	Helper_ctx400(ctx, errmsg)
 }
 
 func getEntriesByWeek(ctx *gin.Context) {
+	var errmsg string
 	if userID, err := helper_GetUserID(ctx); err != nil {
-		Helper_ctx400(ctx, err.Error())
+		errmsg = err.Error()
 	} else {
 		if entries, err := models.M_getEntriesByWeek(ctx.Param("start"), ctx.Param("end"), userID); err != nil {
-			Helper_ctx400(ctx, err.Error())
+			errmsg = err.Error()
 		} else {
 			ctx.JSON(http.StatusOK, entries)
+			return
 		}
 	}
+	Helper_ctx400(ctx, errmsg)
 }
 
 func deleteEntries(ctx *gin.Context) {
+	var errmsg string
 	if id, err := helper_getIntFromStr(ctx.Param("id")); err != nil {
-		Helper_ctx400(ctx, "Invalid entry ID")
+		errmsg = "Invalid entry ID"
 	} else {
 		if err := models.M_deleteEntry(id); err != nil {
-			Helper_ctx400(ctx, err.Error())
+			errmsg = err.Error()
 		} else {
 			ctx.Status(http.StatusOK)
+			return
 		}
 	}
+	Helper_ctx400(ctx, errmsg)
 }
 
 func InitEntriesApi(group *gin.RouterGroup) {
