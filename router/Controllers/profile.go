@@ -125,7 +125,6 @@ func updateProfile(ctx *gin.Context) {
 				ctx.Status(http.StatusOK)
 			}
 		}
-
 	}
 	Helper_ctx400(ctx, errmsg)
 }

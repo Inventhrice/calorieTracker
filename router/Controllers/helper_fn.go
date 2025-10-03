@@ -8,6 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Gets userID from the gin.Context.
+//
+// If loggedInUser is empty, returns error: "There is no logged in user."
 func helper_GetUserID(ctx *gin.Context) (string, error) {
 	var err error
 	id := ctx.GetString("loggedInUser")
@@ -36,6 +39,7 @@ func Helper_ctx400(ctx *gin.Context, errMsg string) {
 	}
 }
 
+// Checks for ID parameter
 func Helper_CheckIDParam(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("ID parameter is required")
