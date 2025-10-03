@@ -13,7 +13,7 @@ type Credentials struct {
 }
 
 type Profile struct {
-	ID        string `json:"id" db:"id"`
+	ID        string `json:"id" db:"ID"`
 	Firstname string `json:"firstname" db:"firstname"`
 	Lastname  string `json:"lastname" db:"lastname"`
 	Pronouns  string `json:"pronouns" db:"pronouns"`
@@ -98,7 +98,7 @@ func profile(ctx *gin.Context) {
 		errmsg = err.Error()
 	} else {
 		var user Profile
-		if err := middlewares.Database.Get(&user, "SELECT id, firstname, lastname, pronouns, username FROM users WHERE id=?", userID); err != nil {
+		if err := middlewares.Database.Get(&user, "SELECT firstname, lastname, pronouns, username FROM users WHERE ID=?", userID); err != nil {
 			errmsg = err.Error()
 		} else {
 			ctx.JSON(http.StatusOK, user)
@@ -118,7 +118,7 @@ func updateProfile(ctx *gin.Context) {
 			errmsg = err.Error()
 		} else {
 			data.ID = userID
-			if _, err := middlewares.Database.NamedExec("UPDATE users SET firstname=:firstname, lastname=:lastname, pronouns=:pronouns, username=:username WHERE id=:id", data); err != nil {
+			if _, err := middlewares.Database.NamedExec("UPDATE users SET firstname=:firstname, lastname=:lastname, pronouns=:pronouns, username=:username WHERE ID=:ID", data); err != nil {
 				errmsg = err.Error()
 			} else {
 				ctx.Status(http.StatusOK)

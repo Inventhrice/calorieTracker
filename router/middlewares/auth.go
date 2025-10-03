@@ -19,12 +19,12 @@ var activeSessions []ActiveToken // mapping usernames, referenced by token
 
 func AuthenticateUser(username string, password string) (string, error) {
 	storedPassword := struct {
-		UserID   string `db:"id"`
+		UserID   string `db:"ID"`
 		Password string `db:"password"`
 	}{"", ""}
 
 	// Get the hashed password from the database
-	if err := Database.Get(&storedPassword, "SELECT id, password FROM users WHERE username=?", username); err != nil {
+	if err := Database.Get(&storedPassword, "SELECT ID, password FROM users WHERE username=?", username); err != nil {
 		return "", err
 	}
 
@@ -60,7 +60,7 @@ func generateToken() (string, error) {
 
 func ChangePassword(username string, password string) error {
 	hashedPassword, _ := argon2id.CreateHash(password, argon2id.DefaultParams)
-	if _, err := Database.Exec("UPDATE users SET password=? WHERE id=?", hashedPassword, username); err != nil {
+	if _, err := Database.Exec("UPDATE users SET password=? WHERE ID=?", hashedPassword, username); err != nil {
 		return err
 	}
 

@@ -4,8 +4,7 @@ export default {
     computed: {
         listTemplates:{
             get(){
-                let temp = await getAllTemplates()
-                return temp
+                return getAllTemplates()
             }
         }
     }
