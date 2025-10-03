@@ -2,7 +2,7 @@ package models
 
 import (
 	"database/sql"
-	"example.com/m/v2/middlewares"
+	"errors"
 )
 
 func Helper_ExecError(r sql.Result, initerr error, noRowsFound_errMsg string) (int64, error) {

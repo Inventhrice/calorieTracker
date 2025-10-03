@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	groups "example.com/m/v2/Groups"
+	controllers "example.com/m/v2/Controllers"
 	"example.com/m/v2/middlewares"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -19,19 +19,19 @@ func initStaticRoutes(router *gin.Engine) {
 
 func InitRouter() *gin.Engine {
 	router := gin.Default()
-	router.GET("/api/settings", groups.RefreshSettings)
+	router.GET("/api/settings", controllers.RefreshSettings)
 	initStaticRoutes(router)
 
-	router.POST("/login", groups.Login)
-	router.POST("/logout", groups.CheckAuthenticated, groups.Logout)
+	router.POST("/login", controllers.Login)
+	router.POST("/logout", controllers.CheckAuthenticated, controllers.Logout)
 
-	authorizedRoutes := router.Group("/api", groups.CheckAuthenticated)
+	authorizedRoutes := router.Group("/api", controllers.CheckAuthenticated)
 
-	groups.InitFoodDBApi(authorizedRoutes.Group("/foodDB"))
-	groups.InitEntriesApi(authorizedRoutes.Group("/entries"))
-	groups.InitWeightAPI(authorizedRoutes.Group("/weight"))
-	groups.InitProfileAPI(authorizedRoutes.Group("/profile"))
-	groups.InitGoalsAPI(authorizedRoutes.Group("/goals"))
+	controllers.InitFoodDBApi(authorizedRoutes.Group("/foodDB"))
+	controllers.InitEntriesApi(authorizedRoutes.Group("/entries"))
+	controllers.InitWeightAPI(authorizedRoutes.Group("/weight"))
+	controllers.InitProfileAPI(authorizedRoutes.Group("/profile"))
+	controllers.InitGoalsAPI(authorizedRoutes.Group("/goals"))
 
 	return router
 }
@@ -42,7 +42,7 @@ func main() {
 		return
 	}
 	defer middlewares.Database.Close()
-	groups.Settings = make(map[string]string)
+	controllers.Settings = make(map[string]string)
 	router := InitRouter()
 	router.Run()
 }

@@ -1,4 +1,4 @@
-package groups
+package controllers
 
 import (
 	"database/sql"

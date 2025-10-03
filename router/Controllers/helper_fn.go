@@ -1,4 +1,4 @@
-package groups
+package controllers
 
 import (
 	"errors"
@@ -31,7 +31,9 @@ func helper_getIntFromStr(idParam string) (int, error) {
 }
 
 func Helper_ctx400(ctx *gin.Context, errMsg string) {
-	ctx.JSON(http.StatusBadRequest, gin.H{"Error": errMsg})
+	if errMsg != "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"Error": errMsg})
+	}
 }
 
 func Helper_CheckIDParam(id string) (string, error) {
