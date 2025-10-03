@@ -20,7 +20,7 @@ func updateEntries(ctx *gin.Context) {
 			errmsg = err.Error()
 		} else {
 			if id == entry.ID {
-				if err := models.M_updateEntry(entry); err != nil {
+				if err := models.UpdateEntry(entry); err != nil {
 					errmsg = err.Error()
 				} else {
 					ctx.Status(http.StatusOK)
@@ -43,7 +43,7 @@ func addEntries(ctx *gin.Context) {
 		if entry.UserID, err = helper_GetUserID(ctx); err != nil {
 			errmsg = err.Error()
 		} else {
-			if newID, err := models.M_addEntry(entry); err != nil {
+			if newID, err := models.AddEntry(entry); err != nil {
 				errmsg = err.Error()
 			} else {
 				ctx.JSON(http.StatusOK, gin.H{"message": "Entry added successfully", "addedID": newID})
@@ -76,7 +76,7 @@ func getEntriesByWeek(ctx *gin.Context) {
 	if userID, err := helper_GetUserID(ctx); err != nil {
 		errmsg = err.Error()
 	} else {
-		if entries, err := models.M_getEntriesByWeek(ctx.Param("start"), ctx.Param("end"), userID); err != nil {
+		if entries, err := models.GetEntriesByWeek(ctx.Param("start"), ctx.Param("end"), userID); err != nil {
 			errmsg = err.Error()
 		} else {
 			ctx.JSON(http.StatusOK, entries)
@@ -91,7 +91,7 @@ func deleteEntries(ctx *gin.Context) {
 	if id, err := helper_getIntFromStr(ctx.Param("id")); err != nil {
 		errmsg = "Invalid entry ID"
 	} else {
-		if err := models.M_deleteEntry(id); err != nil {
+		if err := models.DeleteEntry(id); err != nil {
 			errmsg = err.Error()
 		} else {
 			ctx.Status(http.StatusOK)

@@ -22,7 +22,7 @@ type Entry struct {
 	Notes      string        `json:"notes" db:"notes"`
 }
 
-func M_updateEntry(entry Entry) error {
+func UpdateEntry(entry Entry) error {
 	result, err := middlewares.Database.NamedExec("UPDATE entries SET dateRecord=:dateRecord,meal=:meal,foodID=:foodID,grams=:grams,foodname=:foodname,cal=:cal,protein=:protein,fat=:fat,carbs=:carbs WHERE ID=:ID", entry)
 	if _, err := Helper_ExecError(result, err, "No entry with the provided ID found"); err != nil {
 		return err
@@ -31,7 +31,7 @@ func M_updateEntry(entry Entry) error {
 	}
 }
 
-func M_addEntry(entry Entry) (int64, error) {
+func AddEntry(entry Entry) (int64, error) {
 
 	result, err := middlewares.Database.NamedExec("INSERT INTO entries (userid, dateRecord, meal, foodID, foodname, grams, cal, protein, fat, carbs) VALUES (:userid, :dateRecord, :meal, :foodID, :foodname, :grams, :cal, :protein, :fat, :carbs)", entry)
 
@@ -43,7 +43,7 @@ func M_addEntry(entry Entry) (int64, error) {
 	}
 }
 
-func M_deleteEntry(id int) error {
+func DeleteEntry(id int) error {
 	result, err := middlewares.Database.Exec("DELETE FROM entries WHERE id = ?", id)
 	if _, err := Helper_ExecError(result, err, "No entry with the provided ID found"); err != nil {
 		return err
@@ -51,7 +51,7 @@ func M_deleteEntry(id int) error {
 	return nil
 }
 
-func M_getEntriesByWeek(start string, end string, userID string) ([]Entry, error) {
+func GetEntriesByWeek(start string, end string, userID string) ([]Entry, error) {
 	entries := []Entry{}
 	startDate, _ := time.Parse(time.DateOnly, start)
 	endDate, _ := time.Parse(time.DateOnly, end)
