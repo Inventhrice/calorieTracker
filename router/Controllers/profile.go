@@ -118,8 +118,7 @@ func updateProfile(ctx *gin.Context) {
 			errmsg = err.Error()
 		} else {
 			data.ID = userID
-
-			if _, err := middlewares.Database.Exec("UPDATE users SET firstname=?, lastname=?, pronouns=? WHERE id = ?", data); err != nil {
+			if _, err := middlewares.Database.NamedExec("UPDATE users SET firstname=:firstname, lastname=:lastname, pronouns=:pronouns, username=:username WHERE id=:id", data); err != nil {
 				errmsg = err.Error()
 			} else {
 				ctx.Status(http.StatusOK)

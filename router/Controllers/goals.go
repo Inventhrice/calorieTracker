@@ -44,17 +44,16 @@ func addGoal(ctx *gin.Context) {
 
 		if err := ctx.BindJSON(&goals); err != nil {
 			errmsg = err.Error()
-		}
-
-		result, err := middlewares.Database.NamedExec("INSERT INTO goals (goalLbs, multiplier, acceptablePercent, goalsPerMeal, proteinGPerLBS, fatGPerLBS, userid) VALUES (:goalLbs, :multiplier, :acceptablePercent, :goalsPerMeal, :proteinGPerLBS, :fatGPerLBS, :userid)", goals)
-
-		if _, err := models.Helper_ExecError(result, err, "Goals Entry/Info was unable to be added"); err != nil {
-			errmsg = err.Error()
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"message": "Goal added successfully"})
-			return
-		}
+			result, err := middlewares.Database.NamedExec("INSERT INTO goals (goalLbs, multiplier, acceptablePercent, goalsPerMeal, proteinGPerLBS, fatGPerLBS, userid) VALUES (:goalLbs, :multiplier, :acceptablePercent, :goalsPerMeal, :proteinGPerLBS, :fatGPerLBS, :userid)", goals)
 
+			if _, err := models.Helper_ExecError(result, err, "Goals Entry/Info was unable to be added"); err != nil {
+				errmsg = err.Error()
+			} else {
+				ctx.JSON(http.StatusOK, gin.H{"message": "Goal added successfully"})
+				return
+			}
+		}
 	}
 	Helper_ctx400(ctx, errmsg)
 

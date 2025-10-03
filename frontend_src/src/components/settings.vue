@@ -9,7 +9,7 @@ export default {
             loggedInUser: { "First Name": "", "Last Name": "", "Pronouns": "", "Username": "" },
             loginpwd: { "Password": "", "Repeat Password": "" },
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
-            userGoals: { "Weight": 84.5, "% Error": 15, "Multiplier": 10, "ProteinGPerLb": 0.8, "FatGPerLb": 0.4},
+            userGoals: { "Weight": 84.5, "% Error": 15, "Multiplier": 10, "ProteinGPerLb": 0.8, "FatGPerLb": 0.4 },
             mealGoals: { "Breakfast": 0, "Lunch": 0, "Dinner": 0, "Snacks": 0 },
             errMsg: {},
             changepwd: false
@@ -40,6 +40,18 @@ export default {
                 console.log("User info has an error in being fetched.")
             }
         },
+        async updateInformation() {
+            let modifiedUser = {
+                "firstname": this.loggedInUser["First Name"],
+                "lastname": this.loggedInUser["Last Name"],
+                "pronouns": this.loggedInUser["Pronouns"],
+                "username": this.loggedInUser["Username"]
+            }
+            let response = await api_call("/api/profile", "PATCH", JSON.stringify(modifiedUser))
+            if (!response.ok) {
+                console.error("Information was unable to be updated.")
+            }
+        },
         async fetchData() {
             let response = await api_get("/api/profile")
             if (response.ok) {
@@ -64,20 +76,26 @@ export default {
                 this.errMsg['Password'] = "Passwords do not match."
             }
         },
-        async updateGoals(){
-            let obj = {"goalLbs": this.weightLbs,
-                       "multiplier": this.userGoals["Multiplier"],
-                       "acceptablePercent": this.userGoals["% Error"]/100}
-            let goalsPerMeal = "["
-            for(let meal in this.mealGoals){
-                goalsPerMeal += (this.mealGoals[meal]/100) + ","
-            }
-            
-            obj["goalsPerMeal"] = goalsPerMeal.substring(0, goalsPerMeal.length-1) + "]"
-            
-            let response = await api_call("/api/goals", "PATCH", JSON.stringify(obj))
-            if(!response.ok){
-                console.error("PATCH request for updating goals failed.")
+        async updateGoals() {
+            if (this.mealsAllottedAddsUp) {
+                let temp = []
+                for (let meal in this.mealGoals) {
+                    temp.push(this.mealGoals[meal] / 100)
+                }
+
+                let obj = {
+                    "goalLbs": parseFloat(this.weightLbs),
+                    "multiplier": this.userGoals["Multiplier"],
+                    "acceptablePercent": this.userGoals["% Error"] / 100,
+                    "goalsPerMeal": JSON.stringify(temp)
+                }
+
+                let response = await api_call("/api/goals", "POST", JSON.stringify(obj))
+                if (!response.ok) {
+                    console.error("POST request for updating goals failed.")
+                }
+            } else{
+                console.error("Cannot save goals, meals do not add up.")
             }
 
         }
@@ -87,8 +105,8 @@ export default {
     },
     computed: {
         weightLbs: {
-            get(){
-                return Math.round(this.userGoals['Weight']*2.2).toFixed(2)
+            get() {
+                return Math.round(this.userGoals['Weight'] * 2.2).toFixed(2)
             }
         },
         calErrorMargin: {
@@ -105,7 +123,7 @@ export default {
                 tMacros["Calories"] = this.weightLbs * this.userGoals['Multiplier']
                 tMacros["Protein"] = Math.round(this.weightLbs * this.userGoals["ProteinGPerLb"])
                 tMacros["Fat"] = Math.round(this.weightLbs * this.userGoals["FatGPerLb"])
-                tMacros["Carbs"] = (tMacros["Calories"] - ((tMacros["Fat"] * FAT_CALPERGRAM) + (tMacros["Protein"] * PROTEIN_CALPERGRAM)))/CARB_CALPERGRAM
+                tMacros["Carbs"] = (tMacros["Calories"] - ((tMacros["Fat"] * FAT_CALPERGRAM) + (tMacros["Protein"] * PROTEIN_CALPERGRAM))) / CARB_CALPERGRAM
                 return tMacros
             }
         },
@@ -200,12 +218,13 @@ export default {
                         <span v-for="macro, macroName in this.totalMacros">
                             <span>{{ macroName }}: </span>
                             <span class="opacity-50">{{ meal * macro / 100 }} {{ macroName == "Calories" ? 'cals' : 'g'
-                                }} </span>
+                            }} </span>
                         </span>
                     </span>
                 </div>
             </div>
-            <div class="flex justify-end mt-5"><button class="btn btn-confirm" @click="updateGoals">Save Goals</button></div>
+            <div class="flex justify-end mt-5"><button class="btn btn-confirm" @click="updateGoals">Save Goals</button>
+            </div>
         </div>
     </div>
 </template>
