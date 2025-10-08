@@ -1,6 +1,8 @@
 package models
 
-import "example.com/m/v2/middlewares"
+import (
+	"example.com/m/v2/middlewares"
+)
 
 type EntryTemplate struct {
 	ID       int    `json:"id" db:"id"`
@@ -11,9 +13,9 @@ type EntryTemplate struct {
 }
 
 func DeleteTemplate(id int) error {
-	result, err := middlewares.Database.NamedExec("DELETE FROM entryTemplates WHERE id = ?", id)
+	result, err := middlewares.Database.Exec("DELETE FROM entryTemplates WHERE id=?", id)
 
-	if _, err := Helper_ExecError(result, err, "Template was unable to be added"); err != nil {
+	if _, err := Helper_ExecError(result, err, "Template was unable to be deleted"); err != nil {
 		return err
 	}
 	return nil
@@ -31,7 +33,7 @@ func AddTemplate(template EntryTemplate) (int64, error) {
 
 func GetAllTemplates(userID string) ([]EntryTemplate, error) {
 	var templates []EntryTemplate
-	if err := middlewares.Database.Select(&templates, "SELECT id, meal, food_id, quantity FROM entryTemplates WHERE user_id = ?"); err != nil {
+	if err := middlewares.Database.Select(&templates, "SELECT id, meal, food_id, quantity FROM entryTemplates WHERE user_id=?", userID); err != nil {
 		return nil, err
 	}
 	return templates, nil
