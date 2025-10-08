@@ -1,11 +1,13 @@
 package models
 
 import (
+	"fmt"
+
 	"example.com/m/v2/middlewares"
 )
 
 type EntryTemplate struct {
-	ID       int    `json:"id" db:"id"`
+	ID       int    `json:"id" db:"ID"`
 	Meal     string `json:"meal" db:"meal"`
 	FoodID   int    `json:"food_id" db:"food_id"`
 	Quantity int    `json:"quantity" db:"quantity"`
@@ -13,7 +15,8 @@ type EntryTemplate struct {
 }
 
 func DeleteTemplate(id int) error {
-	result, err := middlewares.Database.Exec("DELETE FROM entryTemplates WHERE id=?", id)
+	fmt.Println(id)
+	result, err := middlewares.Database.Exec("DELETE FROM entryTemplates WHERE ID=?", id)
 
 	if _, err := Helper_ExecError(result, err, "Template was unable to be deleted"); err != nil {
 		return err
@@ -33,7 +36,7 @@ func AddTemplate(template EntryTemplate) (int64, error) {
 
 func GetAllTemplates(userID string) ([]EntryTemplate, error) {
 	var templates []EntryTemplate
-	if err := middlewares.Database.Select(&templates, "SELECT id, meal, food_id, quantity FROM entryTemplates WHERE user_id=?", userID); err != nil {
+	if err := middlewares.Database.Select(&templates, "SELECT ID, meal, food_id, quantity FROM entryTemplates WHERE user_ID=?", userID); err != nil {
 		return nil, err
 	}
 	return templates, nil
@@ -41,7 +44,7 @@ func GetAllTemplates(userID string) ([]EntryTemplate, error) {
 
 func GetTemplate(userID string, id int) (EntryTemplate, error) {
 	var template EntryTemplate
-	if err := middlewares.Database.Get(&template, "SELECT id, meal, food_id, quantity FROM entryTemplates WHERE user_id=? AND id=?", userID, id); err != nil {
+	if err := middlewares.Database.Get(&template, "SELECT ID, meal, food_id, quantity FROM entryTemplates WHERE user_id=? AND ID=?", userID, id); err != nil {
 		return EntryTemplate{}, err
 	}
 	return template, nil

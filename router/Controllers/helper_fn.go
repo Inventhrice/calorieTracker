@@ -22,14 +22,14 @@ func helper_GetUserID(ctx *gin.Context) (string, error) {
 
 // Helper function that executes Atoi, and automatically sends a BadRequest reponse if there is an error. Returns the parsed int or -1 on an error.
 func helper_getIntFromStr(idParam string) (int, error) {
-	if idParam, err := Helper_CheckIDParam(idParam); err != nil {
-		id, err := strconv.Atoi(idParam)
-		if err != nil {
-			return -1, err
-		}
-		return id, nil
-	} else {
+	if err := Helper_CheckIDParam(idParam); err != nil {
 		return -1, err
+	} else {
+		if id, err := strconv.Atoi(idParam); err != nil {
+			return -1, err
+		} else {
+			return id, nil
+		}
 	}
 }
 
@@ -40,11 +40,10 @@ func Helper_ctx400(ctx *gin.Context, errMsg string) {
 }
 
 // Checks for ID parameter
-func Helper_CheckIDParam(id string) (string, error) {
+func Helper_CheckIDParam(id string) error {
 	if id == "" {
-		return "", errors.New("ID parameter is required")
+		return errors.New("ID parameter is required")
 	} else {
-		return id, nil
+		return nil
 	}
-
 }
