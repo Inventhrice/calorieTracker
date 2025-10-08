@@ -32,6 +32,7 @@ func InitRouter() *gin.Engine {
 	controllers.InitWeightAPI(authorizedRoutes.Group("/weight"))
 	controllers.InitProfileAPI(authorizedRoutes.Group("/profile"))
 	controllers.InitGoalsAPI(authorizedRoutes.Group("/goals"))
+	controllers.InitTemplateRoutes(authorizedRoutes.Group("/template"))
 
 	return router
 }
