@@ -9,9 +9,9 @@ import (
 type EntryTemplate struct {
 	ID       int    `json:"id" db:"ID"`
 	Meal     string `json:"meal" db:"meal"`
-	FoodID   int    `json:"food_id" db:"food_id"`
+	FoodID   int    `json:"foodID" db:"foodID"`
 	Quantity int    `json:"quantity" db:"quantity"`
-	UserID   string `db:"user_id"`
+	UserID   string `db:"userID"`
 }
 
 func DeleteTemplate(id int) error {
@@ -25,7 +25,7 @@ func DeleteTemplate(id int) error {
 }
 
 func AddTemplate(template EntryTemplate) (int64, error) {
-	result, err := middlewares.Database.NamedExec("INSERT INTO entryTemplates (user_id, meal,food_id,quantity) VALUES (:user_id, :meal,:food_id,:quantity)", template)
+	result, err := middlewares.Database.NamedExec("INSERT INTO entryTemplates (userID, meal,foodID,quantity) VALUES (:userID, :meal,:foodID,:quantity)", template)
 	if _, err := Helper_ExecError(result, err, "Template was unable to be added"); err != nil {
 		return -1, err
 	} else {
@@ -36,7 +36,7 @@ func AddTemplate(template EntryTemplate) (int64, error) {
 
 func GetAllTemplates(userID string) ([]EntryTemplate, error) {
 	var templates []EntryTemplate
-	if err := middlewares.Database.Select(&templates, "SELECT ID, meal, food_id, quantity FROM entryTemplates WHERE user_ID=?", userID); err != nil {
+	if err := middlewares.Database.Select(&templates, "SELECT ID, meal, foodID, quantity FROM entryTemplates WHERE userID=?", userID); err != nil {
 		return nil, err
 	}
 	return templates, nil
@@ -44,14 +44,14 @@ func GetAllTemplates(userID string) ([]EntryTemplate, error) {
 
 func GetTemplate(userID string, id int) (EntryTemplate, error) {
 	var template EntryTemplate
-	if err := middlewares.Database.Get(&template, "SELECT ID, meal, food_id, quantity FROM entryTemplates WHERE user_id=? AND ID=?", userID, id); err != nil {
+	if err := middlewares.Database.Get(&template, "SELECT ID, meal, foodID, quantity FROM entryTemplates WHERE userID=? AND ID=?", userID, id); err != nil {
 		return EntryTemplate{}, err
 	}
 	return template, nil
 }
 
 func UpdateTemplate(template EntryTemplate) error {
-	result, err := middlewares.Database.NamedExec("UPDATE entryTemplates SET meal=:meal, food_id=:food_id, quantity=:quantity WHERE id=:id", template)
+	result, err := middlewares.Database.NamedExec("UPDATE entryTemplates SET meal=:meal, foodID=:foodID, quantity=:quantity WHERE ID=:ID", template)
 	if _, err := Helper_ExecError(result, err, "No template with the provided ID found"); err != nil {
 		return err
 	} else {

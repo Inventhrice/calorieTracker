@@ -13,7 +13,7 @@ export async function getAllTemplates() {
 
         let allFoods = await fetchAllFoods()
         if(allFoods){
-            allTemplates.forEach((el) => el.foodname = allFoods[el.food_id])
+            allTemplates.forEach((el) => el.foodname = allFoods[el.foodID])
         }
 
         return allTemplates
@@ -69,7 +69,6 @@ export default {
             }
         },
         async updateTemplate() {
-            this.selected['food_id'] = this.selected["foodID"]
             if (!this.selected.hasOwnProperty('id')) {
                 this.addTemplate()
             } else{

@@ -37,8 +37,9 @@ export default {
             this.showEntriesDialog = true
         },
         makeTemplateEntry(selected){
-            selected.daterecord = new Date(getLocalDate(undefined) + "T00:00:00")
-            this.selected = selected
+            this.selected = JSON.parse(JSON.stringify(selected))
+            delete this.selected['id']
+            this.selected.daterecord = new Date(getLocalDate(undefined) + "T00:00:00")
             this.showEntriesDialog = true
         },
         async editEntry() {
