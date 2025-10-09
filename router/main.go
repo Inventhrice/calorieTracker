@@ -4,38 +4,35 @@ import (
 	"fmt"
 	"net/http"
 
-	groups "example.com/m/v2/Groups"
+	controllers "example.com/m/v2/Controllers"
 	"example.com/m/v2/middlewares"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func InitRouter() *gin.Engine {
-	router := gin.Default()
-	router.GET("/api/settings", groups.RefreshSettings)
+func initStaticRoutes(router *gin.Engine) {
 	router.StaticFile("/", "/app/public/index.html")
 	router.StaticFile("/favicon.ico", "/app/public/favicon.ico")
+	router.StaticFile("/serviceworker.js", "/app/public/serviceworker.js")
 	router.StaticFS("/assets", http.Dir("/app/public/assets"))
+}
 
-	router.POST("/login", groups.Login)
-	router.POST("/logout", groups.CheckAuthenticated, groups.Logout)
+func InitRouter() *gin.Engine {
+	router := gin.Default()
+	router.GET("/api/settings", controllers.RefreshSettings)
+	initStaticRoutes(router)
 
-	authorizedRoutes := router.Group("/api", groups.CheckAuthenticated)
+	router.POST("/login", controllers.Login)
+	router.POST("/logout", controllers.CheckAuthenticated, controllers.Logout)
 
-	foodDBAPI := authorizedRoutes.Group("/foodDB")
-	groups.InitFoodDBApi(foodDBAPI)
+	authorizedRoutes := router.Group("/api", controllers.CheckAuthenticated)
 
-	entriesAPI := authorizedRoutes.Group("/entries")
-	groups.InitEntriesApi(entriesAPI)
-
-	weightAPI := authorizedRoutes.Group("/weight")
-	groups.InitWeightAPI(weightAPI)
-
-	profileAPI := authorizedRoutes.Group("/profile")
-	groups.InitProfileAPI(profileAPI)
-
-	goalsAPI := authorizedRoutes.Group("/goals")
-	groups.InitGoalsAPI(goalsAPI)
+	controllers.InitFoodDBApi(authorizedRoutes.Group("/foodDB"))
+	controllers.InitEntriesApi(authorizedRoutes.Group("/entries"))
+	controllers.InitWeightAPI(authorizedRoutes.Group("/weight"))
+	controllers.InitProfileAPI(authorizedRoutes.Group("/profile"))
+	controllers.InitGoalsAPI(authorizedRoutes.Group("/goals"))
+	controllers.InitTemplateRoutes(authorizedRoutes.Group("/template"))
 
 	return router
 }
@@ -46,7 +43,7 @@ func main() {
 		return
 	}
 	defer middlewares.Database.Close()
-	groups.Settings = make(map[string]string)
+	controllers.Settings = make(map[string]string)
 	router := InitRouter()
 	router.Run()
 }

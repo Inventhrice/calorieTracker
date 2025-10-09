@@ -3,11 +3,12 @@ import entriesDialog from './entries-dialog.vue'
 import tabledEntries from './tabledEntries.vue'
 import entriesDatePicker from './entriesDatePicker.vue'
 import weightEntry from './weightEntry.vue'
+import listTemplates from './listTemplates.vue'
 import { getLocalDate } from '../../js/datefn.js'
 import { api_call, api_get } from '../../js/auth.js'
 
 export default {
-    components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog },
+    components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog, listTemplates },
     data() {
         return {
             title: "Entries", // Title of this page
@@ -33,6 +34,12 @@ export default {
                 if (found.foodID === undefined) this.selected.foodID = undefined
                 this.selected.daterecord = new Date(this.selected.daterecord)
             }
+            this.showEntriesDialog = true
+        },
+        makeTemplateEntry(selected){
+            this.selected = JSON.parse(JSON.stringify(selected))
+            delete this.selected['id']
+            this.selected.daterecord = new Date(getLocalDate(undefined) + "T00:00:00")
             this.showEntriesDialog = true
         },
         async editEntry() {
@@ -121,7 +128,12 @@ export default {
                 </button>
             </span>
         </div>
-        <tabled-entries @show-dialog="showEntriesDialogFn" :goalsinfo :entries></tabled-entries>
+        <div class="flex w-full">
+            <list-templates @show-dialog="makeTemplateEntry"></list-templates>
+        </div>
+        <div class="flex w-full">
+            <tabled-entries @show-dialog="showEntriesDialogFn" :goalsinfo :entries></tabled-entries>
+        </div>
     </div>
     <entries-dialog v-if="showEntriesDialog" @close-dialog="this.showEntriesDialog = false" :selected
         @confirm-dialog="editEntry" @delete-dialog="deleteEntry"></entries-dialog>

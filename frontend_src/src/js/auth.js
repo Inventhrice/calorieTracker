@@ -1,4 +1,5 @@
-const API_URL = ""
+const API_URL = ( import.meta.env.DEV ? import.meta.env.VITE_API_URL : "")
+
 export async function api_logout(){
     return api_call(`/logout`, "POST")
 }
@@ -23,6 +24,19 @@ export async function api_call(url, methodType, body=""){
         let response = await fetch(`${API_URL}${url}`, {method: methodType, body: body, credentials: "include"})
         return response
     } catch(error) {
+        console.error(error.message)
+        throw(error)
+    }
+}
+
+export async function getMealsInfo(){
+    try{
+        let response = await api_get("/api/settings/all")
+        if(response.ok){
+            let data = await response.json()
+            return JSON.parse(data.data)
+        }
+    } catch(error){
         console.error(error.message)
         throw(error)
     }

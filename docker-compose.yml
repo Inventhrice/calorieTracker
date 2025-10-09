@@ -1,0 +1,35 @@
+services:
+  mariadb:
+    container_name: db
+    image: lscr.io/linuxserver/mariadb
+    environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=EST
+        - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+        - MYSQL_DATABASE=${DB_DBNAME}
+        - MYSQL_USER=${DB_USER}
+        - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes: 
+          - ./mariadbData:/config
+    ports:
+        - "3307:3306"
+  caltracker:
+    image: calorietracker
+    build:
+      context: .
+    command: "/app/router/server"
+    ports:
+      - "8080:8080"
+    env_file: .env
+  calrouter:
+    build:
+      context: .
+      target: router
+    ports:
+      - "8080:8080"
+    command: "/app/router/server"
+    env_file: .env
+networks:
+  default:
+    name: N_calorieTracker

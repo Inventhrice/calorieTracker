@@ -19,14 +19,16 @@ var activeSessions []ActiveToken // mapping usernames, referenced by token
 
 func AuthenticateUser(username string, password string) (string, error) {
 	storedPassword := struct {
-		UserID   string `db:"id"`
+		UserID   string `db:"ID"`
 		Password string `db:"password"`
 	}{"", ""}
 
-	if err := Database.Get(&storedPassword, "SELECT id, password FROM users WHERE username=?", username); err != nil {
+	// Get the hashed password from the database
+	if err := Database.Get(&storedPassword, "SELECT ID, password FROM users WHERE username=?", username); err != nil {
 		return "", err
 	}
 
+	// Compare the Passwords
 	if match, err := argon2id.ComparePasswordAndHash(password, storedPassword.Password); err != nil || !match {
 		if !match {
 			return "", errors.New("Passwords do not match.")
@@ -34,10 +36,14 @@ func AuthenticateUser(username string, password string) (string, error) {
 		return "", err
 	}
 
-	RemoveActiveSession(storedPassword.UserID)
-	genToken, _ := generateToken()
-
-	activeSessions = append(activeSessions, ActiveToken{userID: storedPassword.UserID, Token: genToken})
+	// Checks if the user is already logged in, if so, returns the token already assigned. Else, generates and stores the token.
+	var genToken string
+	if found, index := findActiveSession(storedPassword.UserID); found {
+		genToken = activeSessions[index].Token
+	} else {
+		genToken, _ = generateToken()
+		activeSessions = append(activeSessions, ActiveToken{userID: storedPassword.UserID, Token: genToken})
+	}
 
 	return genToken, nil
 }
@@ -54,7 +60,7 @@ func generateToken() (string, error) {
 
 func ChangePassword(username string, password string) error {
 	hashedPassword, _ := argon2id.CreateHash(password, argon2id.DefaultParams)
-	if _, err := Database.Exec("UPDATE users SET password=? WHERE id=?", hashedPassword, username); err != nil {
+	if _, err := Database.Exec("UPDATE users SET password=? WHERE ID=?", hashedPassword, username); err != nil {
 		return err
 	}
 
