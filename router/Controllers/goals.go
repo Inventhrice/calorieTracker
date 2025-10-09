@@ -13,8 +13,8 @@ type Goals struct {
 	Multiplier     int     `json:"multiplier" db:"multiplier"`
 	ErrMargin      float32 `json:"acceptablePercent" db:"acceptablePercent"`
 	GoalsPerMeal   string  `json:"goalsPerMeal" db:"goalsPerMeal"`
-	ProteinGPerLbs float32 `json:"ProteinGPerLBS" db:"proteinGPerLBS"`
-	FatGPerLbs     float32 `json:"FatGPerLBS" db:"fatGPerLBS"`
+	ProteinGPerLbs float32 `json:"proteinGPerLBS" db:"proteinGPerLBS"`
+	FatGPerLbs     float32 `json:"fatGPerLBS" db:"fatGPerLBS"`
 	UserID         string  `db:"userid"`
 }
 
@@ -24,7 +24,7 @@ func getGoal(ctx *gin.Context) {
 		errmsg = err.Error()
 	} else {
 		var goals Goals
-		if err := middlewares.Database.Get(&goals, "SELECT goalLbs, multiplier, acceptablePercent, goalsPerMeal FROM goals WHERE userID=?", userID); err != nil {
+		if err := middlewares.Database.Get(&goals, "SELECT goalLbs, multiplier, acceptablePercent, goalsPerMeal, proteinGPerLBS, fatGPerLBS FROM goals WHERE userID=?  ORDER BY ID DESC LIMIT 1;", userID); err != nil {
 			errmsg = err.Error()
 		} else {
 			ctx.JSON(http.StatusOK, goals)

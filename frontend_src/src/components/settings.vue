@@ -9,7 +9,7 @@ export default {
             loggedInUser: { "First Name": "", "Last Name": "", "Pronouns": "", "Username": "" },
             loginpwd: { "Password": "", "Repeat Password": "" },
             mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
-            userGoals: { "Weight": 84.5, "% Error": 15, "Multiplier": 10, "ProteinGPerLb": 0.8, "FatGPerLb": 0.4 },
+            userGoals: { "Weight": 84.5, "% Error": 15, "Multiplier": 10, "proteinGPerLBS": 0.8, "fatGPerLBS": 0.4 },
             mealGoals: { "Breakfast": 0, "Lunch": 0, "Dinner": 0, "Snacks": 0 },
             errMsg: {},
             changepwd: false
@@ -23,6 +23,8 @@ export default {
                 this.userGoals["Weight"] = (userData.goalLbs / 2.2).toFixed(2)
                 this.userGoals["Multiplier"] = userData.multiplier
                 this.userGoals["% Error"] = userData.acceptablePercent * 100
+                this.userGoals["proteinGPerLBS"] = userData["proteinGPerLBS"]
+                this.userGoals["fatGPerLBS"] = userData["fatGPerLBS"]
                 for (let index in this.mealTimes) {
                     this.mealGoals[this.mealTimes[index]] = JSON.parse(userData.goalsPerMeal)[index] * 100
                 }
@@ -87,7 +89,9 @@ export default {
                     "goalLbs": parseFloat(this.weightLbs),
                     "multiplier": this.userGoals["Multiplier"],
                     "acceptablePercent": this.userGoals["% Error"] / 100,
-                    "goalsPerMeal": JSON.stringify(temp)
+                    "goalsPerMeal": JSON.stringify(temp),
+                    "proteinGPerLBS": parseFloat(this.userGoals["proteinGPerLBS"]),
+                    "fatGPerLBS": parseFloat(this.userGoals["fatGPerLBS"])
                 }
 
                 let response = await api_call("/api/goals", "POST", JSON.stringify(obj))
@@ -121,8 +125,8 @@ export default {
                 const CARB_CALPERGRAM = 4
                 let tMacros = { "Calories": 0, "Protein": 0, "Fat": 0, "Carbs": 0 }
                 tMacros["Calories"] = this.weightLbs * this.userGoals['Multiplier']
-                tMacros["Protein"] = Math.round(this.weightLbs * this.userGoals["ProteinGPerLb"])
-                tMacros["Fat"] = Math.round(this.weightLbs * this.userGoals["FatGPerLb"])
+                tMacros["Protein"] = Math.round(this.weightLbs * this.userGoals["proteinGPerLBS"])
+                tMacros["Fat"] = Math.round(this.weightLbs * this.userGoals["fatGPerLBS"])
                 tMacros["Carbs"] = (tMacros["Calories"] - ((tMacros["Fat"] * FAT_CALPERGRAM) + (tMacros["Protein"] * PROTEIN_CALPERGRAM))) / CARB_CALPERGRAM
                 return tMacros
             }
@@ -195,11 +199,11 @@ export default {
                 </span>
                 <span>
                     Protein (g/lb body weight):
-                    <input type="number" class="dialog-input w-[4em]" v-model="this.userGoals['ProteinGPerLb']" />
+                    <input type="number" class="dialog-input w-[4em]" v-model="this.userGoals['proteinGPerLBS']" />
                 </span>
                 <span>
                     Fat (g/lb body weight):
-                    <input type="number" class="dialog-input w-[4em]" v-model="this.userGoals['FatGPerLb']" />
+                    <input type="number" class="dialog-input w-[4em]" v-model="this.userGoals['fatGPerLBS']" />
                 </span>
             </div>
 
