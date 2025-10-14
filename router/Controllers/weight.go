@@ -31,7 +31,8 @@ func addWeight(ctx *gin.Context) {
 		if err := ctx.BindJSON(&weight); err != nil {
 			errmsg = err.Error()
 		} else {
-			if err := models.AddUpdateWeight(userID); err != nil {
+			weight.UserID = userID
+			if err := models.AddUpdateWeight(weight); err != nil {
 				errmsg = err.Error()
 			} else {
 				ctx.Status(http.StatusOK)

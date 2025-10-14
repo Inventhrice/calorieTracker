@@ -24,13 +24,10 @@ func GetWeight(start string, userID string) (WeightData, error) {
 	}
 }
 
-func AddUpdateWeight(userID string) error {
-	var weight WeightData
-	weight.UserID = userID
-
+func AddUpdateWeight(weight WeightData) error {
 	mode := "PATCH"
 	var temp float32
-	if err := middlewares.Database.QueryRow("SELECT kg FROM weightTrack WHERE dateRecord=? AND userid=?;", weight.Date, userID).Scan(&temp); err != nil {
+	if err := middlewares.Database.QueryRow("SELECT kg FROM weightTrack WHERE dateRecord=? AND userid=?;", weight.Date, weight.UserID).Scan(&temp); err != nil {
 		if err == sql.ErrNoRows {
 			mode = "POST"
 		} else {
