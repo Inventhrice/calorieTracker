@@ -51,7 +51,7 @@ func Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		return
 	} else {
-		ctx.SetCookie("token", token, 0, "", "", false, false)
+		ctx.SetCookie("token", token, 2592000, "", "", false, false)
 		ctx.Status(http.StatusOK)
 		return
 	}
