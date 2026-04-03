@@ -42,10 +42,10 @@ export default {
             if (this.isFoodID && this.foodinfo) {
                 let foodinfo = this.foodinfo
                 this.selected.foodname = foodinfo.name
-                this.selected.cal = (foodinfo.calperg * quantity).toFixed(2)
-                this.selected.carbs = (foodinfo.carbperg * quantity).toFixed(2)
-                this.selected.protein = (foodinfo.proteinperg * quantity).toFixed(2)
-                this.selected.fat = (foodinfo.fatperg * quantity).toFixed(2)
+                this.selected.cal = Math.round(foodinfo.calperg * quantity)
+                this.selected.carbs = Math.round(foodinfo.carbperg * quantity)
+                this.selected.protein = Math.round(foodinfo.proteinperg * quantity)
+                this.selected.fat = Math.round(foodinfo.fatperg * quantity)
             }
 
         }
