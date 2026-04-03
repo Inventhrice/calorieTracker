@@ -1,3 +1,4 @@
+import { toRaw } from 'vue'
 const API_URL = ( import.meta.env.DEV ? import.meta.env.VITE_API_URL : "")
 
 export async function api_logout(){
@@ -40,4 +41,8 @@ export async function getMealsInfo(){
         console.error(error.message)
         throw(error)
     }
+}
+
+export function clone(obj){
+	return structuredClone(toRaw(obj))
 }
