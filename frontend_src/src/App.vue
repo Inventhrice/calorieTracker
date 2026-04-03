@@ -5,7 +5,7 @@ import foodDB from './components/foodDB/foodDB.vue';
 import settings from './components/settings.vue'
 import Sidebar from './components/sidebar.vue';
 import login from './components/login.vue';
-import { api_get } from './js/auth';
+import { api_get } from './js/api';
 
 
 const routes = {

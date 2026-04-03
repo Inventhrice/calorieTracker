@@ -1,5 +1,5 @@
 <script>
-import { api_get, api_call } from '../../js/auth';
+import { api_get, api_call } from '../../js/api.js';
 import EntriesDialog from '../entries/entries-dialog.vue';
 import { getLocalDate } from '../../js/datefn.js'
 

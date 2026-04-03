@@ -5,7 +5,7 @@ import entriesDatePicker from './entriesDatePicker.vue'
 import weightEntry from './weightEntry.vue'
 import listTemplates from './listTemplates.vue'
 import { getLocalDate } from '../../js/datefn.js'
-import { api_call, api_get } from '../../js/auth.js'
+import { clone, api_call, api_get } from '../../js/api.js'
 
 export default {
     components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog, listTemplates },
@@ -44,7 +44,7 @@ export default {
         },
         async editEntry() {
             if (this.selected) {
-                let selectedCopy = JSON.parse(JSON.stringify(this.selected))
+                let selectedCopy = clone(this.selected)
                 selectedCopy.foodID = { Int32: (selectedCopy.foodID === undefined ? 0 : selectedCopy.foodID), Valid: (selectedCopy.foodID !== undefined) }
                 selectedCopy.daterecord = getLocalDate(new Date(selectedCopy.daterecord))
                 if (!this.selected.hasOwnProperty('id')) {

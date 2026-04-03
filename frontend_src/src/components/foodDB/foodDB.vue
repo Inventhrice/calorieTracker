@@ -1,7 +1,7 @@
 <script>
 import foodDialog from './foodDB-dialog.vue'
 import deleteDialog from "../confirmDialog.vue"
-import { api_call, api_get } from '../../js/auth.js'
+import { api_call, api_get } from '../../js/api.js'
 import entriesDialog from '../entries/entries-dialog.vue';
 import templatedEntries from './templatedEntries.vue';
 export default {
