@@ -1,6 +1,6 @@
 <script>
 
-import { api_login } from '../js/auth'
+import { api_login } from '../js/api.js'
 
 export default {
     data() {

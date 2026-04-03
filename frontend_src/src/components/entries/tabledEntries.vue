@@ -1,4 +1,5 @@
 <script>
+import { clone } from "../../js/api.js"
 export default {
     data() {
         return {
@@ -8,7 +9,7 @@ export default {
     computed: {
         graftTable: {
             get() {
-                let graftTable = JSON.parse(JSON.stringify(this.entries)).toSorted(this.sortEntries)
+                let graftTable = clone(this.entries).toSorted(this.sortEntries)
                 let add = []
                 let caloriesOfDay = 0
                 let totalCal = 0

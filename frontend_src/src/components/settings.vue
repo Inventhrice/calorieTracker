@@ -1,5 +1,5 @@
 <script>
-import { api_call, api_get } from "../js/auth.js"
+import { api_call, api_get } from "../js/api.js"
 import errPopup from "./errPopup.vue"
 export default {
     components: { errPopup },

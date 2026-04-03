@@ -1,5 +1,5 @@
 <script>
-import { api_call, api_get } from '../../js/auth'
+import { api_call, api_get } from '../../js/api.js'
 export default {
     data() {
         return {

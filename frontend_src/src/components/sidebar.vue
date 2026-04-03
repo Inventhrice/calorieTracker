@@ -1,5 +1,5 @@
 <script>
-    import { api_logout } from "../js/auth.js"
+    import { api_logout } from "../js/api.js"
     export default {
         props: {
             routes: Object

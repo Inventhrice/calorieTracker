@@ -1,5 +1,5 @@
 <script>
-import { api_get } from "../../js/auth.js"
+import { api_get } from "../../js/api.js"
 import { getLocalDate } from "../../js/datefn.js"
 export default {
     data() {

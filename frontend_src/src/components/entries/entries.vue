@@ -5,7 +5,7 @@ import entriesDatePicker from './entriesDatePicker.vue'
 import weightEntry from './weightEntry.vue'
 import listTemplates from './listTemplates.vue'
 import { getLocalDate } from '../../js/datefn.js'
-import { api_call, api_get } from '../../js/auth.js'
+import { clone, api_call, api_get } from '../../js/api.js'
 
 export default {
     components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog, listTemplates },
@@ -30,21 +30,21 @@ export default {
                 }
             } else {
                 let found = this.entries.find((el) => el.id == index)
-                this.selected = JSON.parse(JSON.stringify(found))
+                this.selected = clone(found)
                 if (found.foodID === undefined) this.selected.foodID = undefined
                 this.selected.daterecord = new Date(this.selected.daterecord)
             }
             this.showEntriesDialog = true
         },
         makeTemplateEntry(selected){
-            this.selected = JSON.parse(JSON.stringify(selected))
+            this.selected = structuredClone(selected)
             delete this.selected['id']
             this.selected.daterecord = new Date(getLocalDate(undefined) + "T00:00:00")
             this.showEntriesDialog = true
         },
         async editEntry() {
             if (this.selected) {
-                let selectedCopy = JSON.parse(JSON.stringify(this.selected))
+                let selectedCopy = clone(this.selected)
                 selectedCopy.foodID = { Int32: (selectedCopy.foodID === undefined ? 0 : selectedCopy.foodID), Valid: (selectedCopy.foodID !== undefined) }
                 selectedCopy.daterecord = getLocalDate(new Date(selectedCopy.daterecord))
                 if (!this.selected.hasOwnProperty('id')) {
