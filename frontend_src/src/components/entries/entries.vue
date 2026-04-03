@@ -30,14 +30,14 @@ export default {
                 }
             } else {
                 let found = this.entries.find((el) => el.id == index)
-                this.selected = JSON.parse(JSON.stringify(found))
+                this.selected = clone(found)
                 if (found.foodID === undefined) this.selected.foodID = undefined
                 this.selected.daterecord = new Date(this.selected.daterecord)
             }
             this.showEntriesDialog = true
         },
         makeTemplateEntry(selected){
-            this.selected = JSON.parse(JSON.stringify(selected))
+            this.selected = structuredClone(selected)
             delete this.selected['id']
             this.selected.daterecord = new Date(getLocalDate(undefined) + "T00:00:00")
             this.showEntriesDialog = true
