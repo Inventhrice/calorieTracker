@@ -37,7 +37,7 @@ export default {
             this.showEntriesDialog = true
         },
         makeTemplateEntry(selected){
-            this.selected = structuredClone(selected)
+            this.selected = clone(selected)
             delete this.selected['id']
             this.selected.daterecord = new Date(getLocalDate(undefined) + "T00:00:00")
             this.showEntriesDialog = true
