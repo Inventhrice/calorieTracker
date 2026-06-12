@@ -44,7 +44,7 @@ export default {
         <label for="weight">Weight: </label>
         <input class="remove-spinner w-[4em]" name="weight" type="number" step="0.01" v-model="weightRecorded" />
         <button @click="editWeight()" class="btn btn-confirm pl-1">
-            <span class="iconify btn-icon" data-icon="mdi-refresh"></span>
+            <span class="icon btn-icon mdi--refresh"></span>
         </button>
     </span>
 </template>

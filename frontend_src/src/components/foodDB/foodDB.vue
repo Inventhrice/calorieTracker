@@ -91,7 +91,7 @@ export default {
         <div class="flex justify-between content-center w-98/100 text">
             <span class="content-center font-semibold">{{ allFoods.length }} Items found</span>
             <button class="flex btn btn-confirm" @click="showFoodDialog()">
-                <span class="iconify btn-icon text-2xl pr-1" data-icon="mdi-hamburger-plus"></span>
+                <span class="icon btn-icon text-2xl pr-1 mdi--hamburger-plus"></span>
                 <span>Add new food</span>
             </button>
         </div>
@@ -120,12 +120,11 @@ export default {
                         <td>{{ foodinfo.carbperg }}</td>
                         <td class="text-center py-1">
                             <span class="p-1">
-                                <button class="btn" @click="showFoodDialog(foodinfo)"> <span class="iconify btn-icon"
-                                        data-icon="mdi-pencil"></span> </button>
+                                <button class="btn" @click="showFoodDialog(foodinfo)"> <span class="icon btn-icon mdi--pencil"></span> </button>
                             </span>
                             <span class="p-1">
                                 <button class="btn btn-uhoh px-1" @click="showDeleteDialog(foodinfo)"> <span
-                                        class="iconify btn-icon" data-icon="mdi-trash-can"></span> </button>
+                                        class="icon btn-icon mdi--trash-can"></span> </button>
                             </span>
                         </td>
                     </tr>

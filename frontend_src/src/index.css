@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import "./icons.css";
+
 @layer components {
   .dropdown {
     @apply m-0 w-full px-2 pb-2 transition duration-300 ease-in-out;
@@ -40,20 +42,21 @@
   .text {
     @apply text-blue-500 dark:text-gray-300 opacity-80;
   }
-  
+
   .title-text {
     @apply text-xl tracking-wider font-semibold ml-6 my-auto transition duration-300 ease-in-out;
   }
 
   .module-background {
-    @apply bg-blue-900/50 text-gray-300  dark:bg-gray-900/50;
+    @apply bg-blue-900/50 text-gray-300 dark:bg-gray-900/50;
   }
 
   th {
-    @apply text-lg font-semibold ;
+    @apply text-lg font-semibold;
   }
 
-  td, th {
+  td,
+  th {
     @apply px-2 py-1 mx-2;
   }
 
@@ -61,11 +64,11 @@
     @apply border-2 border-gray-500;
   }
 
-  .btn{
+  .btn {
     @apply p-1 px-2 rounded-md text-gray-100 bg-gray-500 hover:bg-gray-600 active:bg-gray-700;
   }
 
-  .btn-icon{
+  .btn-icon {
     @apply scale-125
   }
 
@@ -78,13 +81,11 @@
   }
 
   .dialog {
-    @apply bg-white dark:bg-black opacity-100 rounded-xl  max-h-screen
-    fixed top-1/2 left-1/2 -translate-1/2 z-auto overflow-y-auto
-    px-5 py-2 gap-2;
+    @apply bg-white dark:bg-black opacity-100 rounded-xl max-h-screen fixed top-1/2 left-1/2 -translate-1/2 z-auto overflow-y-auto px-5 py-2 gap-2;
 
   }
 
-  label{
+  label {
     @apply pr-2 font-semibold;
   }
 
@@ -101,18 +102,16 @@
   }
 
   .graph-timespan-selector {
-    @apply flex flex-row justify-start
-    bg-gray-500 rounded-2xl
-    border-2 border-gray-400;
+    @apply flex flex-row justify-start bg-gray-500 rounded-2xl border-2 border-gray-400;
   }
 
-  .remove-spinner{
+  .remove-spinner {
     -webkit-appearance: none;
     margin: 0;
     -moz-appearance: textfield;
   }
 
-  .error-popup{
+  .error-popup {
     @apply bg-red-400/50 rounded-2xl;
   }
 
