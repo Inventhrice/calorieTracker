@@ -111,8 +111,7 @@ export default {
         class="flex flex-col md:flex-row overflow-hidden overflow-y-scroll md:overflow-x-scroll my-3 mr-2 py-3 items-center rounded-2xl module-background w-full">
         <div class="min-w-fit border-blue-500 border-2 m-2 border-dashed rounded-2xl grid grid-cols-1 place-content-center"
             @click="showTemplate()">
-            <span class="iconify text-blue-500 hover:text-blue-600 active:text-blue-700 m-3" width="4em" height="4em"
-                data-icon="mdi-plus-thick"></span>
+            <span class="icon mdi--plus-thick text-blue-500 hover:text-blue-600 active:text-blue-700 m-3" width="4em" height="4em"></span>
         </div>
         <div class="min-w-fit border-2 border-blue-500 rounded-2xl h-full flex flex-col align-middle p-3 mx-2"
             v-for="(templates, index) in listTemplates" :key="index" @click="showTemplate(index)">

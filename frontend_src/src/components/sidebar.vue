@@ -17,12 +17,12 @@
     <div class="sidebarcontainer">
     <span v-for="icon in routes" >
 		<a :href=icon.link class="sidebarIconContainer group">
-			<span class="iconify" :data-icon="'mdi-' + icon.icon"></span>
+			<span :class="'icon mdi--' + icon.icon"></span>
 			<span class="sidebarFloatingText">{{icon.text}}</span>
 		</a>
     </span>
 	<span @click="logout" class="sidebarIconContainer group">
-		<span class="iconify" :data-icon="'mdi-logout'"></span>
+		<span class="icon mdi--logout"></span>
 		<span class="sidebarFloatingText">Logout</span>
 	</span>
 </div>

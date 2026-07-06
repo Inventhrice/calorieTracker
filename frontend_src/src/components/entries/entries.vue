@@ -37,7 +37,7 @@ export default {
             this.showEntriesDialog = true
         },
         makeTemplateEntry(selected){
-            this.selected = structuredClone(selected)
+            this.selected = clone(selected)
             delete this.selected['id']
             this.selected.daterecord = new Date(getLocalDate(undefined) + "T00:00:00")
             this.showEntriesDialog = true
@@ -123,7 +123,7 @@ export default {
             <weight-entry class="my-1 p-1" :start></weight-entry>
             <span class="my-1 p-1">
                 <button class="flex btn btn-confirm" @click="showEntriesDialogFn(undefined)">
-                    <span class="iconify btn-icon text-2xl" data-icon="mdi-pencil-add"></span>
+                    <span class="icon mdi--pencil-add btn-icon text-2xl"></span>
                     <span>Add entry</span>
                 </button>
             </span>

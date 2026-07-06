@@ -49,17 +49,17 @@ export default {
 <template>
     <span>
         <button @click="refreshData(-7)" class="btn btn-confirm">
-            <span class="iconify btn-icon" data-icon="mdi-navigate-before"></span>
+            <span class="icon btn-icon mdi--navigate-before"></span>
         </button>
         <span class="my-1 p-1">
             From: <input class="dialog-input" type="date" v-model="datePickerWrapperCurrentWeek" />
         </span>
         <button @click="refreshData(7)" class="btn btn-confirm">
-            <span class="iconify btn-icon" data-icon="mdi-navigate-next"></span>
+            <span class="icon btn-icon mdi--navigate-next"></span>
         </button>
         <span class="my-1 p-1">To: {{ currentWeek.end.toDateString() }}</span>
         <button class="btn" @click="refreshData(undefined)">
-            <span class="iconify btn-icon" data-icon="mdi-calendar-today"></span>
+            <span class="icon btn-icon mdi--calendar-today"></span>
         </button>
     </span>
 </template>
