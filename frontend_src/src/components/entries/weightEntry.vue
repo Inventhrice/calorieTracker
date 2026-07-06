@@ -43,8 +43,8 @@ export default {
     <span>
         <label for="weight">Weight: </label>
         <input class="remove-spinner w-[4em]" name="weight" type="number" step="0.01" v-model="weightRecorded" />
-        <button @click="editWeight()" class="btn btn-confirm pl-1">
-            <span class="icon btn-icon mdi--refresh"></span>
+        <button @click="editWeight()" class="btn btn-confirm">
+            <span class="icon btn-icon mdi--upload"></span>
         </button>
     </span>
 </template>
