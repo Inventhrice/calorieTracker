@@ -1,8 +1,7 @@
 <script lang="ts">
-import { Entry, MealTimes } from "./entry_obj.ts";
+import { Entry, MealTimes } from "./entry.ts";
+import type { NutrientStats } from "./entry.ts"
 import { defineComponent } from 'vue'
-
-type NutrientStats = { cal: number, protein: number, fat: number, carbs: number }
 
 export default defineComponent({
     props: {
@@ -17,18 +16,8 @@ export default defineComponent({
             totals.carbs += entry.carbs
             return totals
         },
-        computeStats(dateRecord = "", meal: string, totalCal: number): object {
-            let msg = ""
-            let diffCal = 0
-            if (this.goalinfo) {
-                let goals = this.goalinfo
-                diffCal = (goals[meal] - totalCal)
-                let tolerance = goals[meal] * (goals.percentAllowed)
-                msg = (diffCal >= 0) ? "Great job!" :
-                    ((diffCal >= tolerance * -1) ? "Spot on!" : "Next time!")
-            }
-            return { daterecord: dateRecord, meal: meal, foodname: "", notes: msg, quantity: totalCal, cal: diffCal, protein: 0, carbs: 0, fat: 0 }
-
+        marginErrorPopup(stats: NutrientStats, tolerances: NutrientStats){
+            // end result is +/-, amount off the goal
         },
         sortEntries(first: string, second: string): number {
             return new Date(first).valueOf() - new Date(second).valueOf()

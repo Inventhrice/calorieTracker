@@ -6,7 +6,7 @@ import weightEntry from './weightEntry.vue'
 import listTemplates from './listTemplates.vue'
 import { getLocalDate } from '../../js/datefn.ts'
 import { clone, api_call, api_get } from '../../js/api.js'
-import { Entry } from "./entry_obj";
+import { Entry, parse_goals } from "./entry.ts";
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -83,14 +83,7 @@ export default defineComponent({
             let response = await api_get("/api/goals")
             if (response.ok) {
                 let obj = await response.json()
-                obj.goalsPerMeal = JSON.parse(obj.goalsPerMeal)
-                let returnobj = { percentAllowed: obj.acceptablePercent, Total: obj.goalLbs * obj.multiplier }
-                for (let index in this.mealTimes) {
-                    let meals = this.mealTimes[index]
-                    let mealGoal = obj.goalsPerMeal[index]
-                    returnobj[meals] = mealGoal * returnobj.Total
-                }
-                this.goalsinfo = returnobj
+                this.goalsinfo = parse_goals(obj)
             } else {
                 let msg = await response.text()
                 console.log(msg)

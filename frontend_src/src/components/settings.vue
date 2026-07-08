@@ -1,5 +1,6 @@
 <script>
 import { api_call, api_get } from "../js/api.js"
+import { calc_day_goals } from "./entries/goals.ts";
 import errPopup from "./errPopup.vue"
 export default {
     components: { errPopup },
@@ -120,14 +121,15 @@ export default {
         },
         totalMacros: {
             get() {
-                const FAT_CALPERGRAM = 9
-                const PROTEIN_CALPERGRAM = 4
-                const CARB_CALPERGRAM = 4
+                let goalinfo = {multiplier: this.userGoals['Multiplier'], weightLbs: this.weightLbs, proteinGPerLBS: this.userGoals["proteinGPerLBS"], fatGPerLBS: this.userGoals["fatGPerLBS"]}
+
+                let calc_goals = calc_day_goals(goalinfo)
+
                 let tMacros = { "Calories": 0, "Protein": 0, "Fat": 0, "Carbs": 0 }
-                tMacros["Calories"] = this.weightLbs * this.userGoals['Multiplier']
-                tMacros["Protein"] = Math.round(this.weightLbs * this.userGoals["proteinGPerLBS"])
-                tMacros["Fat"] = Math.round(this.weightLbs * this.userGoals["fatGPerLBS"])
-                tMacros["Carbs"] = (tMacros["Calories"] - ((tMacros["Fat"] * FAT_CALPERGRAM) + (tMacros["Protein"] * PROTEIN_CALPERGRAM))) / CARB_CALPERGRAM
+                tMacros["Calories"] = calc_goals.cal
+                tMacros["Protein"] = calc_goals.protein
+                tMacros["Fat"] = calc_goals.fat
+                tMacros["Carbs"] = calc_goals.carbs
                 return tMacros
             }
         },

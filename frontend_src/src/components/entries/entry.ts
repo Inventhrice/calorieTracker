@@ -1,6 +1,8 @@
-import { getToday } from "../../js/datefn.js"
+import { getToday } from "../../js/datefn.ts"
 
 export const MealTimes = ["Breakfast", "Lunch", "Dinner", "Snacks"]
+
+export type NutrientStats = { cal: number, protein: number, fat: number, carbs: number }
 
 export class Entry {
 
@@ -28,7 +30,7 @@ export class Entry {
         this.notes = ""
     }
 
-    static from(json: any): Entry{
+    static from(json: any): Entry {
         let foodID = (json.foodID.Valid) ? json.foodID.Int32 : undefined;
         let e = new Entry();
         e.daterecord = json.daterecord
@@ -43,6 +45,6 @@ export class Entry {
         e.meal = json.meal
         return e
     }
-     
+
 
 }
