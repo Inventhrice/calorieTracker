@@ -114,7 +114,7 @@ export default {
         </div>
 
         <label for="notes">Notes</label>
-        <textarea id="notes" class="dialog-input" v-model="selected.notes"></textarea>
+        <textarea id="notes" class="dialog-input" v-model="selected.notes" placeholder="I'm empty!"></textarea>
 
         <div class="flex justify-end">
             <button class="btn" @click="$emit('close-dialog')">Cancel</button>
