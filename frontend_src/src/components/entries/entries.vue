@@ -4,10 +4,12 @@ import tabledEntries from './tabledEntries.vue'
 import entriesDatePicker from './entriesDatePicker.vue'
 import weightEntry from './weightEntry.vue'
 import listTemplates from './listTemplates.vue'
-import { getLocalDate } from '../../js/datefn.js'
+import { getLocalDate } from '../../js/datefn.ts'
 import { clone, api_call, api_get } from '../../js/api.js'
+import { Entry } from "./entry_obj";
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
     components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog, listTemplates },
     data() {
         return {
@@ -24,10 +26,7 @@ export default {
     methods: {
         showEntriesDialogFn(index = undefined) {
             if (index === undefined) {
-                this.selected = {
-                    daterecord: new Date(getLocalDate(undefined) + "T00:00:00"), foodname: "", foodID: undefined,
-                    quantity: 0, cal: 0, protein: 0, fat: 0, carbs: 0, notes: ""
-                }
+                this.selected = new Entry();
             } else {
                 let found = this.entries.find((el) => el.id == index)
                 this.selected = clone(found)
@@ -36,10 +35,10 @@ export default {
             }
             this.showEntriesDialog = true
         },
-        makeTemplateEntry(selected){
+        makeTemplateEntry(selected) {
             this.selected = clone(selected)
             delete this.selected['id']
-            this.selected.daterecord = new Date(getLocalDate(undefined) + "T00:00:00")
+            this.selected.daterecord = Entry.EmptyDate();
             this.showEntriesDialog = true
         },
         async editEntry() {
@@ -104,16 +103,18 @@ export default {
                 this.start = currentWeek.start
                 let response = await api_get("/api/entries/" + currentWeek.start + "/" + currentWeek.end)
                 if (response.ok) {
-                    this.entries = await response.json()
-                    this.entries.forEach((el) => {
-                        el.foodID = (el.foodID.Valid) ? el.foodID.Int32 : undefined;
+                    this.entries = []
+                    let rawEntries = await response.json()
+                    for(let el of rawEntries) {
                         el.daterecord = new Date((new Date(el.daterecord)).setUTCHours(8));
-                    })
+                        this.entries.push(Entry.from(el))
+                        
+                    }
                 }
             }
         }
     }
-}
+})
 </script>
 
 <template>

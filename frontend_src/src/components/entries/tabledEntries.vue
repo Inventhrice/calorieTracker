@@ -1,71 +1,27 @@
-<script>
-import { clone } from "../../js/api.js"
-export default {
-    data() {
-        return {
-            mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"]
-        }
-    },
-    computed: {
-        graftTable: {
-            get() {
-                let graftTable = clone(this.entries).toSorted(this.sortEntries)
-                let add = []
-                let caloriesOfDay = 0
-                let totalCal = 0
+<script lang="ts">
+import { Entry, MealTimes } from "./entry_obj.ts";
+import { defineComponent } from 'vue'
 
-                for (let index = graftTable.length - 1; index > 0; index--) {
-                    let entry = graftTable[index]
-                    totalCal += entry.cal
-                    if (entry.daterecord.valueOf() == graftTable[index - 1].daterecord.valueOf()) {
-                        if (entry.meal !== graftTable[index - 1].meal) {
-                            add.push({ addIndex: index, data: this.computeStats("", entry.meal, totalCal) })
-                            caloriesOfDay += totalCal
-                            totalCal = 0
-                        }
-                    } else {
-                        add.push({ addIndex: index, data: this.computeStats("", entry.meal, totalCal) })
+type NutrientStats = { cal: number, protein: number, fat: number, carbs: number }
 
-                        caloriesOfDay += totalCal
-                        add.push({ addIndex: index, data: this.computeStats(new Date(entry.daterecord).toDateString(), "Total", caloriesOfDay) })
-
-                        totalCal = 0
-                        caloriesOfDay = 0
-                    }
-                    entry.meal = ""
-                    entry.daterecord = ""
-                }
-
-                let entry = graftTable[0]
-                if (entry) {
-                    totalCal += entry.cal
-                    add.push({ addIndex: 0, data: this.computeStats("", entry.meal, totalCal) })
-                    caloriesOfDay += totalCal
-                    add.push({ addIndex: 0, data: this.computeStats(new Date(entry.daterecord).toDateString(), "Total", caloriesOfDay) })
-
-                    entry.meal = ""
-                    entry.daterecord = ""
-                }
-
-                for (let index = 0; index < add.length; index++) {
-                    let data = add[index]
-                    graftTable.splice(data.addIndex, 0, data.data)
-                }
-
-                return graftTable
-            }
-        }
-    },
+export default defineComponent({
     props: {
-        entries: Array,
-        goalsinfo: Object
+        entries: Array<Entry>,
+        goalinfo: Object
     },
     methods: {
-        computeStats(dateRecord = "", meal, totalCal) {
+        addStats(totals: NutrientStats, entry: NutrientStats) {
+            totals.cal += entry.cal
+            totals.protein += entry.protein
+            totals.fat += entry.fat
+            totals.carbs += entry.carbs
+            return totals
+        },
+        computeStats(dateRecord = "", meal: string, totalCal: number): object {
             let msg = ""
             let diffCal = 0
-            if (this.goalsinfo) {
-                let goals = this.goalsinfo
+            if (this.goalinfo) {
+                let goals = this.goalinfo
                 diffCal = (goals[meal] - totalCal)
                 let tolerance = goals[meal] * (goals.percentAllowed)
                 msg = (diffCal >= 0) ? "Great job!" :
@@ -74,25 +30,78 @@ export default {
             return { daterecord: dateRecord, meal: meal, foodname: "", notes: msg, quantity: totalCal, cal: diffCal, protein: 0, carbs: 0, fat: 0 }
 
         },
-        sortEntries(first, second) {
-            let diffDate = new Date(first.daterecord).valueOf() - new Date(second.daterecord).valueOf()
-            if (diffDate == 0) {
-                if (this.mealTimes) {
-                    return this.mealTimes.indexOf(first.meal) - this.mealTimes.indexOf(second.meal)
-                } else {
-                    console.log("Unable to sort, this.mealtimes not defined")
-                    return -1
+        sortEntries(first: string, second: string): number {
+            return new Date(first).valueOf() - new Date(second).valueOf()
+        }
+    },
+    computed: {
+        tabled_entries(): any {
+            let cloned_entries = this.entries!
+            let tabled_entries: any = {}
+
+            if (cloned_entries.length > 0) {
+
+                cloned_entries.forEach((el, index, _) => {
+                    let datestr = el.daterecord.toISOString()
+                    if (!(datestr in tabled_entries)) tabled_entries[datestr] = {}
+                    if (!(el.meal in tabled_entries[datestr])) tabled_entries[datestr][el.meal] = [] as Array<any>
+                    tabled_entries[datestr][el.meal].push(index)
+                });
+
+                for (const daterecord in tabled_entries) {
+                    tabled_entries[daterecord]["totals"] = {}
+
+                    let day_totals = { cal: 0, protein: 0, fat: 0, carbs: 0 }
+                    for (const meal of MealTimes) {
+                        if (meal in tabled_entries[daterecord]) {
+                            let meal_totals = { cal: 0, protein: 0, fat: 0, carbs: 0 }
+                            for (const entry_index of tabled_entries[daterecord][meal]) {
+                                meal_totals = this.addStats(meal_totals, cloned_entries[entry_index])
+                            }
+
+                            tabled_entries[daterecord]["totals"][meal] = meal_totals
+
+                            day_totals = this.addStats(day_totals, meal_totals)
+                        }
+                    }
+                    tabled_entries[daterecord]["totals"]["Day"] = day_totals;
                 }
-            } else {
-                return diffDate
             }
+            return tabled_entries
+        },
+        formatted_entries(): any[] {
+            let makeRow = (daterecord: string, meal: string, foodname: string, quantity: string, cal: number, protein: number, fat: number, carbs: number, notes: string) => {
+                return { daterecord: daterecord, meal: meal, foodname: foodname, quantity: quantity, cal: cal.toFixed(2), protein: protein.toFixed(2), fat: fat.toFixed(2), carbs: carbs.toFixed(2), notes: notes }
+            }
+
+            let formatted_entries: any[] = [];
+            let sorted_dates = Object.keys(this.tabled_entries).sort(this.sortEntries)
+            
+            for (const daterecord of sorted_dates) {
+                let day_entries = this.tabled_entries[daterecord]
+                let day_total = day_entries["totals"]["Day"] as NutrientStats
+                formatted_entries.push(makeRow(new Date(daterecord).toDateString(), "Total", "", "", day_total.cal, day_total.protein, day_total.fat, day_total.carbs, ""))
+                for (const meal of MealTimes) {
+                    if(meal in day_entries){
+                        let meal_entries = day_entries[meal] 
+                        let meal_total = day_entries["totals"][meal]
+                        formatted_entries.push(makeRow("", meal, "", "", meal_total.cal, meal_total.protein, meal_total.fat, meal_total.carbs, ""))
+                        for(const entry_index of meal_entries){
+                            const entry = this.entries![entry_index]
+                            formatted_entries.push(makeRow("", "", entry.foodname, entry.quantity.toString(), entry.cal, entry.protein, entry.fat, entry.carbs, entry.notes))
+                        }
+                    }
+                    
+                }
+            }
+            return formatted_entries
         }
     }
-}
+})
 </script>
 
 <template>
-    <table class="text table-border table-auto w-full">
+        <table class="text table-border table-auto w-full">
         <thead class="module-background table-header">
             <tr>
                 <th>Date</th>
@@ -107,17 +116,18 @@ export default {
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(entry, index) in graftTable" :key="index" class="table-border">
+            <tr v-for="(entry, index) in formatted_entries" :key="index" class="table-border">
                 <td class="font-semibold">{{ entry.daterecord }}</td>
                 <td class="font-semibold">{{ entry.meal }}</td>
                 <td class="font-semibold"><a @click="$emit('showDialog', entry.id)">{{ entry.foodname }}</a></td>
                 <td class="text-right">{{ entry.quantity }}</td>
-                <td class="text-right">{{ entry.cal.toFixed(2) }}</td>
-                <td class="text-right">{{ entry.protein.toFixed(2) }}</td>
-                <td class="text-right">{{ entry.fat.toFixed(2) }}</td>
-                <td class="text-right">{{ entry.carbs.toFixed(2) }}</td>
+                <td class="text-right">{{ entry.cal }}</td>
+                <td class="text-right">{{ entry.protein }}</td>
+                <td class="text-right">{{ entry.fat }}</td>
+                <td class="text-right">{{ entry.carbs }}</td>
                 <td class="text-right">{{ entry.notes }}</td>
             </tr>
         </tbody>
     </table>
 </template>
+
