@@ -1,5 +1,5 @@
 <script>
-import { getAllTemplates } from "../foodDB/templatedEntries.vue"
+import { getAllTemplates } from "../template/templatedEntries.vue"
 export default {
     data() {
         return {

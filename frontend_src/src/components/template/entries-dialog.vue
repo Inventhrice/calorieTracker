@@ -1,12 +1,13 @@
 <script>
 import { api_get } from "../../js/api.js"
 import { getLocalDate } from "../../js/datefn.js"
+import { MealTimes } from "../entries/entry.ts"
+
 export default {
     data() {
         return {
             editFields: false,
-            allFoods: [],
-            mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"]
+            allFoods: []
         }
     },
     computed: {
@@ -87,7 +88,7 @@ export default {
 
         <div><label for="meal">Meal</label>
             <select class="dialog-input" name="meal" v-model="selected.meal">
-                <option v-for="meal in this.mealTimes"> {{ meal }} </option>
+                <option v-for="meal in this.MealTimes"> {{ meal }} </option>
             </select>
         </div>
 

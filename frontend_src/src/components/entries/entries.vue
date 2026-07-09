@@ -1,9 +1,11 @@
 <script>
-import entriesDialog from './entries-dialog.vue'
 import tabledEntries from './tabledEntries.vue'
 import entriesDatePicker from './entriesDatePicker.vue'
 import weightEntry from './weightEntry.vue'
-import listTemplates from './listTemplates.vue'
+
+import entriesDialog from '../template/entries-dialog.vue'
+import listTemplates from '../template/listTemplates.vue'
+
 import { getLocalDate } from '../../js/datefn.ts'
 import { clone, api_call, api_get } from '../../js/api.js'
 import { Entry } from "./entry.ts";

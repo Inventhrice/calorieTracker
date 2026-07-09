@@ -69,6 +69,7 @@ export default defineComponent({
 
 <template>
     <div>
+        <span class="text-2xl font-bold pb-3">ABOUT ME</span>
         <span class="informationSpan" v-for="_, key in loggedInUser">
             <label :for="key">{{ key }}:</label>
             <input v-model="loggedInUser[key]" class="dialog-input grow my-3" type="text">
