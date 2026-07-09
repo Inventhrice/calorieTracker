@@ -6,8 +6,9 @@ import weightEntry from './weightEntry.vue'
 import listTemplates from './listTemplates.vue'
 import { getLocalDate } from '../../js/datefn.ts'
 import { clone, api_call, api_get } from '../../js/api.js'
-import { Entry, parse_goals } from "./entry.ts";
+import { Entry } from "./entry.ts";
 import { defineComponent } from 'vue'
+import { parse_goals } from '../settings/goals.ts'
 
 export default defineComponent({
     components: { weightEntry, entriesDatePicker, tabledEntries, entriesDialog, listTemplates },

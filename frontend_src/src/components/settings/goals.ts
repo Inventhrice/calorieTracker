@@ -1,5 +1,5 @@
-import type { NutrientStats } from "./entry.ts"
-import { MealTimes } from './entry.ts'
+import type { NutrientStats } from "../entries/entry.ts"
+import { MealTimes } from '../entries/entry.ts'
 
 export function calc_day_goals(goalinfo: { multiplier: number, goalLbs: number, proteinGPerLBS: number, fatGPerLBS: number }): NutrientStats {
     const FAT_CALPERGRAM = 9
