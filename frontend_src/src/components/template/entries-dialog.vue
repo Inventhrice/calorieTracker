@@ -1,7 +1,7 @@
 <script>
-import { api_get } from "../../js/api.js"
-import { getLocalDate } from "../../js/datefn.js"
-import { MealTimes } from "../entries/entry.ts"
+import { api_get } from "../../js/api.ts"
+import { getLocalDate } from "../../js/datefn.ts"
+import { MealTimes } from "../entries/entry.ts";
 
 export default {
     data() {
@@ -11,6 +11,9 @@ export default {
         }
     },
     computed: {
+        MealTimes() {
+            return MealTimes
+        },
         isFoodID: {
             get() {
                 return this.selected.foodID !== undefined
@@ -88,7 +91,7 @@ export default {
 
         <div><label for="meal">Meal</label>
             <select class="dialog-input" name="meal" v-model="selected.meal">
-                <option v-for="meal in this.MealTimes"> {{ meal }} </option>
+                <option v-for="meal in MealTimes"> {{ meal }} </option>
             </select>
         </div>
 

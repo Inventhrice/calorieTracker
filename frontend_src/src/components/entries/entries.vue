@@ -6,7 +6,7 @@ import weightEntry from './weightEntry.vue'
 import entriesDialog from '../template/entries-dialog.vue'
 import listTemplates from '../template/listTemplates.vue'
 
-import { getLocalDate } from '../../js/datefn.ts'
+import { getLocalDate, getToday } from '../../js/datefn.ts'
 import { clone, api_call, api_get } from '../../js/api.js'
 import { Entry } from "./entry.ts";
 import { defineComponent } from 'vue'
@@ -19,11 +19,10 @@ export default defineComponent({
             title: "Entries", // Title of this page
             entries: [], // All the entries fetched by GET /api/entries
             goalsinfo: {},
-            mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"],
             start: null,
             showEntriesDialog: false,
             showConfirmDeleteDialog: false,
-            selected: null
+            selected: new Entry()
         }
     },
     methods: {
@@ -31,7 +30,7 @@ export default defineComponent({
             if (index === undefined) {
                 this.selected = new Entry();
             } else {
-                let found = this.entries.find((el) => el.id == index)
+                let found = this.entries[index]
                 this.selected = clone(found)
                 if (found.foodID === undefined) this.selected.foodID = undefined
                 this.selected.daterecord = new Date(this.selected.daterecord)
@@ -41,7 +40,7 @@ export default defineComponent({
         makeTemplateEntry(selected) {
             this.selected = clone(selected)
             delete this.selected['id']
-            this.selected.daterecord = Entry.EmptyDate();
+            this.selected.daterecord = getToday();
             this.showEntriesDialog = true
         },
         async editEntry() {
@@ -56,7 +55,7 @@ export default defineComponent({
                         this.selected.id = data.addedID
                         this.entries.push(this.selected)
                     } else {
-                        console.log(response.Error)
+                        console.log((response).Error)
                     }
                 } else {
                     let index = this.entries.findIndex((el) => selectedCopy.id == el.id)
@@ -77,12 +76,12 @@ export default defineComponent({
                 if (response.ok) {
                     this.entries.splice(this.entries.findIndex((el) => this.selected.id == el.id), 1)
                 } else {
-                    console.log(response.Error)
+                    console.log((response).Error)
                 }
                 this.showEntriesDialog = false
             }
         },
-        async fetchGoalInfo(currentWeek = "") {
+        async fetchGoalInfo() {
             let response = await api_get("/api/goals")
             if (response.ok) {
                 let obj = await response.json()
@@ -95,7 +94,7 @@ export default defineComponent({
         },
         async fetchEntries(currentWeek) {
             if (currentWeek) {
-                this.fetchGoalInfo(currentWeek)
+                this.fetchGoalInfo()
                 this.start = currentWeek.start
                 let response = await api_get("/api/entries/" + currentWeek.start + "/" + currentWeek.end)
                 if (response.ok) {

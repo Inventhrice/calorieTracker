@@ -3,6 +3,12 @@ import { Entry, MealTimes } from "./entry.ts";
 import type { NutrientStats } from "./entry.ts"
 import { defineComponent } from 'vue'
 
+type Row = {id?: number, daterecord: string, meal: string, foodname: string, quantity: string, cal: string, protein: string, fat: string, carbs: string, notes: string}
+
+function makeRow(daterecord: string, meal: string, foodname: string, quantity: string, cal: number, protein: number, fat: number, carbs: number, notes: string, id?: number): Row {
+    return { daterecord: daterecord, meal: meal, foodname: foodname, quantity: quantity, cal: cal.toFixed(2), protein: protein.toFixed(2), fat: fat.toFixed(2), carbs: carbs.toFixed(2), notes: notes, id: id }
+}
+
 export default defineComponent({
     props: {
         entries: Array<Entry>,
@@ -16,7 +22,7 @@ export default defineComponent({
             totals.carbs += entry.carbs
             return totals
         },
-        marginErrorPopup(stats: NutrientStats, tolerances: NutrientStats){
+        marginErrorPopup(stats: NutrientStats, tolerances: NutrientStats) {
             // end result is +/-, amount off the goal
         },
         sortEntries(first: string, second: string): number {
@@ -24,7 +30,7 @@ export default defineComponent({
         }
     },
     computed: {
-        tabled_entries(): any {
+         tabled_entries(): any {
             let cloned_entries = this.entries!
             let tabled_entries: any = {}
 
@@ -58,29 +64,26 @@ export default defineComponent({
             }
             return tabled_entries
         },
-        formatted_entries(): any[] {
-            let makeRow = (daterecord: string, meal: string, foodname: string, quantity: string, cal: number, protein: number, fat: number, carbs: number, notes: string) => {
-                return { daterecord: daterecord, meal: meal, foodname: foodname, quantity: quantity, cal: cal.toFixed(2), protein: protein.toFixed(2), fat: fat.toFixed(2), carbs: carbs.toFixed(2), notes: notes }
-            }
+        formatted_entries(): Row[] {
+            let tabled_entries = this.tabled_entries
+            let formatted_entries = [] as Row[];
+            let sorted_dates = Object.keys(tabled_entries).sort(this.sortEntries)
 
-            let formatted_entries: any[] = [];
-            let sorted_dates = Object.keys(this.tabled_entries).sort(this.sortEntries)
-            
             for (const daterecord of sorted_dates) {
-                let day_entries = this.tabled_entries[daterecord]
+                let day_entries = tabled_entries[daterecord]
                 let day_total = day_entries["totals"]["Day"] as NutrientStats
                 formatted_entries.push(makeRow(new Date(daterecord).toDateString(), "Total", "", "", day_total.cal, day_total.protein, day_total.fat, day_total.carbs, ""))
                 for (const meal of MealTimes) {
-                    if(meal in day_entries){
-                        let meal_entries = day_entries[meal] 
+                    if (meal in day_entries) {
+                        let meal_entries = day_entries[meal]
                         let meal_total = day_entries["totals"][meal]
                         formatted_entries.push(makeRow("", meal, "", "", meal_total.cal, meal_total.protein, meal_total.fat, meal_total.carbs, ""))
-                        for(const entry_index of meal_entries){
+                        for (const entry_index of meal_entries) {
                             const entry = this.entries![entry_index]
-                            formatted_entries.push(makeRow("", "", entry.foodname, entry.quantity.toString(), entry.cal, entry.protein, entry.fat, entry.carbs, entry.notes))
+                            formatted_entries.push(makeRow("", "", entry.foodname, entry.quantity.toString(), entry.cal, entry.protein, entry.fat, entry.carbs, entry.notes, entry_index))
                         }
                     }
-                    
+
                 }
             }
             return formatted_entries
@@ -90,7 +93,7 @@ export default defineComponent({
 </script>
 
 <template>
-        <table class="text table-border table-auto w-full">
+    <table class="text table-border table-auto w-full">
         <thead class="module-background table-header">
             <tr>
                 <th>Date</th>
@@ -119,4 +122,3 @@ export default defineComponent({
         </tbody>
     </table>
 </template>
-
