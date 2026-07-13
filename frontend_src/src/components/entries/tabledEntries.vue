@@ -2,6 +2,7 @@
 import { Entry, MealTimes } from "./entry.ts";
 import type { NutrientStats } from "./entry.ts"
 import { defineComponent } from 'vue'
+import { getLocalDate } from "../../js/datefn.ts";
 
 type Row = {id?: number, daterecord: string, meal: string, foodname: string, quantity: string, cal: string, protein: string, fat: string, carbs: string, notes: string}
 
@@ -22,9 +23,6 @@ export default defineComponent({
             totals.carbs += entry.carbs
             return totals
         },
-        marginErrorPopup(stats: NutrientStats, tolerances: NutrientStats) {
-            // end result is +/-, amount off the goal
-        },
         sortEntries(first: string, second: string): number {
             return new Date(first).valueOf() - new Date(second).valueOf()
         }
@@ -37,7 +35,8 @@ export default defineComponent({
             if (cloned_entries.length > 0) {
 
                 cloned_entries.forEach((el, index, _) => {
-                    let datestr = el.daterecord.toISOString()
+                    // This is extremely important, as it ignores any wonky timestamp stuff and only gives us the date
+                    let datestr = getLocalDate(el.daterecord)
                     if (!(datestr in tabled_entries)) tabled_entries[datestr] = {}
                     if (!(el.meal in tabled_entries[datestr])) tabled_entries[datestr][el.meal] = [] as Array<any>
                     tabled_entries[datestr][el.meal].push(index)
