@@ -4,7 +4,7 @@ import type { NutrientStats } from "./entry.ts"
 import { defineComponent } from 'vue'
 import { getLocalDate } from "../../js/datefn.ts";
 
-type Row = {id?: number, daterecord: string, meal: string, foodname: string, quantity: string, cal: string, protein: string, fat: string, carbs: string, notes: string}
+type Row = { id?: number, daterecord: string, meal: string, foodname: string, quantity: string, cal: string, protein: string, fat: string, carbs: string, notes: string }
 
 function makeRow(daterecord: string, meal: string, foodname: string, quantity: string, cal: number, protein: number, fat: number, carbs: number, notes: string, id?: number): Row {
     return { daterecord: daterecord, meal: meal, foodname: foodname, quantity: quantity, cal: cal.toFixed(2), protein: protein.toFixed(2), fat: fat.toFixed(2), carbs: carbs.toFixed(2), notes: notes, id: id }
@@ -28,40 +28,46 @@ export default defineComponent({
         }
     },
     computed: {
-         tabled_entries(): any {
-            let cloned_entries = this.entries!
+        tabled_entries(): any {
+            let entries = this.entries!
             let tabled_entries: any = {}
 
-            if (cloned_entries.length > 0) {
-
-                cloned_entries.forEach((el, index, _) => {
+            if (entries.length > 0) {
+                entries.forEach((el) => {
                     // This is extremely important, as it ignores any wonky timestamp stuff and only gives us the date
-                    let datestr = getLocalDate(el.daterecord)
+                    let datestr = el.daterecord.toDateString()
                     if (!(datestr in tabled_entries)) tabled_entries[datestr] = {}
                     if (!(el.meal in tabled_entries[datestr])) tabled_entries[datestr][el.meal] = [] as Array<any>
-                    tabled_entries[datestr][el.meal].push(index)
+                    tabled_entries[datestr][el.meal].push(el)
                 });
-
-                for (const daterecord in tabled_entries) {
-                    tabled_entries[daterecord]["totals"] = {}
-
-                    let day_totals = { cal: 0, protein: 0, fat: 0, carbs: 0 }
-                    for (const meal of MealTimes) {
-                        if (meal in tabled_entries[daterecord]) {
-                            let meal_totals = { cal: 0, protein: 0, fat: 0, carbs: 0 }
-                            for (const entry_index of tabled_entries[daterecord][meal]) {
-                                meal_totals = this.addStats(meal_totals, cloned_entries[entry_index])
-                            }
-
-                            tabled_entries[daterecord]["totals"][meal] = meal_totals
-
-                            day_totals = this.addStats(day_totals, meal_totals)
-                        }
-                    }
-                    tabled_entries[daterecord]["totals"]["Day"] = day_totals;
-                }
             }
             return tabled_entries
+        },
+        tabled_totals(): any {
+            let tabled_totals: any = {}
+            let tabled_entries = this.tabled_entries
+
+            for (const daterecord in tabled_entries) {
+                tabled_totals[daterecord] = {}
+
+                let day_totals: NutrientStats = { cal: 0, protein: 0, fat: 0, carbs: 0 }
+                for (const meal of MealTimes) {
+                    if (meal in tabled_entries[daterecord]) {
+                        let meal_totals: NutrientStats = { cal: 0, protein: 0, fat: 0, carbs: 0 }
+
+                        for (const entry of tabled_entries[daterecord][meal]) {
+                            meal_totals = this.addStats(meal_totals, entry)
+                        }
+
+                        tabled_totals[daterecord][meal] = meal_totals
+
+                        day_totals = this.addStats(day_totals, meal_totals)
+                    }
+                }
+                tabled_totals[daterecord]["Day"] = day_totals;
+
+            }
+            return tabled_totals
         },
         formatted_entries(): Row[] {
             let tabled_entries = this.tabled_entries
@@ -107,7 +113,46 @@ export default defineComponent({
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(entry, index) in formatted_entries" :key="index" class="table-border">
+            <template v-for="(meal, daterecord) in tabled_entries" :key="daterecord">
+                <tr class="table-border">
+                    <td class="font-semibold">{{ daterecord }}</td>
+                    <td class="font-semibold">Total</td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-right">{{ tabled_totals[daterecord]["Day"].cal.toFixed(2) }}</td>
+                    <td class="text-right">{{ tabled_totals[daterecord]["Day"].protein.toFixed(2) }}</td>
+                    <td class="text-right">{{ tabled_totals[daterecord]["Day"].fat.toFixed(2) }}</td>
+                    <td class="text-right">{{ tabled_totals[daterecord]["Day"].carbs.toFixed(2) }}</td>
+                    <td></td>
+
+                </tr>
+                <template v-for="(listEntries, mealname) in meal" :key="mealname">
+                    <tr class="table-border">
+                        <td></td>
+                        <td class="font-semibold"> {{ mealname }}</td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right">{{ tabled_totals[daterecord][mealname].cal.toFixed(2) }}</td>
+                        <td class="text-right">{{ tabled_totals[daterecord][mealname].protein.toFixed(2) }}</td>
+                        <td class="text-right">{{ tabled_totals[daterecord][mealname].fat.toFixed(2) }}</td>
+                        <td class="text-right">{{ tabled_totals[daterecord][mealname].carbs.toFixed(2) }}</td>
+                        <td></td>
+                    </tr>
+                    <tr v-for="(entry, index) in listEntries" :key="index" class="table-border">
+                        <td></td>
+                        <td></td>
+                        <td class="font-semibold"><a @click="$emit('showDialog', entry.id)">{{ entry.foodname }}</a>
+                        </td>
+                        <td class="text-right">{{ entry.quantity }}</td>
+                        <td class="text-right">{{ entry.cal }}</td>
+                        <td class="text-right">{{ entry.protein }}</td>
+                        <td class="text-right">{{ entry.fat }}</td>
+                        <td class="text-right">{{ entry.carbs }}</td>
+                        <td class="text-right">{{ entry.notes }}</td>
+                    </tr>
+                </template>
+            </template>
+            <!-- <tr v-for="(entry, index) in formatted_entries" :key="index" class="table-border">
                 <td class="font-semibold">{{ entry.daterecord }}</td>
                 <td class="font-semibold">{{ entry.meal }}</td>
                 <td class="font-semibold"><a @click="$emit('showDialog', entry.id)">{{ entry.foodname }}</a></td>
@@ -117,7 +162,7 @@ export default defineComponent({
                 <td class="text-right">{{ entry.fat }}</td>
                 <td class="text-right">{{ entry.carbs }}</td>
                 <td class="text-right">{{ entry.notes }}</td>
-            </tr>
+            </tr> -->
         </tbody>
     </table>
 </template>
