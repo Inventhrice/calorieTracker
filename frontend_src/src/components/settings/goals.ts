@@ -28,15 +28,14 @@ export function calc_pct_goals(totals: NutrientStats, pct: number): NutrientStat
     return nutrients
 }
 
-
-export function parse_goals(goalinfo: { "goalLbs": number, "multiplier": number, "acceptablePercent": number, "goalsPerMeal": string, "proteinGPerLBS": number, "fatGPerLBS": number, "UserID": "" }) {
-    let all_calculated: any = {}
+export function parse_goals(goalinfo: { "goalLbs": number, "multiplier": number, "acceptablePercent": number, "goalsPerMeal": string, "proteinGPerLBS": number, "fatGPerLBS": number }): GoalInfo {
+    let all_calculated: GoalInfo = {} as GoalInfo
     all_calculated["goalsPerMeal"] = JSON.parse(goalinfo.goalsPerMeal)
     all_calculated["percentAllowed"] = goalinfo.acceptablePercent
 
     let day_goals = calc_day_goals(goalinfo)
     let err_daygoals = calc_pct_goals(day_goals, goalinfo.acceptablePercent)
-    
+
     all_calculated["totals"] = { "day": day_goals }
     all_calculated["marginOfError"] = { "day": err_daygoals }
 
@@ -48,4 +47,11 @@ export function parse_goals(goalinfo: { "goalLbs": number, "multiplier": number,
         all_calculated["marginOfError"][meal] = calc_pct_goals(err_daygoals, pct_meal)
     }
     return all_calculated
+}
+
+export type GoalInfo = {
+    goalsPerMeal: Array<number>,
+    percentAllowed: number,
+    totals: { [key: string]: NutrientStats },
+    marginOfError: { [key: string]: NutrientStats }
 }
