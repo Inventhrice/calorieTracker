@@ -4,19 +4,37 @@ import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
 import type { GoalInfo } from "../settings/goals.ts";
 
-export type Row = { daterecord: string, meal: string, stats: NutrientStats}
+export type Row = { daterecord: string, meal: string, stats: NutrientStats }
 
 export default defineComponent({
     props: {
-        goalinfo: {type: Object as PropType<GoalInfo>, required: true},
-        total: {type: Object as PropType<Row>, required: true}
+        goalinfo: { type: Object as PropType<GoalInfo>, required: true },
+        total: { type: Object as PropType<Row>, required: true }
     },
     computed: {
         goals(): NutrientStats {
             return this.goalinfo.totals[this.total.meal]
         },
-        stats(): any {
+        stats(): NutrientStats {
+            return this.total.stats
+        },
+        error(): NutrientStats {
+            return this.goalinfo.marginOfError[this.total.meal]
+        },
+        diffs(): NutrientStats {
+            //let msg = (diffCal >= 0) ? "Great job!" : ((diffCal >= tolerance * -1) ? "Spot on!" : "Next time!")
             
+            let diff: NutrientStats = NutrientStats.clone(this.goals)
+            diff.subtract(this.stats)
+            return diff
+        }
+    },
+    methods: {
+        getResult(fieldname: "cal" | "protein" | "fat" | "carbs"): string {
+            let fieldval = this.diffs.getField(fieldname)
+            if(fieldval > 0) return "dark:bg-green-600/75"
+            else if(fieldval >= this.error.getField(fieldname)*-1) return "dark:bg-yellow-600/40"
+            else return "dark:bg-red-600/90"
         }
     }
 })
@@ -24,15 +42,32 @@ export default defineComponent({
 </script>
 
 <template>
-    <tr class="table-border">
-        <td class="font-semibold"><span v-if="total!.daterecord != ''">{{ total!.daterecord }}</span></td>
-        <td class="font-semibold">{{ total!.meal }}</td>
+    <tr class="border-gray-500">
+        <td class="font-semibold"><span v-if="total.daterecord != ''">{{ total.daterecord }}</span></td>
+        <td class="font-semibold">{{ total.meal }}</td>
         <td></td>
         <td></td>
-        <td class="text-right">{{ Math.round(stats.cal)}} }}</td>
-        <td class="text-right">{{ Math.round(stats.protein)}} }}</td>
-        <td class="text-right">{{ Math.round(stats.fat) }} </td>
-        <td class="text-right">{{ Math.round(stats.carbs) }} </td>
+        <td class="text-right font-semibold">
+            <span :class="['totalbox', getResult('cal')] ">{{ Math.round(stats.cal) }} <span class="text-xs">/ {{ Math.round(goals.cal) }}</span> </span>
+        </td>
+        <td class="text-right font-semibold">
+            <span :class="['totalbox', getResult('protein')] ">{{ Math.round(stats.protein) }} <span class="text-xs">/ {{ Math.round(goals.protein) }}</span></span>
+        </td>
+        <td class="text-right font-semibold">
+            <span :class="['totalbox', getResult('fat')] ">{{ Math.round(stats.fat) }} <span class="text-xs">/ {{ Math.round(goals.fat) }}</span></span>
+        </td>
+        <td class="text-right font-semibold">
+            <span :class="['totalbox', getResult('carbs')] ">{{ Math.round(stats.carbs) }} <span class="text-xs">/ {{ Math.round(goals.carbs) }}</span></span>
+        </td>
         <td></td>
     </tr>
 </template>
+
+<style scoped>
+@import "tailwindcss";
+
+.totalbox {
+    @apply text-gray-50 py-0.5 px-2 rounded-4xl shadow-xl;
+}
+
+</style>

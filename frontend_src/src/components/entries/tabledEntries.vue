@@ -6,14 +6,14 @@ import type { GoalInfo } from "../settings/goals.ts";
 import type { PropType } from 'vue'
 import { default as TotalRow, type Row } from "./tabledEntries-TotalRow.vue";
 
-type TabledEntries = {[daterecord: string]: {[meal: string]: Array<Entry>}}
-type TabledTotals = {[daterecord: string]: {[meal: string]: NutrientStats}}
+type TabledEntries = { [daterecord: string]: { [meal: string]: Array<Entry> } }
+type TabledTotals = { [daterecord: string]: { [meal: string]: NutrientStats } }
 
 export default defineComponent({
     components: { TotalRow },
     props: {
         entries: Array<Entry>,
-        goalinfo: {type: Object as PropType<GoalInfo>, required: true}
+        goalinfo: { type: Object as PropType<GoalInfo>, required: true }
     },
     methods: {
         sortEntries(first: string, second: string): number {
@@ -37,8 +37,14 @@ export default defineComponent({
                 entries.forEach((el) => {
                     // This is extremely important, as it ignores any wonky timestamp stuff and only gives us the date
                     let datestr = el.daterecord.toDateString()
-                    if (!(datestr in tabled_entries)) tabled_entries[datestr] = {}
-                    if (!(el.meal in tabled_entries[datestr])) tabled_entries[datestr][el.meal] = [] as Array<Entry>
+
+                    if (!(datestr in tabled_entries)) {
+                        tabled_entries[datestr] = {}
+                        for (const meal of MealTimes) {
+                            tabled_entries[datestr][meal] = [] as Array<Entry>
+                        }
+                    }
+
                     tabled_entries[datestr][el.meal].push(el)
                 });
             }
@@ -69,14 +75,17 @@ export default defineComponent({
 
             }
             return tabled_totals
+        },
+        mealTimes(): string[] {
+            return MealTimes
         }
     }
 })
 </script>
 
 <template>
-    <table class="text table-border table-auto w-full">
-        <thead class="module-background table-header">
+    <table class="text border-gray-500 border-2 table-auto w-full">
+        <thead class="module-background table-header border-gray-500 border-2">
             <tr>
                 <th>Date</th>
                 <th>Meal</th>
@@ -91,18 +100,21 @@ export default defineComponent({
         </thead>
         <tbody>
             <template v-for="(meal, daterecord) in tabled_entries" :key="daterecord">
-                <TotalRow :total="getRow(tabled_totals[daterecord]['Day'], daterecord, 'Total')" :goalinfo="goalinfo"></TotalRow>
-                <template v-for="(listEntries, mealname) in meal" :key="mealname">
-                    <TotalRow :total="getRow(tabled_totals[daterecord][mealname], '', mealname)" :goalinfo="goalinfo"></TotalRow>
-                    <tr v-for="(entry, index) in listEntries" :key="index" class="table-border">
-                        <td></td><td></td>
-                        <td class="font-semibold"><a @click="$emit('showDialog', entry.id)">{{entry.foodname}}</a></td>
-                        <td class="text-right">{{entry.quantity}}</td>
-                        <td class="text-right">{{entry.cal.toFixed(2)}}</td>
-                        <td class="text-right">{{entry.protein.toFixed(2)}}</td>
-                        <td class="text-right">{{entry.fat.toFixed(2)}}</td>
-                        <td class="text-right">{{entry.carbs.toFixed(2)}}</td>
-                        <td class="text-right">{{entry.notes}}</td>
+                <TotalRow :total="getRow(tabled_totals[daterecord]['Day'], daterecord, 'Total')" :goalinfo="goalinfo">
+                </TotalRow>
+                <template v-for="mealname in mealTimes" :key="mealname">
+                    <TotalRow class="bg-gray-800/50" v-if="meal[mealname].length > 0" :total="getRow(tabled_totals[daterecord][mealname], '', mealname)" :goalinfo="goalinfo">
+                    </TotalRow>
+                    <tr v-for="(entry, index) in meal[mealname]" :key="index" class="module-background">
+                        <td></td>
+                        <td class="border-gray-500"></td>
+                        <td class="font-semibold"><a @click="$emit('showDialog', entry.id)">{{ entry.foodname }}</a></td>
+                        <td class="">{{ entry.quantity }}</td>
+                        <td class="text-right">{{ entry.cal.toFixed(2) }}</td>
+                        <td class="text-right">{{ entry.protein.toFixed(2) }}</td>
+                        <td class="text-right">{{ entry.fat.toFixed(2) }}</td>
+                        <td class="text-right">{{ entry.carbs.toFixed(2) }}</td>
+                        <td class="text-right">{{ entry.notes }}</td>
                     </tr>
                 </template>
             </template>
