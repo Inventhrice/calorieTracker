@@ -96,7 +96,7 @@ export default {
             </button>
         </div>
         <div class="flex w-full">
-            <table class="w-98/100 table-border table-auto text">
+            <table class="w-98/100 border-gray-500 border-2 table-auto text">
                 <thead class="module-background">
                     <tr>
                         <th class="text-left pl-2">Name</th>
@@ -108,7 +108,7 @@ export default {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="table-border" v-for="foodinfo in allFoods" :key="foodinfo.id">
+                    <tr class="border-gray-500 border-2" v-for="foodinfo in allFoods" :key="foodinfo.id">
                         <td class="text-left pl-2">
                             <a v-if=foodinfo.source.Valid :href=foodinfo.source.String
                                 class="font-semibold underline">{{ foodinfo.name }}</a>

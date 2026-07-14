@@ -18,7 +18,7 @@ export default defineComponent({
         return {
             title: "Entries", // Title of this page
             entries: [], // All the entries fetched by GET /api/entries
-            goalsinfo: {},
+            goalinfo: {},
             start: null,
             showEntriesDialog: false,
             showConfirmDeleteDialog: false,
@@ -89,7 +89,7 @@ export default defineComponent({
             let response = await api_get("/api/goals")
             if (response.ok) {
                 let obj = await response.json()
-                this.goalsinfo = parse_goals(obj)
+                this.goalinfo = parse_goals(obj)
             } else {
                 let msg = await response.text()
                 console.log(msg)
@@ -132,7 +132,7 @@ export default defineComponent({
             <list-templates @show-dialog="makeTemplateEntry"></list-templates>
         </div>
         <div class="flex w-full">
-            <tabled-entries @show-dialog="showEntriesDialogFn" :goalsinfo :entries></tabled-entries>
+            <tabled-entries @show-dialog="showEntriesDialogFn" :goalinfo="goalinfo" :entries></tabled-entries>
         </div>
     </div>
     <entries-dialog v-if="showEntriesDialog" @close-dialog="this.showEntriesDialog = false" :selected
