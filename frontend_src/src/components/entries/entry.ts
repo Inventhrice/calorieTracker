@@ -2,7 +2,26 @@ import { getToday } from "../../js/datefn.ts"
 
 export const MealTimes = ["Breakfast", "Lunch", "Dinner", "Snacks"]
 
-export type NutrientStats = { cal: number, protein: number, fat: number, carbs: number }
+export class NutrientStats { 
+    cal: number
+    protein: number
+    fat: number
+    carbs: number 
+
+    constructor(){
+        this.cal = 0
+        this.protein = 0
+        this.fat = 0
+        this.carbs = 0
+    }
+
+    add(entry: NutrientStats | Entry) {
+        this.cal += entry.cal
+        this.protein += entry.protein
+        this.fat += entry.fat
+        this.carbs += entry.carbs
+    }
+}
 
 export class Entry {
 
