@@ -84,18 +84,17 @@ export default defineComponent({
 </script>
 
 <template>
-    <table class="text border-gray-500 border-2 table-auto w-full">
+    <table class="text border-gray-500 border-2 table-auto w-full mr-2">
         <thead class="module-background table-header border-gray-500 border-2">
             <tr>
-                <th>Date</th>
-                <th>Meal</th>
-                <th>Food</th>
-                <th>Quantity</th>
-                <th>Calorie </th>
-                <th>Protein (g)</th>
-                <th>Fat (g)</th>
-                <th>Carb (g)</th>
-                <th>Notes</th>
+                <th class="text-left">Date/Meal</th>
+                <th class="text-left">Food</th>
+                <th class="text-left">Quantity</th>
+                <th class="text-right">Calorie </th>
+                <th class="text-right">Protein (g)</th>
+                <th class="text-right">Fat (g)</th>
+                <th class="text-right">Carb (g)</th>
+                <th class="">Notes</th>
             </tr>
         </thead>
         <tbody>
@@ -107,7 +106,6 @@ export default defineComponent({
                     </TotalRow>
                     <tr v-for="(entry, index) in meal[mealname]" :key="index" class="module-background">
                         <td></td>
-                        <td class="border-gray-500"></td>
                         <td class="font-semibold"><a @click="$emit('showDialog', entry.id)">{{ entry.foodname }}</a></td>
                         <td class="">{{ entry.quantity }}</td>
                         <td class="text-right">{{ entry.cal.toFixed(2) }}</td>

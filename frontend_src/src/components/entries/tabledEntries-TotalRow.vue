@@ -22,8 +22,6 @@ export default defineComponent({
             return this.goalinfo.marginOfError[this.total.meal]
         },
         diffs(): NutrientStats {
-            //let msg = (diffCal >= 0) ? "Great job!" : ((diffCal >= tolerance * -1) ? "Spot on!" : "Next time!")
-            
             let diff: NutrientStats = NutrientStats.clone(this.goals)
             diff.subtract(this.stats)
             return diff
@@ -43,8 +41,8 @@ export default defineComponent({
 
 <template>
     <tr class="border-gray-500">
-        <td class="font-semibold"><span v-if="total.daterecord != ''">{{ total.daterecord }}</span></td>
-        <td class="font-semibold">{{ total.meal }}</td>
+        <td class="font-semibold text-left" v-if="total.daterecord != ''">{{ total.daterecord }}</td>
+        <td class="font-semibold text-right" v-else>{{ total.meal }}</td>
         <td></td>
         <td></td>
         <td class="text-right font-semibold">

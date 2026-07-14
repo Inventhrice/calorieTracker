@@ -29,7 +29,7 @@
 </template>
 
 <style scoped>
-@reference "../index.css";
+@import "tailwindcss";
 
 .sidebarcontainer{
     @apply flex flex-col w-auto h-screen p-2 bg-blue-900/50 dark:bg-gray-900 shadow-lg;
