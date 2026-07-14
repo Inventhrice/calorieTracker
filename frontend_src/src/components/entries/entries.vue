@@ -30,7 +30,7 @@ export default defineComponent({
             if (index === undefined) {
                 this.selected = new Entry();
             } else {
-                let found = this.entries[index]
+                let found = this.entries.find((el) => el.id == index)
                 this.selected = clone(found)
                 if (found.foodID === undefined) this.selected.foodID = undefined
                 this.selected.daterecord = new Date(this.selected.daterecord)
@@ -48,8 +48,11 @@ export default defineComponent({
                 let selectedCopy = clone(this.selected)
                 selectedCopy.foodID = { Int32: (selectedCopy.foodID === undefined ? 0 : selectedCopy.foodID), Valid: (selectedCopy.foodID !== undefined) }
                 selectedCopy.daterecord = getLocalDate(new Date(selectedCopy.daterecord))
+
+                // This checks if this is NOT an pre-existing entry
                 if (!this.selected.hasOwnProperty('id')) {
                     let response = await api_call("/api/entries/", "POST", JSON.stringify(selectedCopy))
+
                     if (response.ok) {
                         let data = await (response).json()
                         this.selected.id = data.addedID
@@ -57,6 +60,7 @@ export default defineComponent({
                     } else {
                         console.log((response).Error)
                     }
+
                 } else {
                     let index = this.entries.findIndex((el) => selectedCopy.id == el.id)
                     let response = await api_call("/api/entries/" + selectedCopy.id, "PATCH", JSON.stringify(selectedCopy))
