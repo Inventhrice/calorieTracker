@@ -30,9 +30,9 @@ export default defineComponent({
     methods: {
         getResult(fieldname: "cal" | "protein" | "fat" | "carbs"): string {
             let fieldval = this.diffs.getField(fieldname)
-            if(fieldval > 0) return "dark:bg-green-600/75"
-            else if(fieldval >= this.error.getField(fieldname)*-1) return "dark:bg-yellow-600/40"
-            else return "dark:bg-red-600/90"
+            if(fieldval > 0) return "bg-green-600/75"
+            else if(fieldval >= this.error.getField(fieldname)*-1) return "bg-yellow-600/40"
+            else return "bg-red-600/90"
         }
     }
 })

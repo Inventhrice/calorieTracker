@@ -99,12 +99,12 @@ export default defineComponent({
         </thead>
         <tbody>
             <template v-for="(meal, daterecord) in tabled_entries" :key="daterecord">
-                <TotalRow :total="getRow(tabled_totals[daterecord]['Day'], daterecord, 'Total')" :goalinfo="goalinfo">
+                <TotalRow class="bg-blue-300 not-dark:text-blue-800 dark:bg-gray-700" :total="getRow(tabled_totals[daterecord]['Day'], daterecord, 'Total')" :goalinfo="goalinfo">
                 </TotalRow>
                 <template v-for="mealname in mealTimes" :key="mealname">
-                    <TotalRow class="bg-gray-800/50" v-if="meal[mealname].length > 0" :total="getRow(tabled_totals[daterecord][mealname], '', mealname)" :goalinfo="goalinfo">
+                    <TotalRow class="bg-blue-200 dark:bg-gray-800/50" v-if="meal[mealname].length > 0" :total="getRow(tabled_totals[daterecord][mealname], '', mealname)" :goalinfo="goalinfo">
                     </TotalRow>
-                    <tr v-for="(entry, index) in meal[mealname]" :key="index" class="module-background">
+                    <tr v-for="(entry, index) in meal[mealname]" :key="index" class="bg-blue-100 dark:text-gray-300 dark:bg-gray-900/50">
                         <td></td>
                         <td class="font-semibold"><a @click="$emit('showDialog', entry.id)">{{ entry.foodname }}</a></td>
                         <td class="">{{ entry.quantity }}</td>

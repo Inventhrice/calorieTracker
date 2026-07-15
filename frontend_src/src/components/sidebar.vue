@@ -32,11 +32,11 @@
 @import "tailwindcss";
 
 .sidebarcontainer{
-    @apply flex flex-col w-auto h-screen p-2 bg-blue-900/50 dark:bg-gray-900 shadow-lg;
+    @apply flex flex-col w-auto h-screen p-2 bg-gray-400/50 dark:bg-gray-900 shadow-lg;
 }
 
 .sidebarIconContainer {
-    @apply relative flex items-center justify-center w-auto m-1 p-3 bg-white hover:bg-blue-600 dark:bg-gray-800 text-blue-500 hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg;
+    @apply relative flex items-center justify-center w-auto m-1 p-3 bg-gray-300 hover:bg-blue-600 dark:bg-gray-800 text-blue-500 hover:text-white hover:rounded-xl rounded-3xl transition-all duration-300 ease-linear cursor-pointer shadow-lg;
 }
 
 .sidebarFloatingText {
