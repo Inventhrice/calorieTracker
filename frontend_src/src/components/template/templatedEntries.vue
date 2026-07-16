@@ -1,6 +1,6 @@
 <script>
 import { api_get, api_call } from '../../js/api.js';
-import EntriesDialog from '../entries/entries-dialog.vue';
+import EntriesDialog from './entries-dialog.vue';
 import { getLocalDate } from '../../js/datefn.js'
 
 export async function getAllTemplates() {

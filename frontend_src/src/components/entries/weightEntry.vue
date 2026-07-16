@@ -10,21 +10,22 @@ export default {
         async fetchData() {
             try {
                 let response = await api_get("/api/weight/" + this.start)
+                let data = await response.json()
                 if (response.ok) {
-                    let data = await response.json()
                     this.weightRecorded = data.kg
                 } else{
+                    this.$emit('raise-error', data.Error, "No weight recorded.")
                     this.weightRecorded = 0    
                 }
             } catch (error) {
-                console.error(error)
+                this.$emit('raise-error', error, "No weight recorded.")
                 this.weightRecorded = 0
             }
         },
         async editWeight() {
             let response = await api_call("/api/weight/", "POST", JSON.stringify({ daterecord: this.start, kg: this.weightRecorded }))
             if (!response.ok) {
-                console.log(response.Error)
+                this.$emit('raise-error', response.Error, "Failed to edit weight.")
             }
         }
     },
@@ -35,6 +36,9 @@ export default {
         this.$watch('start', () => {
             this.fetchData()
         })
+    },
+    emits: {
+        "raise-error": null
     }
 }
 </script>
@@ -43,8 +47,8 @@ export default {
     <span>
         <label for="weight">Weight: </label>
         <input class="remove-spinner w-[4em]" name="weight" type="number" step="0.01" v-model="weightRecorded" />
-        <button @click="editWeight()" class="btn btn-confirm pl-1">
-            <span class="icon btn-icon mdi--refresh"></span>
+        <button @click="editWeight()" class="btn btn-confirm">
+            <span class="icon btn-icon mdi--upload"></span>
         </button>
     </span>
 </template>

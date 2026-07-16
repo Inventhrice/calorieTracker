@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build --outDir ../public --emptyOutDir",
+    "build": "vue-tsc -b && vite build --outDir ../public --emptyOutDir",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -14,7 +14,11 @@
     "vue": "^3.5.31"
   },
   "devDependencies": {
+    "@types/node": "^26.1.0",
     "@vitejs/plugin-vue": "^6.0.5",
-    "vite": "^8.0.1"
+    "@vue/tsconfig": "^0.9.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.1",
+    "vue-tsc": "^3.3.6"
   }
 }

@@ -1,15 +1,19 @@
 <script>
-import { api_get } from "../../js/api.js"
-import { getLocalDate } from "../../js/datefn.js"
+import { api_get } from "../../js/api.ts"
+import { getLocalDate } from "../../js/datefn.ts"
+import { MealTimes } from "../entries/entry.ts";
+
 export default {
     data() {
         return {
             editFields: false,
-            allFoods: [],
-            mealTimes: ["Breakfast", "Lunch", "Dinner", "Snacks"]
+            allFoods: []
         }
     },
     computed: {
+        MealTimes() {
+            return MealTimes
+        },
         isFoodID: {
             get() {
                 return this.selected.foodID !== undefined
@@ -87,7 +91,7 @@ export default {
 
         <div><label for="meal">Meal</label>
             <select class="dialog-input" name="meal" v-model="selected.meal">
-                <option v-for="meal in this.mealTimes"> {{ meal }} </option>
+                <option v-for="meal in MealTimes"> {{ meal }} </option>
             </select>
         </div>
 
@@ -114,7 +118,7 @@ export default {
         </div>
 
         <label for="notes">Notes</label>
-        <textarea id="notes" class="dialog-input" v-model="selected.notes"></textarea>
+        <textarea id="notes" class="dialog-input" v-model="selected.notes" placeholder="I'm empty!"></textarea>
 
         <div class="flex justify-end">
             <button class="btn" @click="$emit('close-dialog')">Cancel</button>
