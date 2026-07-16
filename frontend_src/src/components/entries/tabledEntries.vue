@@ -112,7 +112,7 @@ export default defineComponent({
                         <td class="text-right">{{ entry.protein.toFixed(2) }}</td>
                         <td class="text-right">{{ entry.fat.toFixed(2) }}</td>
                         <td class="text-right">{{ entry.carbs.toFixed(2) }}</td>
-                        <td class="text-right">{{ entry.notes }}</td>
+                        <td class="text-center"><span v-if="entry.notes != ''" class="icon mdi--notes dark:text-blue-400"></span></td>
                     </tr>
                 </template>
             </template>
