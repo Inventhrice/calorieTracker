@@ -14,17 +14,18 @@ export default {
                     let data = await response.json()
                     this.weightRecorded = data.kg
                 } else{
+                    this.$emit('raise-error', error, "No weight recorded.")
                     this.weightRecorded = 0    
                 }
             } catch (error) {
-                console.error(error)
+                this.$emit('raise-error', error, "No weight recorded.")
                 this.weightRecorded = 0
             }
         },
         async editWeight() {
             let response = await api_call("/api/weight/", "POST", JSON.stringify({ daterecord: this.start, kg: this.weightRecorded }))
             if (!response.ok) {
-                console.log(response.Error)
+                this.$emit('raise-error', response.Error, "Failed to edit weight.")
             }
         }
     },
