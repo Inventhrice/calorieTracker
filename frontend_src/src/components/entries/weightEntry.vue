@@ -10,11 +10,11 @@ export default {
         async fetchData() {
             try {
                 let response = await api_get("/api/weight/" + this.start)
+                let data = await response.json()
                 if (response.ok) {
-                    let data = await response.json()
                     this.weightRecorded = data.kg
                 } else{
-                    this.$emit('raise-error', error, "No weight recorded.")
+                    this.$emit('raise-error', data.Error, "No weight recorded.")
                     this.weightRecorded = 0    
                 }
             } catch (error) {
@@ -36,6 +36,9 @@ export default {
         this.$watch('start', () => {
             this.fetchData()
         })
+    },
+    emits: {
+        "raise-error": null
     }
 }
 </script>

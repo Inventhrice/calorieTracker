@@ -20,8 +20,8 @@ export default defineComponent({
     data() {
         return {
             title: "Entries", // Title of this page
-            entries: [], // All the entries fetched by GET /api/entries
-            goalinfo: {},
+            entries: undefined, // All the entries fetched by GET /api/entries
+            goalinfo: undefined,
             start: null,
             showEntriesDialog: false,
             showConfirmDeleteDialog: false,
@@ -146,7 +146,7 @@ export default defineComponent({
             <list-templates @show-dialog="makeTemplateEntry"></list-templates>
         </div>
         <div class="flex w-full">
-            <tabled-entries v-if="entries.length > 0" @show-dialog="showEntriesDialogFn" :goalinfo="goalinfo" :entries></tabled-entries>
+            <tabled-entries v-if="entries && goalinfo" @show-dialog="showEntriesDialogFn" :goalinfo="goalinfo" :entries></tabled-entries>
             <div v-else class="text module-background p-4 text-xl opacity-50 rounded-xl italic w-full mr-2">
                 No entries were found for this week.
             </div>
