@@ -23,7 +23,7 @@ type Entry struct {
 }
 
 func UpdateEntry(entry Entry) error {
-	result, err := middlewares.Database.NamedExec("UPDATE entries SET dateRecord=:dateRecord,meal=:meal,foodID=:foodID,grams=:grams,foodname=:foodname,cal=:cal,protein=:protein,fat=:fat,carbs=:carbs WHERE ID=:ID", entry)
+	result, err := middlewares.Database.NamedExec("UPDATE entries SET dateRecord=:dateRecord,meal=:meal,foodID=:foodID,grams=:grams,foodname=:foodname,cal=:cal,protein=:protein,fat=:fat,carbs=:carbs,notes=:notes WHERE id=:ID", entry)
 	if _, err := Helper_ExecError(result, err, "No entry with the provided ID found"); err != nil {
 		return err
 	} else {
@@ -33,7 +33,7 @@ func UpdateEntry(entry Entry) error {
 
 func AddEntry(entry Entry) (int64, error) {
 
-	result, err := middlewares.Database.NamedExec("INSERT INTO entries (userid, dateRecord, meal, foodID, foodname, grams, cal, protein, fat, carbs) VALUES (:userid, :dateRecord, :meal, :foodID, :foodname, :grams, :cal, :protein, :fat, :carbs)", entry)
+	result, err := middlewares.Database.NamedExec("INSERT INTO entries (userid, dateRecord, meal, foodID, foodname, grams, cal, protein, fat, carbs, notes) VALUES (:userid, :dateRecord, :meal, :foodID, :foodname, :grams, :cal, :protein, :fat, :carbs, :notes)", entry)
 
 	if _, err := Helper_ExecError(result, err, "Entry was unable to be added"); err != nil {
 		return -1, err
