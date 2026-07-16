@@ -3,30 +3,6 @@
 @import "./icons.css";
 
 @layer components {
-  .dropdown {
-    @apply m-0 w-full px-2 pb-2 transition duration-300 ease-in-out;
-  }
-
-  .dropdown-header {
-    @apply flex flex-row items-center justify-evenly mx-0 text-gray-500 cursor-pointer;
-  }
-
-  .dropdown-header-text {
-    @apply text-gray-500 opacity-90 text-lg font-semibold cursor-default;
-  }
-
-  .dropdown-header-text-selected {
-    @apply text-blue-500 opacity-90 text-lg font-bold;
-  }
-
-  .dropdown-selection {
-    @apply flex flex-row items-center justify-evenly mt-1 mr-auto ml-2 transition duration-300 ease-in-out cursor-pointer;
-  }
-
-  .dropdown-selection-text {
-    @apply text-gray-500 font-semibold tracking-wide mr-auto transition duration-300 ease-in-out hover:text-pink-500 dark:hover:text-gray-500 cursor-pointer;
-  }
-
   .content-container {
     @apply flex flex-col bg-gray-300 dark:bg-gray-700 m-0 h-screen w-screen overflow-hidden;
   }
@@ -60,10 +36,6 @@
     @apply px-2 py-1 mx-2;
   }
 
-  .table-border {
-    @apply border-2 border-gray-500;
-  }
-
   .btn {
     @apply p-1 px-2 rounded-md text-gray-100 bg-gray-500 hover:bg-gray-600 active:bg-gray-700;
   }
@@ -90,7 +62,7 @@
   }
 
   .dialog-input {
-    @apply bg-gray-400/50 dark:bg-gray-700 rounded pl-1 py-1;
+    @apply bg-gray-400/20 dark:bg-gray-700 rounded pl-1 py-1;
   }
 
   .graph {
