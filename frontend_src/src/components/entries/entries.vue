@@ -43,7 +43,7 @@ export default defineComponent({
         },
         makeTemplateEntry(selected) {
             this.selected = clone(selected)
-            delete this.selected['id']
+            this.selected['id'] = undefined
             this.selected.daterecord = getToday();
             this.showEntriesDialog = true
         },
@@ -54,7 +54,7 @@ export default defineComponent({
                 selectedCopy.daterecord = getLocalDate(new Date(selectedCopy.daterecord))
 
                 // This checks if this is NOT an pre-existing entry
-                if (!this.selected.hasOwnProperty('id')) {
+                if (this.selected.id === undefined) {
                     let response = await api_call("/api/entries/", "POST", JSON.stringify(selectedCopy))
 
                     if (response.ok) {
@@ -132,7 +132,7 @@ export default defineComponent({
 
 <template>
     <div id="main-content" class="content-list">
-        <div class="text font-semibold flex flex-col justify-around items-end lg:w-full lg:flex-row lg:justify-between">
+        <div class="text font-semibold flex flex-col justify-around lg:w-full lg:flex-row lg:justify-between">
             <entries-date-picker class="my-1 p-1" @fetch-entries="fetchEntries"></entries-date-picker>
             <weight-entry class="my-1 p-1" @raise-error="raiseError" :start></weight-entry>
             <span class="my-1 p-1">
