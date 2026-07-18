@@ -69,8 +69,13 @@ export default {
 </script>
 
 <template>
-  <sidebar v-if="loggedin" @logout="logout" :routes></sidebar>
+  <div class="max-sm:hidden">
+    <sidebar v-if="loggedin" @logout="logout" :routes></sidebar>
+  </div>
   <div id="content" class="content-container">
+    <div class="md:hidden">
+      <sidebar v-if="loggedin" @logout="logout" class="" :routes></sidebar>
+    </div>
     <div v-if="loggedin" id="header" class="top-navigation">
       <h5 class="text title-text">{{ title }}</h5>
     </div>

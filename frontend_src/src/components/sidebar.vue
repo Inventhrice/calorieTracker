@@ -1,38 +1,38 @@
 <script>
-    import { api_logout } from "../js/api.js"
-    export default {
-        props: {
-            routes: Object
-        },
-        methods: {
-            async logout(){
-                await api_logout()
-                this.$emit('logout')
-            }
+import { api_logout } from "../js/api.js"
+export default {
+    props: {
+        routes: Object
+    },
+    methods: {
+        async logout() {
+            await api_logout()
+            this.$emit('logout')
         }
     }
+}
 </script>
 
 <template>
     <div class="sidebarcontainer">
-    <span v-for="icon in routes" >
-		<a :href=icon.link class="sidebarIconContainer group">
-			<span :class="'icon mdi--' + icon.icon"></span>
-			<span class="sidebarFloatingText">{{icon.text}}</span>
-		</a>
-    </span>
-	<span @click="logout" class="sidebarIconContainer group">
-		<span class="icon mdi--logout"></span>
-		<span class="sidebarFloatingText">Logout</span>
-	</span>
-</div>
+        <span v-for="icon in routes">
+            <a :href=icon.link class="sidebarIconContainer group">
+                <span :class="'icon mdi--' + icon.icon"></span>
+                <span class="sidebarFloatingText">{{ icon.text }}</span>
+            </a>
+        </span>
+        <span @click="logout" class="sidebarIconContainer group">
+            <span class="icon mdi--logout"></span>
+            <span class="sidebarFloatingText">Logout</span>
+        </span>
+    </div>
 </template>
 
 <style scoped>
 @import "tailwindcss";
 
-.sidebarcontainer{
-    @apply flex flex-col w-auto h-screen p-2 bg-gray-400/50 dark:bg-gray-900 shadow-lg;
+.sidebarcontainer {
+    @apply flex flex-row md:flex-col w-auto h-fit md:h-screen p-2 bg-gray-400/50 dark:bg-gray-900 shadow-lg;
 }
 
 .sidebarIconContainer {
@@ -42,6 +42,4 @@
 .sidebarFloatingText {
     @apply absolute p-2 m-3 min-w-max left-14 rounded-md shadow-md z-50 text-white bg-gray-900 text-xs font-bold transition-all duration-100 scale-0 origin-left group-hover:scale-100;
 }
-
 </style>
-
