@@ -46,16 +46,16 @@ export default defineComponent({
         <td></td>
         <td></td>
         <td class="text-right font-semibold">
-            <span :class="['totalbox', getResult('cal')] ">{{ Math.round(stats.cal) }} <span class="text-xs">/ {{ Math.round(goals.cal) }}</span> </span>
+            <span :class="['totalbox', getResult('cal')] ">{{ Math.round(stats.cal) }} <span class="text-xs hidden md:inline">/ {{ Math.round(goals.cal) }}</span> </span>
         </td>
         <td class="text-right font-semibold">
-            <span :class="['totalbox', getResult('protein')] ">{{ Math.round(stats.protein) }} <span class="text-xs">/ {{ Math.round(goals.protein) }}</span></span>
+            <span :class="['totalbox', getResult('protein')] ">{{ Math.round(stats.protein) }} <span class="text-xs hidden md:inline">/ {{ Math.round(goals.protein) }}</span></span>
         </td>
         <td class="text-right font-semibold">
-            <span :class="['totalbox', getResult('fat')] ">{{ Math.round(stats.fat) }} <span class="text-xs">/ {{ Math.round(goals.fat) }}</span></span>
+            <span :class="['totalbox', getResult('fat')] ">{{ Math.round(stats.fat) }} <span class="text-xs hidden md:inline">/ {{ Math.round(goals.fat) }}</span></span>
         </td>
         <td class="text-right font-semibold">
-            <span :class="['totalbox', getResult('carbs')] ">{{ Math.round(stats.carbs) }} <span class="text-xs">/ {{ Math.round(goals.carbs) }}</span></span>
+            <span :class="['totalbox', getResult('carbs')] ">{{ Math.round(stats.carbs) }} <span class="text-xs hidden md:inline">/ {{ Math.round(goals.carbs) }}</span></span>
         </td>
         <td></td>
     </tr>
