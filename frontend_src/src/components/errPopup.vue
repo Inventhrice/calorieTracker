@@ -38,9 +38,9 @@ export default defineComponent({
 </script>
 
 <template>
-    <div class="absolute h-full self-center flex flex-col-reverse">
+    <div class="absolute bottom-0 self-center h-fit w-fit flex flex-col-reverse">
         <TransitionGroup>
-            <div v-for="message in queue" :key="message" class="w-fit p-3 rounded-2xl bg-red-500 text">
+            <div v-for="message in queue" :key="message" class="w-fit p-3 mt-1 rounded-2xl bg-red-500 text">
                 <span class="icon mdi--error align-middle scale-125 mr-2"></span>
                 <span class="align-middle">{{ message }} Check console for details.</span>
             </div>
