@@ -80,7 +80,7 @@ export class Entry {
         this.protein = 0
         this.fat = 0
         this.carbs = 0
-        this.meal = ""
+        this.meal = MealTimes[0]
         this.notes = ""
     }
 
